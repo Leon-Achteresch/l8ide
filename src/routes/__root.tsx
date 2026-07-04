@@ -2,7 +2,7 @@ import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { AppHeader } from "@/components/app-header";
 import { Sidebar } from "@/components/sidebar";
-import { TabBar } from "@/components/tab-bar";
+import { TabBar } from "@/components/tab-bar/tab-bar";
 import "../App.css";
 
 export const Route = createRootRoute({
