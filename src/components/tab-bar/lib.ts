@@ -5,7 +5,7 @@ import {
   useWorkspaceStore,
 } from "@/lib/workspace-store";
 import type { LucideIcon } from "lucide-react";
-import { Settings } from "lucide-react";
+import { Keyboard, Settings } from "lucide-react";
 
 export const tabClass =
   "relative isolate flex h-full shrink-0 cursor-pointer items-center gap-1.5 px-3 text-sm";
@@ -32,4 +32,5 @@ export function parentDir(path: string) {
 
 export const pageIcons: Record<string, LucideIcon> = {
   "/settings": Settings,
+  "/shortcuts": Keyboard,
 };

@@ -1,3 +1,16 @@
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import { dlog, installDndDiagnostics } from "@/lib/dnd-log";
+import { fileIcon } from "@/lib/file-icons";
+import { useCommandHotkeys } from "@/lib/hotkeys";
+import { basename, canMove, dragRoots, parentDir } from "@/lib/fs-move";
+import { cn } from "@/lib/utils";
+import { useWorkspaceStore } from "@/lib/workspace-store";
 import { CollisionPriority } from "@dnd-kit/abstract";
 import { pointerIntersection } from "@dnd-kit/collision";
 import {
@@ -10,8 +23,8 @@ import {
 import {
   DragDropProvider,
   type DragEndEvent,
-  DragOverlay,
   type DragOverEvent,
+  DragOverlay,
   type DragStartEvent,
   PointerSensor,
   useDraggable,
@@ -28,7 +41,7 @@ import {
   rename,
   stat,
 } from "@tauri-apps/plugin-fs";
-import { ChevronRight, CopyPlus, File, Folder, FolderOpen } from "lucide-react";
+import { ChevronRight, CopyPlus, Earth, EyeClosed, File, Folder, FolderOpen } from "lucide-react";
 import {
   createContext,
   useCallback,
@@ -39,18 +52,6 @@ import {
   useState,
 } from "react";
 import { create } from "zustand";
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu";
-import { dlog, installDndDiagnostics } from "@/lib/dnd-log";
-import { fileIcon } from "@/lib/file-icons";
-import { basename, canMove, dragRoots, parentDir } from "@/lib/fs-move";
-import { cn } from "@/lib/utils";
-import { useWorkspaceStore } from "@/lib/workspace-store";
 
 type Entry = {
   name: string;
@@ -66,10 +67,12 @@ type TreeState = {
   selected: string[];
   anchor: string | null;
   dragging: string[];
+  renamingPath: string | null;
   refreshTicks: Record<string, number>;
   setDropTarget: (path: string | null) => void;
   select: (paths: string[], anchor?: string | null) => void;
   setDragging: (paths: string[]) => void;
+  setRenaming: (path: string | null) => void;
   bumpDirs: (dirs: Iterable<string>) => void;
   reset: () => void;
 };
@@ -79,12 +82,14 @@ const useTreeStore = create<TreeState>()((set) => ({
   selected: [],
   anchor: null,
   dragging: [],
+  renamingPath: null,
   refreshTicks: {},
   setDropTarget: (dropTarget) =>
     set((s) => (s.dropTarget === dropTarget ? s : { dropTarget })),
   select: (selected, anchor) =>
     set(anchor === undefined ? { selected } : { selected, anchor }),
   setDragging: (dragging) => set({ dragging }),
+  setRenaming: (renamingPath) => set({ renamingPath }),
   bumpDirs: (dirs) =>
     set((s) => {
       const refreshTicks = { ...s.refreshTicks };
@@ -97,9 +102,40 @@ const useTreeStore = create<TreeState>()((set) => ({
       selected: [],
       anchor: null,
       dragging: [],
+      renamingPath: null,
       refreshTicks: {},
     }),
 }));
+
+async function deletePaths(paths: string[]) {
+  const targets = dragRoots(paths);
+  if (targets.length === 0) return;
+  const label =
+    targets.length === 1
+      ? `„${basename(targets[0])}“`
+      : `${targets.length} Elemente`;
+  const ok = await confirm(`${label} wirklich löschen?`, {
+    title: "Löschen",
+    kind: "warning",
+  });
+  if (!ok) return;
+  const affected = new Set<string>();
+  for (const path of targets) {
+    try {
+      await remove(path, { recursive: true });
+      const ws = useWorkspaceStore.getState();
+      for (const t of ws.tabs) {
+        if (t === path || t.startsWith(`${path}/`)) ws.closeTab(t);
+      }
+      affected.add(parentDir(path));
+    } catch (err) {
+      dlog("ERROR delete", { path, err });
+    }
+  }
+  const st = useTreeStore.getState();
+  st.select([], null);
+  st.bumpDirs(affected);
+}
 
 async function listDir(path: string): Promise<Entry[]> {
   const entries = await readDir(path);
@@ -157,7 +193,7 @@ const TreeCtx = createContext<TreeCtxType>(null!);
 function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
   const ctx = useContext(TreeCtx);
   const [open, setOpen] = useState(false);
-  const [renaming, setRenaming] = useState(false);
+  const renaming = useTreeStore((s) => s.renamingPath === entry.path);
   const cancelRename = useRef(false);
   const [children, setChildren] = useState<Entry[] | null>(null);
   const isActive = useWorkspaceStore((s) => s.activeFile === entry.path);
@@ -235,28 +271,15 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
     setOpen((o) => !o);
   }
 
-  async function handleDelete() {
-    const ok = await confirm(`„${entry.name}“ wirklich löschen?`, {
-      title: "Löschen",
-      kind: "warning",
-    });
-    if (!ok) return;
-    try {
-      await remove(entry.path, { recursive: true });
-      const ws = useWorkspaceStore.getState();
-      for (const t of ws.tabs) {
-        if (t === entry.path || t.startsWith(`${entry.path}/`)) {
-          ws.closeTab(t);
-        }
-      }
-      useTreeStore.getState().bumpDirs([parentDir(entry.path)]);
-    } catch (err) {
-      dlog("ERROR delete", { path: entry.path, err });
-    }
+  function handleDelete() {
+    const st = useTreeStore.getState();
+    deletePaths(
+      st.selected.includes(entry.path) ? st.selected : [entry.path],
+    );
   }
 
   async function commitRename(newName: string) {
-    setRenaming(false);
+    useTreeStore.getState().setRenaming(null);
     const name = newName.trim();
     if (!name || name === entry.name || name.includes("/")) return;
     const dest = `${parentDir(entry.path)}/${name}`;
@@ -336,7 +359,7 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
                 onBlur={(e) => {
                   if (cancelRename.current) {
                     cancelRename.current = false;
-                    setRenaming(false);
+                    useTreeStore.getState().setRenaming(null);
                     return;
                   }
                   commitRename(e.currentTarget.value);
@@ -349,7 +372,9 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
           </button>
         </ContextMenuTrigger>
         <ContextMenuContent className="min-w-48">
-          <ContextMenuItem onClick={() => setRenaming(true)}>
+          <ContextMenuItem
+            onClick={() => useTreeStore.getState().setRenaming(entry.path)}
+          >
             Umbenennen
           </ContextMenuItem>
           <ContextMenuItem variant="destructive" onClick={handleDelete}>
@@ -368,6 +393,9 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
               useWorkspaceStore.getState().hideName(entry.name, "global")
             }
           >
+            <EyeClosed size={24}>
+              <Earth size={12} x={12} y={0} absoluteStrokeWidth />
+            </EyeClosed>
             Ausblenden (Überall)
           </ContextMenuItem>
         </ContextMenuContent>
@@ -472,6 +500,17 @@ export function FileTree({ rootPath }: { rootPath: string }) {
     if (rootTick === 0) return;
     listDir(rootPath).then(setChildren);
   }, [rootTick, rootPath]);
+
+  useCommandHotkeys(
+    {
+      "file.rename": () => {
+        const st = useTreeStore.getState();
+        if (st.selected.length === 1) st.setRenaming(st.selected[0]);
+      },
+      "file.delete": () => deletePaths(useTreeStore.getState().selected),
+    },
+    { target: containerRef },
+  );
 
   const handleRowClick = useCallback((entry: Entry, e: React.MouseEvent) => {
     const st = useTreeStore.getState();
@@ -695,9 +734,7 @@ export function FileTree({ rootPath }: { rootPath: string }) {
               >
                 <EntryIcon entry={entry} />
                 <span className="whitespace-nowrap">
-                  {draggingCount > 1
-                    ? `${draggingCount} Elemente`
-                    : entry.name}
+                  {draggingCount > 1 ? `${draggingCount} Elemente` : entry.name}
                 </span>
                 {draggingCount > 1 && (
                   <span className="rounded-full bg-primary px-1.5 text-[10px] font-medium leading-4 text-primary-foreground">

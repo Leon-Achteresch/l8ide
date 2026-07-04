@@ -6,6 +6,7 @@ const PAGE_PREFIX = "page:";
 
 export const PAGES: Record<string, string> = {
   "/settings": "Settings",
+  "/shortcuts": "Shortcuts",
 };
 
 export function isPageTab(tab: string) {
