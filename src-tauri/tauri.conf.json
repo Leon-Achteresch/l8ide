@@ -14,7 +14,13 @@
       {
         "title": "l8ide",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
+        "trafficLightPosition": {
+          "x": 19,
+          "y": 23
+        }
       }
     ],
     "security": {

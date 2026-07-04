@@ -1,6 +1,24 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+const PAGE_PREFIX = "page:";
+
+export const PAGES: Record<string, string> = {
+  "/settings": "Settings",
+};
+
+export function isPageTab(tab: string) {
+  return tab.startsWith(PAGE_PREFIX);
+}
+
+export function pageRoute(tab: string) {
+  return tab.slice(PAGE_PREFIX.length);
+}
+
+export function pageTab(route: string) {
+  return `${PAGE_PREFIX}${route}`;
+}
+
 type WorkspaceStore = {
   rootPath: string | null;
   activeFile: string | null;

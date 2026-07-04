@@ -17,8 +17,9 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useRouter } from "@tanstack/react-router";
 import { Pin, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -27,7 +28,12 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { cn } from "@/lib/utils";
-import { useWorkspaceStore } from "@/lib/workspace-store";
+import {
+  isPageTab,
+  PAGES,
+  pageRoute,
+  useWorkspaceStore,
+} from "@/lib/workspace-store";
 
 const tabClass =
   "flex h-9 shrink-0 cursor-pointer items-center gap-1.5 border-r px-3 text-sm";
@@ -40,13 +46,22 @@ function baseName(path: string) {
   return path.split("/").pop() ?? path;
 }
 
+function tabName(path: string) {
+  if (isPageTab(path)) {
+    const route = pageRoute(path);
+    return PAGES[route] ?? route;
+  }
+  return baseName(path);
+}
+
 function parentDir(path: string) {
   return path.split("/").slice(0, -1).pop();
 }
 
 function Tab({ path, showDir }: { path: string; showDir: boolean }) {
-  const name = baseName(path);
-  const dir = parentDir(path);
+  const isPage = isPageTab(path);
+  const name = tabName(path);
+  const dir = isPage ? undefined : parentDir(path);
   const isActive = useWorkspaceStore((s) => s.activeFile === path);
   const isPinned = useWorkspaceStore((s) => s.pinned.includes(path));
   const isLast = useWorkspaceStore((s) => s.tabs[s.tabs.length - 1] === path);
@@ -142,13 +157,19 @@ function Tab({ path, showDir }: { path: string; showDir: boolean }) {
         <ContextMenuItem onClick={() => store().togglePin(path)}>
           {isPinned ? "Unpin" : "Pin"}
         </ContextMenuItem>
-        <ContextMenuSeparator />
-        <ContextMenuItem onClick={() => navigator.clipboard.writeText(path)}>
-          Copy Path
-        </ContextMenuItem>
-        <ContextMenuItem onClick={copyRelativePath}>
-          Copy Relative Path
-        </ContextMenuItem>
+        {!isPage && (
+          <>
+            <ContextMenuSeparator />
+            <ContextMenuItem
+              onClick={() => navigator.clipboard.writeText(path)}
+            >
+              Copy Path
+            </ContextMenuItem>
+            <ContextMenuItem onClick={copyRelativePath}>
+              Copy Relative Path
+            </ContextMenuItem>
+          </>
+        )}
       </ContextMenuContent>
     </ContextMenu>
   );
@@ -156,6 +177,8 @@ function Tab({ path, showDir }: { path: string; showDir: boolean }) {
 
 export function TabBar() {
   const tabs = useWorkspaceStore((s) => s.tabs);
+  const activeFile = useWorkspaceStore((s) => s.activeFile);
+  const router = useRouter();
   const [dragged, setDragged] = useState<string | null>(null);
   const draggedPinned = useWorkspaceStore(
     (s) => dragged !== null && s.pinned.includes(dragged),
@@ -167,14 +190,23 @@ export function TabBar() {
     }),
   );
 
+  useEffect(() => {
+    const target =
+      activeFile && isPageTab(activeFile) ? pageRoute(activeFile) : "/";
+    if (router.state.location.pathname !== target) {
+      router.history.push(target);
+    }
+  }, [activeFile, router]);
+
   if (tabs.length === 0) return null;
 
   const nameCounts = new Map<string, number>();
   for (const t of tabs) {
-    const name = baseName(t);
+    const name = tabName(t);
     nameCounts.set(name, (nameCounts.get(name) ?? 0) + 1);
   }
-  const showDir = (path: string) => (nameCounts.get(baseName(path)) ?? 0) > 1;
+  const showDir = (path: string) =>
+    !isPageTab(path) && (nameCounts.get(tabName(path)) ?? 0) > 1;
 
   function handleDragStart(e: DragStartEvent) {
     setDragged(String(e.active.id));
@@ -204,7 +236,7 @@ export function TabBar() {
       onDragEnd={handleDragEnd}
       onDragCancel={() => setDragged(null)}
     >
-      <div className="flex h-9 shrink-0 items-stretch overflow-x-auto border-b bg-sidebar">
+      <div className="flex h-9 shrink-0 items-stretch overflow-x-auto border-b bg-sidebar overflow-y-hidden">
         <SortableContext items={tabs} strategy={horizontalListSortingStrategy}>
           {tabs.map((path) => (
             <Tab key={path} path={path} showDir={showDir(path)} />
@@ -220,7 +252,7 @@ export function TabBar() {
             )}
           >
             {draggedPinned && <Pin className="size-3" />}
-            <span className="whitespace-nowrap">{baseName(dragged)}</span>
+            <span className="whitespace-nowrap">{tabName(dragged)}</span>
             {showDir(dragged) && (
               <span className="whitespace-nowrap text-xs text-muted-foreground">
                 {parentDir(dragged)}
