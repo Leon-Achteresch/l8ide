@@ -18,6 +18,7 @@ import Toml from "@thesvg/react/toml";
 import Typescript from "@thesvg/react/typescript";
 import Vite from "@thesvg/react/vite";
 import Yaml from "@thesvg/react/yaml";
+import AzureImage from "@thesvg/react/azure-image";
 import type { ComponentType, SVGProps } from "react";
 
 type Icon = ComponentType<SVGProps<SVGSVGElement>>;
@@ -57,6 +58,13 @@ const byExt: Record<string, Icon> = {
   yml: Yaml,
   yaml: Yaml,
   toml: Toml,
+  img: AzureImage,
+  png: AzureImage,
+  jpg: AzureImage,
+  jpeg: AzureImage,
+  gif: AzureImage,
+  webp: AzureImage,
+  avif: AzureImage,
 };
 
 export function fileIcon(name: string): Icon | null {
