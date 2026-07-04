@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button";
 import { WindowControls } from "@/components/window-controls";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
+import { open } from "@tauri-apps/plugin-dialog";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { FolderOpen, Settings } from "lucide-react";
+import { FolderOpen, PanelLeft, Settings } from "lucide-react";
 import { type CSSProperties } from "react";
 
 const IS_MAC =
@@ -17,6 +18,8 @@ export function AppHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const rootPath = useWorkspaceStore((s) => s.rootPath);
   const setRootPath = useWorkspaceStore((s) => s.setRootPath);
+  const sidebarOpen = useWorkspaceStore((s) => s.sidebarOpen);
+  const toggleSidebar = useWorkspaceStore((s) => s.toggleSidebar);
 
   async function pickFolder() {
     const selected = await open({ directory: true, multiple: false });
@@ -48,6 +51,19 @@ export function AppHeader() {
         className="flex shrink-0 items-center gap-0.5 pr-1.5"
         style={{ WebkitAppRegion: "no-drag" } as CSSProperties}
       >
+        <button
+          type="button"
+          aria-label="Toggle sidebar"
+          title="Toggle sidebar"
+          onClick={toggleSidebar}
+          className={cn(
+            "inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-all duration-150",
+            "hover:bg-foreground/10 hover:text-foreground",
+            sidebarOpen && "text-foreground",
+          )}
+        >
+          <PanelLeft className="size-4" strokeWidth={2} />
+        </button>
         <Link
           to="/settings"
           aria-label="Settings"

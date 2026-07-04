@@ -21,6 +21,10 @@ export function pageTab(route: string) {
 
 type WorkspaceStore = {
   rootPath: string | null;
+  sidebarWidth: number;
+  sidebarOpen: boolean;
+  setSidebarWidth: (width: number) => void;
+  toggleSidebar: () => void;
   activeFile: string | null;
   tabs: string[];
   pinned: string[];
@@ -45,6 +49,11 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
   persist(
     (set) => ({
       rootPath: null,
+      sidebarWidth: 256,
+      sidebarOpen: true,
+      setSidebarWidth: (width) =>
+        set({ sidebarWidth: Math.max(160, Math.min(600, width)) }),
+      toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
       activeFile: null,
       tabs: [],
       pinned: [],

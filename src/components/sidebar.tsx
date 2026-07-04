@@ -1,21 +1,37 @@
 import { FileTree } from "@/components/file-tree";
 import { useWorkspaceStore } from "@/lib/workspace-store";
-import { open } from "@tauri-apps/plugin-dialog";
 
 export function Sidebar() {
   const rootPath = useWorkspaceStore((s) => s.rootPath);
-  const setRootPath = useWorkspaceStore((s) => s.setRootPath);
+  const sidebarWidth = useWorkspaceStore((s) => s.sidebarWidth);
+  const sidebarOpen = useWorkspaceStore((s) => s.sidebarOpen);
+  const setSidebarWidth = useWorkspaceStore((s) => s.setSidebarWidth);
 
-  async function pickFolder() {
-    const selected = await open({ directory: true, multiple: false });
-    if (typeof selected === "string") setRootPath(selected);
+  function startResize(e: React.PointerEvent) {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startWidth = sidebarWidth;
+    function onMove(ev: PointerEvent) {
+      setSidebarWidth(startWidth + ev.clientX - startX);
+    }
+    function onUp() {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      document.body.style.cursor = "";
+    }
+    document.body.style.cursor = "col-resize";
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
   }
 
+  if (!sidebarOpen) return null;
+
   return (
-    <aside className="flex h-full w-64 shrink-0 flex-col border-r bg-sidebar">
-      <div className="flex items-center justify-between border-b p-2">
-        //Content für spätere Funktionen
-      </div>
+    <aside
+      className="relative flex h-full shrink-0 flex-col border-r bg-sidebar"
+      style={{ width: sidebarWidth }}
+    >
+      <div className="flex items-center justify-between border-b p-2" />
       {rootPath ? (
         <FileTree rootPath={rootPath} />
       ) : (
@@ -23,6 +39,10 @@ export function Sidebar() {
           Open a folder to get started.
         </div>
       )}
+      <div
+        onPointerDown={startResize}
+        className="absolute inset-y-0 -right-1 z-20 w-2 cursor-col-resize"
+      />
     </aside>
   );
 }
