@@ -11,6 +11,47 @@ import { isPageTab, pageRoute, useWorkspaceStore } from "@/lib/workspace-store";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Pin, X } from "lucide-react";
+import { motion } from "motion/react";
+
+const INDICATOR_SPRING = {
+  type: "spring",
+  stiffness: 520,
+  damping: 38,
+  mass: 0.55,
+} as const;
+
+function TabCornerLeft() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 15 15"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="absolute -left-3 bottom-0 [filter:drop-shadow(-1.2px_-0.5px_1px_rgba(0,0,0,0.10))]"
+    >
+      <path d="M15 15H0C8.28427 15 15 8.28427 15 0V15Z" fill="var(--background)" />
+    </svg>
+  );
+}
+
+function TabCornerRight() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 15 15"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="absolute -right-3 bottom-0 [filter:drop-shadow(1.2px_-0.5px_1px_rgba(0,0,0,0.10))]"
+    >
+      <path
+        d="M0 15L6.5568e-07 0C2.93563e-07 8.28427 6.71573 15 15 15L0 15Z"
+        fill="var(--background)"
+      />
+    </svg>
+  );
+}
 
 export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
   const isPage = isPageTab(path);
@@ -50,11 +91,23 @@ export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
           "group",
           tabClass,
           isActive
-            ? "bg-background text-foreground"
-            : "text-muted-foreground hover:bg-accent/50",
+            ? "text-foreground"
+            : "rounded-md text-muted-foreground hover:bg-accent/50",
           isDragging && "opacity-30",
         )}
       >
+        {isActive && (
+          <motion.span
+            layoutId="tab-bar-indicator"
+            transition={INDICATOR_SPRING}
+            className="absolute inset-0 -z-10"
+            aria-hidden
+          >
+            <span className="absolute inset-0 rounded-t-xl bg-background [box-shadow:-1px_-1px_1px_0.1px_rgba(0,0,0,0.08),1px_-1px_1px_0.1px_rgba(0,0,0,0.08)]" />
+            <TabCornerLeft />
+            <TabCornerRight />
+          </motion.span>
+        )}
         {isPinned && (
           <button
             type="button"

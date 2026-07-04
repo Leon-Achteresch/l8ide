@@ -1,6 +1,7 @@
 import { readDir } from "@tauri-apps/plugin-fs";
 import { ChevronRight, File, Folder, FolderOpen } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { fileIcon } from "@/lib/file-icons";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
@@ -33,6 +34,7 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
   const isActive = useWorkspaceStore((s) => s.activeFile === entry.path);
   const activeFile = useWorkspaceStore((s) => s.activeFile);
   const openFile = useWorkspaceStore((s) => s.openFile);
+  const fileIcons = useWorkspaceStore((s) => s.fileIcons);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -86,7 +88,14 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
             <Folder className="size-3.5 shrink-0" />
           )
         ) : (
-          <File className="size-3.5 shrink-0" />
+          (() => {
+            const Icon = fileIcons ? fileIcon(entry.name) : null;
+            return Icon ? (
+              <Icon className="size-3.5 shrink-0" />
+            ) : (
+              <File className="size-3.5 shrink-0" />
+            );
+          })()
         )}
         <span className="truncate">{entry.name}</span>
       </button>

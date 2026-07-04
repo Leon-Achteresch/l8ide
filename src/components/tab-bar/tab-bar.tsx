@@ -84,7 +84,7 @@ export function TabBar() {
       onDragEnd={handleDragEnd}
       onDragCancel={() => setDragged(null)}
     >
-      <div className="flex h-9 shrink-0 items-stretch overflow-x-auto border-b bg-sidebar overflow-y-hidden">
+      <div className="flex h-9 shrink-0 items-stretch gap-1 overflow-x-auto overflow-y-hidden bg-sidebar px-2 pt-1">
         <SortableContext items={tabs} strategy={horizontalListSortingStrategy}>
           {tabs.map((path) => (
             <Tab key={path} path={path} showDir={showDir(path)} />
@@ -96,7 +96,7 @@ export function TabBar() {
           <div
             className={cn(
               tabClass,
-              "cursor-grabbing bg-background text-foreground shadow-lg ring-1 ring-border",
+              "h-9 cursor-grabbing rounded-md bg-background text-foreground shadow-lg ring-1 ring-border",
             )}
           >
             {draggedPinned && <Pin className="size-3" />}

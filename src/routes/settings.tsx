@@ -10,6 +10,8 @@ export const Route = createFileRoute("/settings")({
 
 function SettingsPage() {
   const { resolvedTheme, setTheme } = useTheme();
+  const fileIcons = useWorkspaceStore((s) => s.fileIcons);
+  const setFileIcons = useWorkspaceStore((s) => s.setFileIcons);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -33,6 +35,15 @@ function SettingsPage() {
             onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
           />
         )}
+      </div>
+      <div className="mt-4 flex items-center justify-between max-w-sm">
+        <div>
+          <p className="text-sm font-medium">Datei-Icons</p>
+          <p className="text-xs text-muted-foreground">
+            Dateityp-Icons in der Sidebar anzeigen
+          </p>
+        </div>
+        <Switch checked={fileIcons} onCheckedChange={setFileIcons} />
       </div>
     </div>
   );
