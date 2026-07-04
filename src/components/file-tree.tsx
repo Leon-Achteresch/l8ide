@@ -43,6 +43,7 @@ import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
+  ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { dlog, installDndDiagnostics } from "@/lib/dnd-log";
@@ -156,6 +157,8 @@ const TreeCtx = createContext<TreeCtxType>(null!);
 function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
   const ctx = useContext(TreeCtx);
   const [open, setOpen] = useState(false);
+  const [renaming, setRenaming] = useState(false);
+  const cancelRename = useRef(false);
   const [children, setChildren] = useState<Entry[] | null>(null);
   const isActive = useWorkspaceStore((s) => s.activeFile === entry.path);
   const activeFile = useWorkspaceStore((s) => s.activeFile);
@@ -232,6 +235,48 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
     setOpen((o) => !o);
   }
 
+  async function handleDelete() {
+    const ok = await confirm(`„${entry.name}“ wirklich löschen?`, {
+      title: "Löschen",
+      kind: "warning",
+    });
+    if (!ok) return;
+    try {
+      await remove(entry.path, { recursive: true });
+      const ws = useWorkspaceStore.getState();
+      for (const t of ws.tabs) {
+        if (t === entry.path || t.startsWith(`${entry.path}/`)) {
+          ws.closeTab(t);
+        }
+      }
+      useTreeStore.getState().bumpDirs([parentDir(entry.path)]);
+    } catch (err) {
+      dlog("ERROR delete", { path: entry.path, err });
+    }
+  }
+
+  async function commitRename(newName: string) {
+    setRenaming(false);
+    const name = newName.trim();
+    if (!name || name === entry.name || name.includes("/")) return;
+    const dest = `${parentDir(entry.path)}/${name}`;
+    try {
+      if (await exists(dest)) {
+        const ok = await confirm(
+          `„${name}“ existiert bereits in diesem Ordner. Ersetzen?`,
+          { title: "Ersetzen", kind: "warning" },
+        );
+        if (!ok) return;
+        await remove(dest, { recursive: true });
+      }
+      await rename(entry.path, dest);
+      useWorkspaceStore.getState().remapPath(entry.path, dest);
+      useTreeStore.getState().bumpDirs([parentDir(entry.path)]);
+    } catch (err) {
+      dlog("ERROR rename", { path: entry.path, dest, err });
+    }
+  }
+
   return (
     <div>
       <ContextMenu>
@@ -265,10 +310,52 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
               <span className="w-3.5 shrink-0" />
             )}
             <EntryIcon entry={entry} open={open} />
-            <span className="truncate">{entry.name}</span>
+            {renaming ? (
+              <input
+                autoFocus
+                defaultValue={entry.name}
+                onFocus={(e) => {
+                  const dot = entry.isDirectory
+                    ? -1
+                    : entry.name.lastIndexOf(".");
+                  e.currentTarget.setSelectionRange(
+                    0,
+                    dot > 0 ? dot : entry.name.length,
+                  );
+                }}
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                onKeyDown={(e) => {
+                  e.stopPropagation();
+                  if (e.key === "Enter") e.currentTarget.blur();
+                  if (e.key === "Escape") {
+                    cancelRename.current = true;
+                    e.currentTarget.blur();
+                  }
+                }}
+                onBlur={(e) => {
+                  if (cancelRename.current) {
+                    cancelRename.current = false;
+                    setRenaming(false);
+                    return;
+                  }
+                  commitRename(e.currentTarget.value);
+                }}
+                className="min-w-0 flex-1 rounded border bg-background px-1 text-sm outline-none ring-1 ring-ring"
+              />
+            ) : (
+              <span className="truncate">{entry.name}</span>
+            )}
           </button>
         </ContextMenuTrigger>
         <ContextMenuContent className="min-w-48">
+          <ContextMenuItem onClick={() => setRenaming(true)}>
+            Umbenennen
+          </ContextMenuItem>
+          <ContextMenuItem variant="destructive" onClick={handleDelete}>
+            Löschen
+          </ContextMenuItem>
+          <ContextMenuSeparator />
           <ContextMenuItem
             onClick={() =>
               useWorkspaceStore.getState().hideName(entry.name, "workspace")
