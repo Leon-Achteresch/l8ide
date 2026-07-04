@@ -3,9 +3,9 @@ import { WindowControls } from "@/components/window-controls";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useTheme } from "next-themes";
 import { open } from "@tauri-apps/plugin-dialog";
-import { FolderOpen, Keyboard, PanelLeft, Settings } from "lucide-react";
+import { FolderOpen, Keyboard, PanelLeftClose, Settings } from "lucide-react";
+import { useTheme } from "next-themes";
 import { type CSSProperties } from "react";
 
 const IS_MAC =
@@ -40,7 +40,7 @@ export function AppHeader() {
     >
       <div className="flex items-center gap-2">
         <img
-          src={resolvedTheme === "dark" ? "/logo_white.png" : "/logo_black.png"}
+          src={resolvedTheme === "dark" ? "/logo_black.png" : "/logo_white.png"}
           alt="Logo"
           className="h-5 w-auto"
         />
@@ -55,7 +55,7 @@ export function AppHeader() {
             sidebarOpen && "text-foreground",
           )}
         >
-          <PanelLeft className="size-4" strokeWidth={2} />
+          <PanelLeftClose className="size-4" strokeWidth={2} />
         </button>
 
         <span className="truncate text-sm font-medium">

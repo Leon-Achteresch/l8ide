@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "test:move": "node scripts/test-move-logic.mjs",
+    "icons:generate": "node scripts/generate-icons.mjs",
     "preview": "vite preview",
     "tauri": "tauri"
   },
