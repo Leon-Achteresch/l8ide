@@ -1,10 +1,13 @@
 import {
+  detectPlatform,
   type Hotkey,
+  normalizeHotkeyFromEvent,
   type UseHotkeyOptions,
   useHotkeys,
 } from "@tanstack/react-hotkeys";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useHotkeyRecording } from "@/lib/hotkey-recording";
 
 export type Command = {
   id: string;
@@ -49,6 +52,24 @@ export const COMMANDS: Command[] = [
     label: "Datei speichern",
     group: "Editor",
     hotkey: "Mod+S",
+  },
+  {
+    id: "editor.zoomIn",
+    label: "Schrift vergrößern",
+    group: "Editor",
+    hotkey: "Mod+=",
+  },
+  {
+    id: "editor.zoomOut",
+    label: "Schrift verkleinern",
+    group: "Editor",
+    hotkey: "Mod+-",
+  },
+  {
+    id: "editor.zoomReset",
+    label: "Schriftgröße zurücksetzen",
+    group: "Editor",
+    hotkey: "Mod+0",
   },
   { id: "tab.close", label: "Tab schließen", group: "Tabs", hotkey: "Mod+W" },
   {
@@ -99,6 +120,78 @@ export const COMMANDS: Command[] = [
   },
 ];
 
+export const COMMAND_HOTKEY_ALTERNATES: Partial<Record<string, Hotkey[]>> = {
+  "editor.zoomIn": ["Mod+Shift+=" as Hotkey],
+};
+
+export const NUMPAD_ADD_HOTKEY = "Mod+NumpadAdd";
+
+const ZOOM_IN_NUMPAD_BINDINGS = new Set([
+  NUMPAD_ADD_HOTKEY,
+  "Control+NumpadAdd",
+  "Mod+=",
+  "Mod+Shift+=",
+]);
+
+const MODIFIER_KEYS = new Set([
+  "Control",
+  "Shift",
+  "Alt",
+  "Meta",
+  "AltGraph",
+  "OS",
+]);
+
+function hasMod(event: KeyboardEvent) {
+  return event.metaKey || event.ctrlKey;
+}
+
+export function sanitizeRecordedHotkey(hotkey: string): string {
+  if (hotkey.endsWith("++") && hotkey !== "Mod++" && hotkey !== "Control++") {
+    return `${hotkey.slice(0, -1)}=`;
+  }
+  return hotkey;
+}
+
+export function sanitizeZoomInHotkey(hotkey: string): string {
+  if (hotkey === "Mod++" || hotkey === "Control++") {
+    return NUMPAD_ADD_HOTKEY;
+  }
+  return sanitizeRecordedHotkey(hotkey);
+}
+
+export function hotkeyFromKeyboardEvent(event: KeyboardEvent): string | null {
+  if (event.repeat) return null;
+  if (MODIFIER_KEYS.has(event.key)) return null;
+
+  if (
+    (event.key === "Backspace" || event.key === "Delete") &&
+    !hasMod(event) &&
+    !event.shiftKey &&
+    !event.altKey
+  ) {
+    return "";
+  }
+
+  if (event.code === "NumpadAdd" && hasMod(event) && !event.altKey) {
+    return NUMPAD_ADD_HOTKEY;
+  }
+
+  const normalized = normalizeHotkeyFromEvent(event, detectPlatform()) as string;
+  if (normalized === "Mod++" || normalized === "Control++") {
+    return NUMPAD_ADD_HOTKEY;
+  }
+
+  return sanitizeRecordedHotkey(normalized);
+}
+
+export function zoomInUsesNumpad(overrides: Record<string, string | null>) {
+  const override = overrides["editor.zoomIn"];
+  if (override === null) return false;
+  if (override === undefined) return true;
+  return ZOOM_IN_NUMPAD_BINDINGS.has(sanitizeZoomInHotkey(override));
+}
+
 type HotkeySettings = {
   overrides: Record<string, string | null>;
   setOverride: (id: string, hotkey: string | null) => void;
@@ -129,22 +222,38 @@ export function effectiveHotkey(
   overrides: Record<string, string | null>,
 ): string | null {
   const override = overrides[command.id];
-  return override === undefined ? command.hotkey : override;
+  if (override === null) return null;
+  if (override === undefined) return command.hotkey;
+  if (command.id === "editor.zoomIn") return sanitizeZoomInHotkey(override);
+  return sanitizeRecordedHotkey(override);
 }
 
 export function useCommandHotkeys(
   handlers: Record<string, () => void>,
   commonOptions?: UseHotkeyOptions,
+  optionsById?: Record<string, UseHotkeyOptions>,
 ) {
   const overrides = useHotkeySettings((s) => s.overrides);
+  const isRecording = useHotkeyRecording((s) => s.isRecording);
   useHotkeys(
-    COMMANDS.filter((c) => c.id in handlers).map((c) => {
+    COMMANDS.filter((c) => c.id in handlers).flatMap((c) => {
       const binding = effectiveHotkey(c, overrides);
-      return {
-        hotkey: (binding ?? c.hotkey) as Hotkey,
+      const primary = (binding ?? c.hotkey) as Hotkey;
+      const usesDefault = overrides[c.id] === undefined;
+      const hotkeys = [
+        primary,
+        ...(usesDefault ? (COMMAND_HOTKEY_ALTERNATES[c.id] ?? []) : []),
+      ];
+      const perId = optionsById?.[c.id];
+      const perIdEnabled = perId?.enabled ?? true;
+      return hotkeys.map((hotkey) => ({
+        hotkey,
         callback: () => handlers[c.id](),
-        options: { enabled: binding !== null },
-      };
+        options: {
+          ...perId,
+          enabled: binding !== null && !isRecording && perIdEnabled,
+        },
+      }));
     }),
     commonOptions,
   );

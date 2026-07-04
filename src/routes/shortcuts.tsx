@@ -3,8 +3,13 @@ import {
   type Command,
   COMMANDS,
   effectiveHotkey,
+  hotkeyFromKeyboardEvent,
+  NUMPAD_ADD_HOTKEY,
+  sanitizeRecordedHotkey,
+  sanitizeZoomInHotkey,
   useHotkeySettings,
 } from "@/lib/hotkeys";
+import { useHotkeyRecording } from "@/lib/hotkey-recording";
 import { cn } from "@/lib/utils";
 import { pageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import {
@@ -26,6 +31,7 @@ function ShortcutsPage() {
   const overrides = useHotkeySettings((s) => s.overrides);
   const resetAll = useHotkeySettings((s) => s.resetAll);
   const setOverride = useHotkeySettings((s) => s.setOverride);
+  const setRecording = useHotkeyRecording((s) => s.setRecording);
   const [editing, setEditing] = useState<string | null>(null);
   const editingRef = useRef<string | null>(null);
 
@@ -33,14 +39,25 @@ function ShortcutsPage() {
     useWorkspaceStore.getState().openFile(pageTab("/shortcuts"));
   }, []);
 
+  useEffect(() => {
+    return () => useHotkeyRecording.getState().setRecording(false);
+  }, []);
+
   function finishEdit() {
     editingRef.current = null;
     setEditing(null);
+    setRecording(false);
   }
 
   const recorder = useHotkeyRecorder({
     onRecord: (hotkey) => {
-      if (editingRef.current) setOverride(editingRef.current, hotkey);
+      if (editingRef.current) {
+        const sanitized =
+          editingRef.current === "editor.zoomIn"
+            ? sanitizeZoomInHotkey(hotkey)
+            : sanitizeRecordedHotkey(hotkey);
+        setOverride(editingRef.current, sanitized);
+      }
       finishEdit();
     },
     onCancel: finishEdit,
@@ -51,9 +68,36 @@ function ShortcutsPage() {
     ignoreInputs: false,
   });
 
+  useEffect(() => {
+    if (!editing) return;
+
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === "Escape") return;
+      if (event.code !== "NumpadAdd") return;
+
+      const captured = hotkeyFromKeyboardEvent(event);
+      if (!captured || !editingRef.current) return;
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      recorder.stopRecording();
+
+      const sanitized =
+        editingRef.current === "editor.zoomIn"
+          ? sanitizeZoomInHotkey(captured)
+          : sanitizeRecordedHotkey(captured);
+      setOverride(editingRef.current, sanitized);
+      finishEdit();
+    };
+
+    document.addEventListener("keydown", handler, true);
+    return () => document.removeEventListener("keydown", handler, true);
+  }, [editing, recorder, setOverride]);
+
   function beginEdit(id: string) {
     editingRef.current = id;
     setEditing(id);
+    setRecording(true);
     recorder.startRecording();
   }
 
@@ -160,13 +204,20 @@ function ShortcutRow({
         >
           {isEditing
             ? recordedHotkey
-              ? formatForDisplay(recordedHotkey)
+              ? formatBinding(recordedHotkey)
               : "Aufnahme…"
             : binding
-              ? formatForDisplay(binding)
+              ? formatBinding(binding)
               : "Deaktiviert"}
         </button>
       </div>
     </li>
   );
+}
+
+function formatBinding(binding: string) {
+  if (binding === NUMPAD_ADD_HOTKEY) {
+    return `${formatForDisplay("Mod+=")} (Num)`;
+  }
+  return formatForDisplay(binding);
 }

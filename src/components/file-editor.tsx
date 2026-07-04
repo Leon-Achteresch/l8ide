@@ -3,7 +3,13 @@ import { convertFileSrc } from "@tauri-apps/api/core";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import * as monaco from "monaco-editor";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEditorZoom } from "@/lib/editor-zoom";
+import {
+  revealInEditor,
+  takePendingReveal,
+} from "@/lib/monaco-navigation";
+import { monacoUriForPath } from "@/lib/monaco-uri";
+import { useEffect, useRef, useState } from "react";
 import "@/lib/monaco";
 
 type OpenFile = { path: string; content: string };
@@ -32,12 +38,21 @@ export function FileEditor({ path }: { path: string }) {
 function TextEditor({ path }: { path: string }) {
   const [file, setFile] = useState<OpenFile | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const editorRef = useRef<monaco.editor.ICodeEditor | null>(null);
   const { resolvedTheme } = useTheme();
+  const fontSize = useEditorZoom((s) => s.fontSize);
+
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (!editor || !file || file.path !== path) return;
+    const target = takePendingReveal(path);
+    if (target) revealInEditor(editor, target);
+  }, [path, file]);
 
   useEffect(() => {
     let cancelled = false;
     setError(null);
-    if (monaco.editor.getModel(monaco.Uri.parse(path))) {
+    if (monaco.editor.getModel(monacoUriForPath(path))) {
       setFile({ path, content: "" });
       return;
     }
@@ -71,9 +86,15 @@ function TextEditor({ path }: { path: string }) {
       defaultValue={file.content}
       theme={resolvedTheme === "dark" ? "vs-dark" : "light"}
       options={{
-        fontSize: 13,
+        fontSize,
         minimap: { enabled: false },
         automaticLayout: true,
+        links: true,
+      }}
+      onMount={(editor) => {
+        editorRef.current = editor;
+        const target = takePendingReveal(path);
+        if (target) revealInEditor(editor, target);
       }}
     />
   );

@@ -1,4 +1,5 @@
 import { loader } from "@monaco-editor/react";
+import { initMonacoWorkspace } from "@/lib/monaco-workspace";
 import * as monaco from "monaco-editor";
 import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
 import cssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker";
@@ -28,11 +29,6 @@ self.MonacoEnvironment = {
   },
 };
 
-for (const defaults of [
-  monaco.typescript.typescriptDefaults,
-  monaco.typescript.javascriptDefaults,
-]) {
-  defaults.setDiagnosticsOptions({ noSemanticValidation: true });
-}
+initMonacoWorkspace();
 
 loader.config({ monaco });
