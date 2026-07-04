@@ -1,8 +1,10 @@
-import { Link, useRouterState } from "@tanstack/react-router";
-import { Settings } from "lucide-react";
-import { type CSSProperties } from "react";
+import { Button } from "@/components/ui/button";
 import { WindowControls } from "@/components/window-controls";
 import { cn } from "@/lib/utils";
+import { useWorkspaceStore } from "@/lib/workspace-store";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { FolderOpen, Settings } from "lucide-react";
+import { type CSSProperties } from "react";
 
 const IS_MAC =
   typeof navigator !== "undefined" &&
@@ -13,6 +15,13 @@ const IS_WINDOWS =
 
 export function AppHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const rootPath = useWorkspaceStore((s) => s.rootPath);
+  const setRootPath = useWorkspaceStore((s) => s.setRootPath);
+
+  async function pickFolder() {
+    const selected = await open({ directory: true, multiple: false });
+    if (typeof selected === "string") setRootPath(selected);
+  }
 
   return (
     <header
@@ -23,6 +32,16 @@ export function AppHeader() {
         IS_MAC ? "pl-[86px]" : "pl-2",
       )}
     >
+      <div className="flex items-center gap-2">
+        <span className="truncate text-sm font-medium">
+          {rootPath ? rootPath.split("/").pop() : "No folder open"}
+        </span>
+
+        <Button variant="ghost" size="icon" onClick={pickFolder}>
+          <FolderOpen className="size-4" />
+        </Button>
+      </div>
+
       <div className="flex-1" />
 
       <div
