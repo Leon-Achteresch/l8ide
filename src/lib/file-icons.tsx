@@ -25,6 +25,7 @@ type Icon = ComponentType<SVGProps<SVGSVGElement>>;
 
 const byName: Record<string, Icon> = {
   "package.json": Npm,
+  "package-lock.json": Npm,
   "bun.lock": Bun,
   "bun.lockb": Bun,
   ".gitignore": Git,

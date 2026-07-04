@@ -1,3 +1,4 @@
+import { remap } from "@/lib/fs-move";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -47,6 +48,7 @@ type WorkspaceStore = {
   closeAll: () => void;
   togglePin: (path: string) => void;
   moveTab: (path: string, toIndex: number) => void;
+  remapPath: (src: string, dest: string) => void;
 };
 
 function move(arr: string[], path: string, to: number) {
@@ -173,6 +175,15 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
           const max = isPinned ? s.pinned.length - 1 : s.tabs.length - 1;
           return {
             tabs: move(s.tabs, path, Math.max(min, Math.min(max, toIndex))),
+          };
+        }),
+      remapPath: (src, dest) =>
+        set((s) => {
+          const map = remap(src, dest);
+          return {
+            tabs: s.tabs.map(map),
+            pinned: s.pinned.map(map),
+            activeFile: s.activeFile ? map(s.activeFile) : null,
           };
         }),
     }),
