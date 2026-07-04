@@ -1,4 +1,5 @@
 import Editor from "@monaco-editor/react";
+import { convertFileSrc } from "@tauri-apps/api/core";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import * as monaco from "monaco-editor";
 import { useTheme } from "next-themes";
@@ -7,7 +8,28 @@ import "@/lib/monaco";
 
 type OpenFile = { path: string; content: string };
 
+const IMAGE_EXTENSIONS = /\.(png|jpe?g|gif|webp|svg|bmp|ico|avif)$/i;
+
+function ImageViewer({ path }: { path: string }) {
+  return (
+    <div className="flex h-full items-center justify-center overflow-auto p-4">
+      <img
+        src={convertFileSrc(path)}
+        alt={path}
+        className="max-h-full max-w-full object-contain"
+      />
+    </div>
+  );
+}
+
 export function FileEditor({ path }: { path: string }) {
+  if (IMAGE_EXTENSIONS.test(path)) {
+    return <ImageViewer path={path} />;
+  }
+  return <TextEditor path={path} />;
+}
+
+function TextEditor({ path }: { path: string }) {
   const [file, setFile] = useState<OpenFile | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { resolvedTheme } = useTheme();
