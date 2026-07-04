@@ -1,6 +1,12 @@
 import { readDir } from "@tauri-apps/plugin-fs";
 import { ChevronRight, File, Folder, FolderOpen } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import { fileIcon } from "@/lib/file-icons";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
@@ -28,7 +34,15 @@ async function listDir(path: string): Promise<Entry[]> {
     );
 }
 
-function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
+function TreeNode({
+  entry,
+  depth,
+  hidden,
+}: {
+  entry: Entry;
+  depth: number;
+  hidden: Set<string>;
+}) {
   const [open, setOpen] = useState(false);
   const [children, setChildren] = useState<Entry[] | null>(null);
   const isActive = useWorkspaceStore((s) => s.activeFile === entry.path);
@@ -64,46 +78,73 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
 
   return (
     <div>
-      <button
-        ref={buttonRef}
-        type="button"
-        onClick={toggle}
-        className={cn(
-          "flex w-full items-center gap-1 rounded px-1 py-0.5 text-left text-sm hover:bg-accent",
-          isActive && "bg-accent",
-        )}
-        style={{ paddingLeft: depth * 12 + 4 }}
-      >
-        {entry.isDirectory ? (
-          <ChevronRight
-            className={`size-3.5 shrink-0 transition-transform ${open ? "rotate-90" : ""}`}
-          />
-        ) : (
-          <span className="w-3.5 shrink-0" />
-        )}
-        {entry.isDirectory ? (
-          open ? (
-            <FolderOpen className="size-3.5 shrink-0" />
-          ) : (
-            <Folder className="size-3.5 shrink-0" />
-          )
-        ) : (
-          (() => {
-            const Icon = fileIcons ? fileIcon(entry.name) : null;
-            return Icon ? (
-              <Icon className="size-3.5 shrink-0" />
+      <ContextMenu>
+        <ContextMenuTrigger>
+          <button
+            ref={buttonRef}
+            type="button"
+            onClick={toggle}
+            className={cn(
+              "flex w-full items-center gap-1 rounded px-1 py-0.5 text-left text-sm hover:bg-accent",
+              isActive && "bg-accent",
+            )}
+            style={{ paddingLeft: depth * 12 + 4 }}
+          >
+            {entry.isDirectory ? (
+              <ChevronRight
+                className={`size-3.5 shrink-0 transition-transform ${open ? "rotate-90" : ""}`}
+              />
             ) : (
-              <File className="size-3.5 shrink-0" />
-            );
-          })()
-        )}
-        <span className="truncate">{entry.name}</span>
-      </button>
+              <span className="w-3.5 shrink-0" />
+            )}
+            {entry.isDirectory ? (
+              open ? (
+                <FolderOpen className="size-3.5 shrink-0" />
+              ) : (
+                <Folder className="size-3.5 shrink-0" />
+              )
+            ) : (
+              (() => {
+                const Icon = fileIcons ? fileIcon(entry.name) : null;
+                return Icon ? (
+                  <Icon className="size-3.5 shrink-0" />
+                ) : (
+                  <File className="size-3.5 shrink-0" />
+                );
+              })()
+            )}
+            <span className="truncate">{entry.name}</span>
+          </button>
+        </ContextMenuTrigger>
+        <ContextMenuContent className="min-w-48">
+          <ContextMenuItem
+            onClick={() =>
+              useWorkspaceStore.getState().hideName(entry.name, "workspace")
+            }
+          >
+            Ausblenden (Workspace)
+          </ContextMenuItem>
+          <ContextMenuItem
+            onClick={() =>
+              useWorkspaceStore.getState().hideName(entry.name, "global")
+            }
+          >
+            Ausblenden (Überall)
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
       {open && children !== null && (
         <div>
-          {children.map((child) => (
-            <TreeNode key={child.path} entry={child} depth={depth + 1} />
-          ))}
+          {children
+            .filter((c) => !hidden.has(c.name))
+            .map((child) => (
+              <TreeNode
+                key={child.path}
+                entry={child}
+                depth={depth + 1}
+                hidden={hidden}
+              />
+            ))}
         </div>
       )}
     </div>
@@ -112,6 +153,12 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
 
 export function FileTree({ rootPath }: { rootPath: string }) {
   const [children, setChildren] = useState<Entry[] | null>(null);
+  const globalHidden = useWorkspaceStore((s) => s.hiddenNames);
+  const wsHidden = useWorkspaceStore((s) => s.workspaceHidden[rootPath]);
+  const hidden = useMemo(
+    () => new Set([...globalHidden, ...(wsHidden ?? [])]),
+    [globalHidden, wsHidden],
+  );
 
   useEffect(() => {
     setChildren(null);
@@ -124,9 +171,11 @@ export function FileTree({ rootPath }: { rootPath: string }) {
 
   return (
     <div className="min-h-0 flex-1 overflow-auto p-1">
-      {children.map((child) => (
-        <TreeNode key={child.path} entry={child} depth={0} />
-      ))}
+      {children
+        .filter((c) => !hidden.has(c.name))
+        .map((child) => (
+          <TreeNode key={child.path} entry={child} depth={0} hidden={hidden} />
+        ))}
     </div>
   );
 }

@@ -19,6 +19,8 @@ export function pageTab(route: string) {
   return `${PAGE_PREFIX}${route}`;
 }
 
+export type HiddenScope = "global" | "workspace";
+
 type WorkspaceStore = {
   rootPath: string | null;
   sidebarWidth: number;
@@ -27,6 +29,10 @@ type WorkspaceStore = {
   setFileIcons: (enabled: boolean) => void;
   tabIcons: boolean;
   setTabIcons: (enabled: boolean) => void;
+  hiddenNames: string[];
+  workspaceHidden: Record<string, string[]>;
+  hideName: (name: string, scope: HiddenScope) => void;
+  unhideName: (name: string, scope: HiddenScope) => void;
   setSidebarWidth: (width: number) => void;
   toggleSidebar: () => void;
   activeFile: string | null;
@@ -59,6 +65,41 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
       setFileIcons: (enabled) => set({ fileIcons: enabled }),
       tabIcons: true,
       setTabIcons: (enabled) => set({ tabIcons: enabled }),
+      hiddenNames: [".git"],
+      workspaceHidden: {},
+      hideName: (name, scope) =>
+        set((s) => {
+          if (scope === "global") {
+            return s.hiddenNames.includes(name)
+              ? s
+              : { hiddenNames: [...s.hiddenNames, name] };
+          }
+          if (!s.rootPath) return s;
+          const list = s.workspaceHidden[s.rootPath] ?? [];
+          return list.includes(name)
+            ? s
+            : {
+                workspaceHidden: {
+                  ...s.workspaceHidden,
+                  [s.rootPath]: [...list, name],
+                },
+              };
+        }),
+      unhideName: (name, scope) =>
+        set((s) => {
+          if (scope === "global") {
+            return { hiddenNames: s.hiddenNames.filter((n) => n !== name) };
+          }
+          if (!s.rootPath) return s;
+          return {
+            workspaceHidden: {
+              ...s.workspaceHidden,
+              [s.rootPath]: (s.workspaceHidden[s.rootPath] ?? []).filter(
+                (n) => n !== name,
+              ),
+            },
+          };
+        }),
       setSidebarWidth: (width) =>
         set({ sidebarWidth: Math.max(160, Math.min(600, width)) }),
       toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
@@ -144,6 +185,8 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
           ...s,
           tabs: s.tabs ?? (s.activeFile ? [s.activeFile] : []),
           pinned: s.pinned ?? [],
+          hiddenNames: s.hiddenNames ?? [".git"],
+          workspaceHidden: s.workspaceHidden ?? {},
         };
       },
     },
