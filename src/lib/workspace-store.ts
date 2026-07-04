@@ -4,18 +4,113 @@ import { persist } from "zustand/middleware";
 type WorkspaceStore = {
   rootPath: string | null;
   activeFile: string | null;
+  tabs: string[];
+  pinned: string[];
   setRootPath: (path: string | null) => void;
   openFile: (path: string) => void;
+  setActiveFile: (path: string) => void;
+  closeTab: (path: string) => void;
+  closeOthers: (path: string) => void;
+  closeToRight: (path: string) => void;
+  closeAll: () => void;
+  togglePin: (path: string) => void;
+  moveTab: (path: string, toIndex: number) => void;
 };
+
+function move(arr: string[], path: string, to: number) {
+  const next = arr.filter((t) => t !== path);
+  next.splice(to, 0, path);
+  return next;
+}
 
 export const useWorkspaceStore = create<WorkspaceStore>()(
   persist(
     (set) => ({
       rootPath: null,
       activeFile: null,
-      setRootPath: (path) => set({ rootPath: path, activeFile: null }),
-      openFile: (path) => set({ activeFile: path }),
+      tabs: [],
+      pinned: [],
+      setRootPath: (path) =>
+        set({ rootPath: path, activeFile: null, tabs: [], pinned: [] }),
+      openFile: (path) =>
+        set((s) => ({
+          activeFile: path,
+          tabs: s.tabs.includes(path) ? s.tabs : [...s.tabs, path],
+        })),
+      setActiveFile: (path) => set({ activeFile: path }),
+      closeTab: (path) =>
+        set((s) => {
+          const i = s.tabs.indexOf(path);
+          const tabs = s.tabs.filter((t) => t !== path);
+          return {
+            tabs,
+            pinned: s.pinned.filter((t) => t !== path),
+            activeFile:
+              s.activeFile === path
+                ? (tabs[Math.min(i, tabs.length - 1)] ?? null)
+                : s.activeFile,
+          };
+        }),
+      closeOthers: (path) =>
+        set((s) => ({
+          tabs: s.tabs.filter((t) => t === path || s.pinned.includes(t)),
+          activeFile: path,
+        })),
+      closeToRight: (path) =>
+        set((s) => {
+          const i = s.tabs.indexOf(path);
+          const tabs = s.tabs.filter(
+            (t, ti) => ti <= i || s.pinned.includes(t),
+          );
+          return {
+            tabs,
+            activeFile:
+              s.activeFile && tabs.includes(s.activeFile)
+                ? s.activeFile
+                : path,
+          };
+        }),
+      closeAll: () =>
+        set((s) => {
+          const tabs = s.tabs.filter((t) => s.pinned.includes(t));
+          return {
+            tabs,
+            activeFile:
+              s.activeFile && tabs.includes(s.activeFile)
+                ? s.activeFile
+                : (tabs[tabs.length - 1] ?? null),
+          };
+        }),
+      togglePin: (path) =>
+        set((s) => {
+          const isPinned = s.pinned.includes(path);
+          const pinned = isPinned
+            ? s.pinned.filter((t) => t !== path)
+            : [...s.pinned, path];
+          const to = isPinned ? pinned.length : pinned.length - 1;
+          return { pinned, tabs: move(s.tabs, path, to) };
+        }),
+      moveTab: (path, toIndex) =>
+        set((s) => {
+          const isPinned = s.pinned.includes(path);
+          const min = isPinned ? 0 : s.pinned.length;
+          const max = isPinned ? s.pinned.length - 1 : s.tabs.length - 1;
+          return {
+            tabs: move(s.tabs, path, Math.max(min, Math.min(max, toIndex))),
+          };
+        }),
     }),
-    { name: "workspace-store" },
+    {
+      name: "workspace-store",
+      version: 1,
+      migrate: (persisted) => {
+        const s = persisted as Partial<WorkspaceStore>;
+        return {
+          ...s,
+          tabs: s.tabs ?? (s.activeFile ? [s.activeFile] : []),
+          pinned: s.pinned ?? [],
+        };
+      },
+    },
   ),
 );

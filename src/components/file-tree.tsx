@@ -1,6 +1,6 @@
 import { readDir } from "@tauri-apps/plugin-fs";
 import { ChevronRight, File, Folder, FolderOpen } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
@@ -31,7 +31,23 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
   const [open, setOpen] = useState(false);
   const [children, setChildren] = useState<Entry[] | null>(null);
   const isActive = useWorkspaceStore((s) => s.activeFile === entry.path);
+  const activeFile = useWorkspaceStore((s) => s.activeFile);
   const openFile = useWorkspaceStore((s) => s.openFile);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (entry.isDirectory && activeFile?.startsWith(`${entry.path}/`)) {
+      setOpen(true);
+      setChildren((c) => {
+        if (c === null) listDir(entry.path).then(setChildren);
+        return c;
+      });
+    }
+  }, [activeFile, entry.path, entry.isDirectory]);
+
+  useEffect(() => {
+    if (isActive) buttonRef.current?.scrollIntoView({ block: "nearest" });
+  }, [isActive]);
 
   async function toggle() {
     if (!entry.isDirectory) {
@@ -47,6 +63,7 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
   return (
     <div>
       <button
+        ref={buttonRef}
         type="button"
         onClick={toggle}
         className={cn(
@@ -97,7 +114,7 @@ export function FileTree({ rootPath }: { rootPath: string }) {
   }
 
   return (
-    <div className="overflow-auto p-1">
+    <div className="min-h-0 flex-1 overflow-auto p-1">
       {children.map((child) => (
         <TreeNode key={child.path} entry={child} depth={0} />
       ))}
