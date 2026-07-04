@@ -23,11 +23,16 @@ import type { ComponentType, SVGProps } from "react";
 
 type Icon = ComponentType<SVGProps<SVGSVGElement>>;
 
+const BunIcon: Icon = (props) => <Bun {...props} fill="currentColor" />;
+const MarkdownIcon: Icon = (props) => (
+  <Markdown {...props} variant="mono" fill="currentColor" />
+);
+
 const byName: Record<string, Icon> = {
   "package.json": Npm,
   "package-lock.json": Npm,
-  "bun.lock": Bun,
-  "bun.lockb": Bun,
+  "bun.lock": BunIcon,
+  "bun.lockb": BunIcon,
   ".gitignore": Git,
   ".gitattributes": Git,
   dockerfile: Docker,
@@ -49,8 +54,8 @@ const byExt: Record<string, Icon> = {
   css: Css,
   scss: Sass,
   sass: Sass,
-  md: Markdown,
-  mdx: Markdown,
+  md: MarkdownIcon,
+  mdx: MarkdownIcon,
   rs: Rust,
   py: Python,
   go: Go,
