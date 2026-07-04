@@ -4,6 +4,8 @@ import { persist } from "zustand/middleware";
 
 const PAGE_PREFIX = "page:";
 
+export type SidebarMode = "FileTree" | "Search";
+
 export const PAGES: Record<string, string> = {
   "/settings": "Settings",
   "/shortcuts": "Shortcuts",
@@ -40,6 +42,8 @@ type WorkspaceStore = {
   activeFile: string | null;
   tabs: string[];
   pinned: string[];
+  sidebarMode: SidebarMode;
+  setSidebarMode: (mode: SidebarMode) => void;
   setRootPath: (path: string | null) => void;
   openFile: (path: string) => void;
   setActiveFile: (path: string) => void;
@@ -109,6 +113,8 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
       activeFile: null,
       tabs: [],
       pinned: [],
+      sidebarMode: "FileTree",
+      setSidebarMode: (mode) => set({ sidebarMode: mode }),
       setRootPath: (path) =>
         set({ rootPath: path, activeFile: null, tabs: [], pinned: [] }),
       openFile: (path) =>

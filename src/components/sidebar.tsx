@@ -36,14 +36,13 @@ export function Sidebar() {
           className="relative flex h-full shrink-0 flex-col overflow-hidden border-r bg-sidebar"
         >
           <div style={{ width: sidebarWidth }} className="flex h-full flex-col">
-      <div className="flex items-center justify-between border-b p-2" />
-      {rootPath ? (
-        <FileTree rootPath={rootPath} />
-      ) : (
-        <div className="p-2 text-sm text-muted-foreground">
-          Open a folder to get started.
-        </div>
-      )}
+            {rootPath ? (
+              <FileTree rootPath={rootPath} />
+            ) : (
+              <div className="p-2 text-sm text-muted-foreground">
+                Open a folder to get started.
+              </div>
+            )}
           </div>
           <div
             onPointerDown={startResize}
