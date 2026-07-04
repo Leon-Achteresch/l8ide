@@ -2,6 +2,7 @@ import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { AppHeader } from "@/components/app-header";
 import { AppHotkeys } from "@/components/app-hotkeys";
+import { FileSearch } from "@/components/file-search";
 import { Sidebar } from "@/components/sidebar";
 import { TabBar } from "@/components/tab-bar/tab-bar";
 import "../App.css";
@@ -14,6 +15,7 @@ function RootComponent() {
   return (
     <>
       <AppHotkeys />
+      <FileSearch />
       <div className="flex h-screen w-screen flex-col">
         <AppHeader />
         <div className="flex min-h-0 flex-1">

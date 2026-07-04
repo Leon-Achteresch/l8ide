@@ -1,5 +1,6 @@
 import { useCommandHotkeys } from "@/lib/hotkeys";
 import { isPageTab, pageTab, useWorkspaceStore } from "@/lib/workspace-store";
+import { useFileSearchStore } from "@/components/file-search";
 import { open } from "@tauri-apps/plugin-dialog";
 import { writeTextFile } from "@tauri-apps/plugin-fs";
 import * as monaco from "monaco-editor";
@@ -28,6 +29,7 @@ export function AppHotkeys() {
       useWorkspaceStore.getState().openFile(pageTab("/settings")),
     "shortcuts.open": () =>
       useWorkspaceStore.getState().openFile(pageTab("/shortcuts")),
+    "file.search": () => useFileSearchStore.getState().setOpen(true),
     "theme.toggle": () =>
       setTheme(resolvedTheme === "dark" ? "light" : "dark"),
     "editor.save": () => {

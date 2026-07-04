@@ -10,6 +10,7 @@ import { fileIcon } from "@/lib/file-icons";
 import { useCommandHotkeys } from "@/lib/hotkeys";
 import { basename, canMove, dragRoots, parentDir } from "@/lib/fs-move";
 import { cn } from "@/lib/utils";
+import { refreshFileIndex } from "@/lib/file-index";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { CollisionPriority } from "@dnd-kit/abstract";
 import { pointerIntersection } from "@dnd-kit/collision";
@@ -135,6 +136,7 @@ async function deletePaths(paths: string[]) {
   const st = useTreeStore.getState();
   st.select([], null);
   st.bumpDirs(affected);
+  refreshFileIndex();
 }
 
 async function listDir(path: string): Promise<Entry[]> {
@@ -295,6 +297,7 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
       await rename(entry.path, dest);
       useWorkspaceStore.getState().remapPath(entry.path, dest);
       useTreeStore.getState().bumpDirs([parentDir(entry.path)]);
+      refreshFileIndex();
     } catch (err) {
       dlog("ERROR rename", { path: entry.path, dest, err });
     }
@@ -590,6 +593,7 @@ export function FileTree({ rootPath }: { rootPath: string }) {
       if (done.length > 0) {
         st.select(done, done[0]);
         st.bumpDirs(affected);
+        refreshFileIndex();
       }
       dlog("performDrop finished", { done, affected: [...affected] });
     } finally {
@@ -683,6 +687,7 @@ export function FileTree({ rootPath }: { rootPath: string }) {
           ),
         );
         st.bumpDirs([dir]);
+        refreshFileIndex();
       } else {
         st.setDropTarget(null);
       }

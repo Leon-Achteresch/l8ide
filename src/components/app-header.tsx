@@ -1,3 +1,4 @@
+import { useFileSearchStore } from "@/components/file-search";
 import { Button } from "@/components/ui/button";
 import { WindowControls } from "@/components/window-controls";
 import { cn } from "@/lib/utils";
@@ -22,8 +23,11 @@ export function AppHeader() {
   const setRootPath = useWorkspaceStore((s) => s.setRootPath);
   const sidebarOpen = useWorkspaceStore((s) => s.sidebarOpen);
   const toggleSidebar = useWorkspaceStore((s) => s.toggleSidebar);
+  const openFileSearch = useFileSearchStore((s) => s.setOpen);
 
   const { resolvedTheme } = useTheme();
+
+  const folderName = rootPath ? rootPath.split("/").pop() : null;
 
   async function pickFolder() {
     const selected = await open({ directory: true, multiple: false });
@@ -71,9 +75,21 @@ export function AppHeader() {
       </div>
 
       <div className="flex flex-1 items-center justify-center">
-        <span className="truncate text-sm font-medium">
-          {rootPath ? rootPath.split("/").pop() : "No folder open"}
-        </span>
+        {folderName ? (
+          <button
+            type="button"
+            onClick={() => openFileSearch(true)}
+            title="Datei suchen"
+            style={{ WebkitAppRegion: "no-drag" } as CSSProperties}
+            className="max-w-full truncate rounded-md px-2 py-1 text-sm font-medium text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground"
+          >
+            {folderName}
+          </button>
+        ) : (
+          <span className="truncate text-sm font-medium text-muted-foreground">
+            No folder open
+          </span>
+        )}
       </div>
 
       <div

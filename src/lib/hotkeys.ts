@@ -84,6 +84,12 @@ export const COMMANDS: Command[] = [
       hotkey: `Mod+${n}` as Hotkey,
     };
   }),
+  {
+    id: "file.search",
+    label: "Dateisuche öffnen",
+    group: "Allgemein",
+    hotkey: "Mod+P",
+  },
   { id: "file.rename", label: "Umbenennen", group: "Dateien", hotkey: "F2" },
   {
     id: "file.delete",
