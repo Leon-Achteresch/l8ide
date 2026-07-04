@@ -5,6 +5,7 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
+import { FolderIcon } from "@/components/folder-icon";
 import { dlog, installDndDiagnostics } from "@/lib/dnd-log";
 import { fileIcon } from "@/lib/file-icons";
 import { useCommandHotkeys } from "@/lib/hotkeys";
@@ -42,7 +43,7 @@ import {
   rename,
   stat,
 } from "@tauri-apps/plugin-fs";
-import { ChevronRight, CopyPlus, Earth, EyeClosed, File, Folder, FolderOpen } from "lucide-react";
+import { ChevronRight, CopyPlus, Earth, EyeClosed, File } from "lucide-react";
 import {
   createContext,
   useCallback,
@@ -171,11 +172,7 @@ async function copyEntry(src: string, dest: string) {
 function EntryIcon({ entry, open }: { entry: Entry; open?: boolean }) {
   const fileIcons = useWorkspaceStore((s) => s.fileIcons);
   if (entry.isDirectory) {
-    return open ? (
-      <FolderOpen className="size-3.5 shrink-0" />
-    ) : (
-      <Folder className="size-3.5 shrink-0" />
-    );
+    return <FolderIcon name={entry.name} open={open} />;
   }
   const Icon = fileIcons ? fileIcon(entry.name) : null;
   return Icon ? (
