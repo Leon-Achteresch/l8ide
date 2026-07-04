@@ -4,6 +4,8 @@ import {
   PAGES,
   useWorkspaceStore,
 } from "@/lib/workspace-store";
+import type { LucideIcon } from "lucide-react";
+import { Settings } from "lucide-react";
 
 export const tabClass =
   "flex h-9 shrink-0 cursor-pointer items-center gap-1.5 border-r px-3 text-sm";
@@ -27,3 +29,7 @@ export function tabName(path: string) {
 export function parentDir(path: string) {
   return path.split("/").slice(0, -1).pop();
 }
+
+export const pageIcons: Record<string, LucideIcon> = {
+  "/settings": Settings,
+};

@@ -1,10 +1,16 @@
-import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
+import { pageIcons, parentDir, store, tabClass, tabName } from "@/components/tab-bar/lib";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import { cn } from "@/lib/utils";
+import { isPageTab, pageRoute, useWorkspaceStore } from "@/lib/workspace-store";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from "@/components/ui/context-menu";
-import { cn } from "@/lib/utils";
 import { Pin, X } from "lucide-react";
-import { parentDir, store, tabClass, tabName } from "@/components/tab-bar/lib";
 
 export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
   const isPage = isPageTab(path);
@@ -62,6 +68,11 @@ export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
             <Pin className="size-3" />
           </button>
         )}
+        {isPage &&
+          (() => {
+            const PageIcon = pageIcons[pageRoute(path)];
+            return PageIcon ? <PageIcon className="size-3.5" /> : null;
+          })()}
         <span className="whitespace-nowrap">{name}</span>
         {showDir && dir && (
           <span className="whitespace-nowrap text-xs text-muted-foreground">
