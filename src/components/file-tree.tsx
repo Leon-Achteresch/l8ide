@@ -386,6 +386,7 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
               useWorkspaceStore.getState().hideName(entry.name, "workspace")
             }
           >
+            <EyeClosed className="size-4" />
             Ausblenden (Workspace)
           </ContextMenuItem>
           <ContextMenuItem
@@ -393,9 +394,10 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
               useWorkspaceStore.getState().hideName(entry.name, "global")
             }
           >
-            <EyeClosed size={24}>
-              <Earth size={12} x={12} y={0} absoluteStrokeWidth />
-            </EyeClosed>
+            <span className="relative">
+              <EyeClosed className="size-4" />
+              <Earth className="absolute -bottom-0.5 -right-0.5 size-2.5" />
+            </span>
             Ausblenden (Überall)
           </ContextMenuItem>
         </ContextMenuContent>
