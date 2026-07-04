@@ -12,6 +12,8 @@ function SettingsPage() {
   const { resolvedTheme, setTheme } = useTheme();
   const fileIcons = useWorkspaceStore((s) => s.fileIcons);
   const setFileIcons = useWorkspaceStore((s) => s.setFileIcons);
+  const tabIcons = useWorkspaceStore((s) => s.tabIcons);
+  const setTabIcons = useWorkspaceStore((s) => s.setTabIcons);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -44,6 +46,15 @@ function SettingsPage() {
           </p>
         </div>
         <Switch checked={fileIcons} onCheckedChange={setFileIcons} />
+      </div>
+      <div className="mt-4 flex items-center justify-between max-w-sm">
+        <div>
+          <p className="text-sm font-medium">Tab-Icons</p>
+          <p className="text-xs text-muted-foreground">
+            Dateityp-Icons in der Tab-Leiste anzeigen
+          </p>
+        </div>
+        <Switch checked={tabIcons} onCheckedChange={setTabIcons} />
       </div>
     </div>
   );

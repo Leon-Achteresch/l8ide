@@ -25,6 +25,8 @@ type WorkspaceStore = {
   sidebarOpen: boolean;
   fileIcons: boolean;
   setFileIcons: (enabled: boolean) => void;
+  tabIcons: boolean;
+  setTabIcons: (enabled: boolean) => void;
   setSidebarWidth: (width: number) => void;
   toggleSidebar: () => void;
   activeFile: string | null;
@@ -55,6 +57,8 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
       sidebarOpen: true,
       fileIcons: true,
       setFileIcons: (enabled) => set({ fileIcons: enabled }),
+      tabIcons: true,
+      setTabIcons: (enabled) => set({ tabIcons: enabled }),
       setSidebarWidth: (width) =>
         set({ sidebarWidth: Math.max(160, Math.min(600, width)) }),
       toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),

@@ -6,6 +6,7 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
+import { fileIcon } from "@/lib/file-icons";
 import { cn } from "@/lib/utils";
 import { isPageTab, pageRoute, useWorkspaceStore } from "@/lib/workspace-store";
 import { useSortable } from "@dnd-kit/sortable";
@@ -60,6 +61,7 @@ export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
   const isActive = useWorkspaceStore((s) => s.activeFile === path);
   const isPinned = useWorkspaceStore((s) => s.pinned.includes(path));
   const isLast = useWorkspaceStore((s) => s.tabs[s.tabs.length - 1] === path);
+  const tabIcons = useWorkspaceStore((s) => s.tabIcons);
   const {
     attributes,
     listeners,
@@ -125,6 +127,12 @@ export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
           (() => {
             const PageIcon = pageIcons[pageRoute(path)];
             return PageIcon ? <PageIcon className="size-3.5" /> : null;
+          })()}
+        {!isPage &&
+          tabIcons &&
+          (() => {
+            const Icon = fileIcon(name);
+            return Icon ? <Icon className="size-3.5 shrink-0" /> : null;
           })()}
         <span className="whitespace-nowrap">{name}</span>
         {showDir && dir && (
