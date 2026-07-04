@@ -3,6 +3,7 @@ import { WindowControls } from "@/components/window-controls";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useTheme } from "next-themes";
 import { open } from "@tauri-apps/plugin-dialog";
 import { FolderOpen, Keyboard, PanelLeft, Settings } from "lucide-react";
 import { type CSSProperties } from "react";
@@ -21,6 +22,8 @@ export function AppHeader() {
   const sidebarOpen = useWorkspaceStore((s) => s.sidebarOpen);
   const toggleSidebar = useWorkspaceStore((s) => s.toggleSidebar);
 
+  const { resolvedTheme } = useTheme();
+
   async function pickFolder() {
     const selected = await open({ directory: true, multiple: false });
     if (typeof selected === "string") setRootPath(selected);
@@ -36,6 +39,11 @@ export function AppHeader() {
       )}
     >
       <div className="flex items-center gap-2">
+        <img
+          src={resolvedTheme === "dark" ? "/logo_white.png" : "/logo_black.png"}
+          alt="Logo"
+          className="h-5 w-auto"
+        />
         <button
           type="button"
           aria-label="Toggle sidebar"
