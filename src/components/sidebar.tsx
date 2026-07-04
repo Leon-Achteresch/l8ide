@@ -1,5 +1,6 @@
 import { FileTree } from "@/components/file-tree";
 import { useWorkspaceStore } from "@/lib/workspace-store";
+import { AnimatePresence, motion } from "motion/react";
 
 export function Sidebar() {
   const rootPath = useWorkspaceStore((s) => s.rootPath);
@@ -24,13 +25,17 @@ export function Sidebar() {
     window.addEventListener("pointerup", onUp);
   }
 
-  if (!sidebarOpen) return null;
-
   return (
-    <aside
-      className="relative flex h-full shrink-0 flex-col border-r bg-sidebar"
-      style={{ width: sidebarWidth }}
-    >
+    <AnimatePresence initial={false}>
+      {sidebarOpen && (
+        <motion.aside
+          initial={{ width: 0, opacity: 0 }}
+          animate={{ width: sidebarWidth, opacity: 1 }}
+          exit={{ width: 0, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 400, damping: 40 }}
+          className="relative flex h-full shrink-0 flex-col overflow-hidden border-r bg-sidebar"
+        >
+          <div style={{ width: sidebarWidth }} className="flex h-full flex-col">
       <div className="flex items-center justify-between border-b p-2" />
       {rootPath ? (
         <FileTree rootPath={rootPath} />
@@ -39,10 +44,13 @@ export function Sidebar() {
           Open a folder to get started.
         </div>
       )}
-      <div
-        onPointerDown={startResize}
-        className="absolute inset-y-0 -right-1 z-20 w-2 cursor-col-resize"
-      />
-    </aside>
+          </div>
+          <div
+            onPointerDown={startResize}
+            className="absolute inset-y-0 -right-1 z-20 w-2 cursor-col-resize"
+          />
+        </motion.aside>
+      )}
+    </AnimatePresence>
   );
 }
