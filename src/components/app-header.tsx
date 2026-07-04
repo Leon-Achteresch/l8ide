@@ -4,9 +4,10 @@ import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { open } from "@tauri-apps/plugin-dialog";
-import { FolderOpen, Keyboard, PanelLeftClose, Settings } from "lucide-react";
+import { FolderOpen, Keyboard, PanelLeftClose, PanelLeftOpen, Settings } from "lucide-react";
 import { useTheme } from "next-themes";
 import { type CSSProperties } from "react";
+import { SvgPathMorphing } from "@/blocks/svg-path-morphing";
 
 const IS_MAC =
   typeof navigator !== "undefined" &&
@@ -55,19 +56,25 @@ export function AppHeader() {
             sidebarOpen && "text-foreground",
           )}
         >
-          <PanelLeftClose className="size-4" strokeWidth={2} />
+          <SvgPathMorphing
+            size={16}
+            strokeWidth={2}
+            isOpen={sidebarOpen}
+            openIcon={PanelLeftClose}
+            closedIcon={PanelLeftOpen}
+          />
         </button>
-
-        <span className="truncate text-sm font-medium">
-          {rootPath ? rootPath.split("/").pop() : "No folder open"}
-        </span>
 
         <Button variant="ghost" size="icon" onClick={pickFolder}>
           <FolderOpen className="size-4" />
         </Button>
       </div>
 
-      <div className="flex-1" />
+      <div className="flex flex-1 items-center justify-center">
+        <span className="truncate text-sm font-medium">
+          {rootPath ? rootPath.split("/").pop() : "No folder open"}
+        </span>
+      </div>
 
       <div
         className="flex shrink-0 items-center gap-0.5 pr-1.5"

@@ -1,101 +1,110 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "motion/react";
-
-// Both icons are built from two 4-point shapes (M, L, L, L, Z) so the path
-// command structure stays identical and motion can interpolate `d` smoothly.
-// The play triangle is split down its vertical midline into two quadrilaterals,
-// so each pause bar morphs into one half of the triangle.
-const PAUSE = {
-  left: "M5 5L9 5L9 19L5 19Z",
-  right: "M15 5L19 5L19 19L15 19Z",
-} as const;
-
-const PLAY = {
-  // top-left, top-mid, bottom-mid, bottom-left
-  left: "M7 5L13 8.5L13 15.5L7 19Z",
-  // top-mid, apex, apex, bottom-mid (two corners collapse to the apex)
-  right: "M13 8.5L19 12L19 12L13 15.5Z",
-} as const;
+import { useState, type ElementType } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import type { LucideProps } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
 type SpringConfig = {
   type: "spring";
   stiffness?: number;
+  bounce?: number;
   damping?: number;
   mass?: number;
-  bounce?: number;
   visualDuration?: number;
 };
 
 export type SvgPathMorphingProps = {
   size?: number;
   strokeWidth?: number;
-  startPlaying?: boolean;
+  isOpen: boolean;
+  openIcon: ElementType<LucideProps>;
+  closedIcon: ElementType<LucideProps>;
   spring?: SpringConfig;
   className?: string;
 };
 
 const DEFAULT_SPRING: SpringConfig = {
   type: "spring",
-  stiffness: 260,
-  damping: 26,
-  mass: 0.9,
+  stiffness: 300,
+  damping: 30,
 };
 
 export function SvgPathMorphing({
-  size = 100,
-  strokeWidth = 1.5,
-  startPlaying = false,
+  size = 24,
+  strokeWidth = 2,
+  isOpen,
+  openIcon: OpenIcon,
+  closedIcon: ClosedIcon,
   spring = DEFAULT_SPRING,
   className,
 }: SvgPathMorphingProps) {
-  const [isPlaying, setIsPlaying] = useState(startPlaying);
-  const target = isPlaying ? PLAY : PAUSE;
-
   return (
-    <button
-      type="button"
-      onClick={() => setIsPlaying((prev) => !prev)}
-      aria-label={isPlaying ? "Pause" : "Play"}
-      className={`group text-black dark:text-white ${className ?? ""}`}
+    <div
+      className={`relative ${className ?? ""}`}
+      style={{ width: size, height: size }}
     >
-      <svg
-        width={size}
-        height={size}
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        stroke="currentColor"
-        strokeWidth={strokeWidth}
-        strokeLinejoin="round"
-        strokeLinecap="round"
-      >
-        <motion.path
-          animate={{ d: target.left }}
-          transition={spring}
-          initial={false}
-        />
-        <motion.path
-          animate={{ d: target.right }}
-          transition={spring}
-          initial={false}
-        />
-      </svg>
-    </button>
+      <AnimatePresence initial={false}>
+        {isOpen ? (
+          <motion.div
+            key="open"
+            className="absolute inset-0"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={spring}
+          >
+            <OpenIcon size={size} strokeWidth={strokeWidth} />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="closed"
+            className="absolute inset-0"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={spring}
+          >
+            <ClosedIcon size={size} strokeWidth={strokeWidth} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
 export const controls = {
   size: [100, 16, 120, 2],
   strokeWidth: [1.5, 0, 4, 0.5],
-  startPlaying: false,
-  spring: { type: "spring", stiffness: 260, damping: 26, mass: 0.9 },
+  spring: { type: "spring", stiffness: 300, damping: 30 },
 };
 
-export default function SvgPathMorphingDemo(props: SvgPathMorphingProps) {
+export default function SvgPathMorphingDemo({
+  size = 100,
+  strokeWidth = 1.5,
+  spring,
+  className,
+}: Partial<SvgPathMorphingProps>) {
+  const [open, setOpen] = useState(false);
+
   return (
     <div className="flex h-dvh w-full items-center justify-center bg-white dark:bg-black">
-      <SvgPathMorphing {...props} />
+      <button
+        type="button"
+        onClick={() => setOpen((p) => !p)}
+        aria-label={open ? "Close" : "Open"}
+        className="text-black dark:text-white"
+      >
+        <SvgPathMorphing
+          size={size}
+          strokeWidth={strokeWidth}
+          isOpen={open}
+          openIcon={PanelLeftClose}
+          closedIcon={PanelLeftOpen}
+          spring={spring}
+          className={className}
+        />
+      </button>
     </div>
   );
 }
