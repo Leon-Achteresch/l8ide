@@ -8,6 +8,7 @@
     "opener:default",
     "dialog:allow-open",
     "fs:allow-read-dir",
+    "fs:allow-read-text-file",
     "fs:allow-exists",
     {
       "identifier": "fs:scope",

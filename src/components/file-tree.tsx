@@ -1,6 +1,8 @@
 import { readDir } from "@tauri-apps/plugin-fs";
 import { ChevronRight, File, Folder, FolderOpen } from "lucide-react";
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { useWorkspaceStore } from "@/lib/workspace-store";
 
 type Entry = {
   name: string;
@@ -28,9 +30,14 @@ async function listDir(path: string): Promise<Entry[]> {
 function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
   const [open, setOpen] = useState(false);
   const [children, setChildren] = useState<Entry[] | null>(null);
+  const isActive = useWorkspaceStore((s) => s.activeFile === entry.path);
+  const openFile = useWorkspaceStore((s) => s.openFile);
 
   async function toggle() {
-    if (!entry.isDirectory) return;
+    if (!entry.isDirectory) {
+      openFile(entry.path);
+      return;
+    }
     if (!open && children === null) {
       setChildren(await listDir(entry.path));
     }
@@ -42,7 +49,10 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
       <button
         type="button"
         onClick={toggle}
-        className="flex w-full items-center gap-1 rounded px-1 py-0.5 text-left text-sm hover:bg-accent"
+        className={cn(
+          "flex w-full items-center gap-1 rounded px-1 py-0.5 text-left text-sm hover:bg-accent",
+          isActive && "bg-accent",
+        )}
         style={{ paddingLeft: depth * 12 + 4 }}
       >
         {entry.isDirectory ? (

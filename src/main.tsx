@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { ThemeProvider } from "next-themes";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
@@ -17,6 +18,8 @@ declare module "@tanstack/react-router" {
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   </React.StrictMode>,
 );
