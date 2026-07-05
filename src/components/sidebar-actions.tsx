@@ -1,11 +1,14 @@
 import { Button } from "@/components/ui/button";
+import { useBrowserStore } from "@/lib/browser-store";
 import { useTerminalStore } from "@/lib/terminal-store";
 import { cn } from "@/lib/utils";
-import { Terminal } from "lucide-react";
+import { Globe, Terminal } from "lucide-react";
 
 export function SidebarActions() {
-  const open = useTerminalStore((s) => s.open);
-  const toggle = useTerminalStore((s) => s.toggle);
+  const terminalOpen = useTerminalStore((s) => s.open);
+  const toggleTerminal = useTerminalStore((s) => s.toggle);
+  const browserOpen = useBrowserStore((s) => s.open);
+  const toggleBrowser = useBrowserStore((s) => s.toggle);
 
   return (
     <div className="flex shrink-0 border-t bg-muted/20 px-2 py-1.5">
@@ -20,13 +23,27 @@ export function SidebarActions() {
           size="icon-sm"
           className={cn(
             "text-muted-foreground hover:text-foreground",
-            open && "bg-accent text-foreground shadow-xs",
+            terminalOpen && "bg-accent text-foreground shadow-xs",
           )}
-          onClick={toggle}
-          aria-pressed={open}
+          onClick={toggleTerminal}
+          aria-pressed={terminalOpen}
           title="Terminal"
         >
           <Terminal />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          className={cn(
+            "text-muted-foreground hover:text-foreground",
+            browserOpen && "bg-accent text-foreground shadow-xs",
+          )}
+          onClick={toggleBrowser}
+          aria-pressed={browserOpen}
+          title="Browser"
+        >
+          <Globe />
         </Button>
       </div>
     </div>

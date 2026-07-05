@@ -82,6 +82,7 @@ export function FileSearch() {
   return (
     <>
       <div
+        data-overlay
         className="fixed inset-0 z-40"
         onMouseDown={() => setOpen(false)}
       />

@@ -1,3 +1,4 @@
+mod browser;
 mod terminal;
 
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -336,7 +337,13 @@ pub fn run() {
             terminal::pty_resize,
             terminal::pty_ack,
             terminal::pty_process,
-            terminal::pty_kill
+            terminal::pty_kill,
+            browser::browser_open,
+            browser::browser_set_bounds,
+            browser::browser_show,
+            browser::browser_navigate,
+            browser::browser_eval,
+            browser::browser_close
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

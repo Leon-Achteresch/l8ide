@@ -1,12 +1,11 @@
-import { monacoUriForPath } from "@/lib/monaco-uri";
+import { saveActiveFile } from "@/lib/editor-actions";
 import { useEditorZoom, useModZoomInHotkey } from "@/lib/editor-zoom";
 import { useCommandHotkeys } from "@/lib/hotkeys";
+import { useBrowserStore } from "@/lib/browser-store";
 import { useTerminalStore } from "@/lib/terminal-store";
 import { isPageTab, pageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { useFileSearchStore } from "@/components/file-search";
 import { open } from "@tauri-apps/plugin-dialog";
-import { writeTextFile } from "@tauri-apps/plugin-fs";
-import * as monaco from "monaco-editor";
 import { useTheme } from "next-themes";
 import { SEARCH_INPUT_ID } from "@/components/search-panel/search-panel";
 
@@ -53,14 +52,10 @@ export function AppHotkeys() {
       });
     },
     "terminal.toggle": () => useTerminalStore.getState().toggle(),
+    "browser.toggle": () => useBrowserStore.getState().toggle(),
     "theme.toggle": () =>
       setTheme(resolvedTheme === "dark" ? "light" : "dark"),
-    "editor.save": () => {
-      const path = useWorkspaceStore.getState().activeFile;
-      if (!path || isPageTab(path)) return;
-      const model = monaco.editor.getModel(monacoUriForPath(path));
-      if (model) writeTextFile(path, model.getValue());
-    },
+    "editor.save": saveActiveFile,
     "tab.close": () => {
       const s = useWorkspaceStore.getState();
       if (s.activeFile) s.closeTab(s.activeFile);

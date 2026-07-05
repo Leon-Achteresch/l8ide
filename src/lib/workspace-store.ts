@@ -33,6 +33,10 @@ type WorkspaceStore = {
   setFileIcons: (enabled: boolean) => void;
   tabIcons: boolean;
   setTabIcons: (enabled: boolean) => void;
+  autoSave: boolean;
+  setAutoSave: (enabled: boolean) => void;
+  autoSaveDelay: number;
+  setAutoSaveDelay: (ms: number) => void;
   hiddenNames: string[];
   workspaceHidden: Record<string, string[]>;
   hideName: (name: string, scope: HiddenScope) => void;
@@ -72,6 +76,11 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
       setFileIcons: (enabled) => set({ fileIcons: enabled }),
       tabIcons: true,
       setTabIcons: (enabled) => set({ tabIcons: enabled }),
+      autoSave: false,
+      setAutoSave: (enabled) => set({ autoSave: enabled }),
+      autoSaveDelay: 1000,
+      setAutoSaveDelay: (ms) =>
+        set({ autoSaveDelay: Math.max(200, Math.min(10000, ms)) }),
       hiddenNames: [".git"],
       workspaceHidden: {},
       hideName: (name, scope) =>

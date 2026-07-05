@@ -48,6 +48,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+J",
   },
   {
+    id: "browser.toggle",
+    label: "Browser ein-/ausblenden",
+    group: "Allgemein",
+    hotkey: "Mod+Shift+B",
+  },
+  {
     id: "theme.toggle",
     label: "Dark Mode umschalten",
     group: "Allgemein",

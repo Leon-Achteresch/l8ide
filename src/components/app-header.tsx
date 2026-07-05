@@ -1,6 +1,17 @@
 import { SvgPathMorphing } from "@/blocks/svg-path-morphing";
 import { useFileSearchStore } from "@/components/file-search";
 import { WindowControls } from "@/components/window-controls";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Switch } from "@/components/ui/switch";
+import {
+  redoActive,
+  saveActiveFile,
+  undoActive,
+} from "@/lib/editor-actions";
 import { cn } from "@/lib/utils";
 import {
   type SidebarMode,
@@ -14,8 +25,11 @@ import {
   Keyboard,
   PanelLeftClose,
   PanelLeftOpen,
+  Redo2,
+  Save,
   Search,
   Settings,
+  Undo2,
   type LucideIcon,
 } from "lucide-react";
 import { motion } from "motion/react";

@@ -4,6 +4,8 @@ import { readTextFile } from "@tauri-apps/plugin-fs";
 import * as monaco from "monaco-editor";
 import { useTheme } from "next-themes";
 import { useEditorZoom } from "@/lib/editor-zoom";
+import { saveModel } from "@/lib/editor-actions";
+import { useWorkspaceStore } from "@/lib/workspace-store";
 import {
   revealInEditor,
   takePendingReveal,
@@ -95,6 +97,16 @@ function TextEditor({ path }: { path: string }) {
         editorRef.current = editor;
         const target = takePendingReveal(path);
         if (target) revealInEditor(editor, target);
+
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        editor.onDidChangeModelContent(() => {
+          const { autoSave, autoSaveDelay } = useWorkspaceStore.getState();
+          if (!autoSave) return;
+          const model = editor.getModel();
+          if (!model) return;
+          clearTimeout(timer);
+          timer = setTimeout(() => saveModel(model), autoSaveDelay);
+        });
       }}
     />
   );
