@@ -1,5 +1,6 @@
 import { FileTree } from "@/components/file-tree";
 import { SearchPanel } from "@/components/search-panel/search-panel";
+import { SidebarActions } from "@/components/sidebar-actions";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { AnimatePresence, motion } from "motion/react";
@@ -49,14 +50,18 @@ export function Sidebar() {
                 >
                   <FileTree rootPath={rootPath} />
                 </div>
-                {sidebarMode === "Search" && <SearchPanel rootPath={rootPath} />}
+                {sidebarMode === "Search" && (
+                  <SearchPanel rootPath={rootPath} />
+                )}
               </>
             ) : (
-              <div className="p-2 text-sm text-muted-foreground">
+              <div className="flex min-h-0 flex-1 items-start p-2 text-sm text-muted-foreground">
                 Open a folder to get started.
               </div>
             )}
+            <SidebarActions />
           </div>
+
           <div
             onPointerDown={startResize}
             className="absolute inset-y-0 -right-1 z-20 w-2 cursor-col-resize"
