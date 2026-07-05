@@ -5,7 +5,12 @@ import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { type HiddenScope, useWorkspaceStore } from "@/lib/workspace-store";
+import { cn } from "@/lib/utils";
+import {
+  type HiddenScope,
+  useIsWorkspaceTrusted,
+  useWorkspaceStore,
+} from "@/lib/workspace-store";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -71,6 +76,65 @@ export function SettingsPage() {
         title="Global ausgeblendet"
         description="Gilt in allen Workspaces"
       />
+      <WorkspaceTrust />
+    </div>
+  );
+}
+
+function WorkspaceTrust() {
+  const rootPath = useWorkspaceStore((s) => s.rootPath);
+  const trustedFolders = useWorkspaceStore((s) => s.trustedFolders);
+  const trustFolder = useWorkspaceStore((s) => s.trustFolder);
+  const revokeTrust = useWorkspaceStore((s) => s.revokeTrust);
+  const trusted = useIsWorkspaceTrusted();
+
+  return (
+    <div className="mt-6 max-w-sm">
+      <p className="text-sm font-medium">Workspace Trust</p>
+      <p className="text-xs text-muted-foreground">
+        In nicht vertrauenswürdigen Ordnern läuft der eingeschränkte Modus (Terminal deaktiviert).
+      </p>
+      {rootPath && (
+        <div className="mt-2 flex items-center justify-between gap-2 rounded border px-2 py-1.5 text-sm">
+          <span className="min-w-0">
+            <span
+              className={cn(
+                "font-medium",
+                trusted ? "text-emerald-600 dark:text-emerald-500" : "text-amber-600 dark:text-amber-500",
+              )}
+            >
+              {trusted ? "Vertraut" : "Eingeschränkt"}
+            </span>
+            <span className="block truncate font-mono text-xs text-muted-foreground">
+              {rootPath}
+            </span>
+          </span>
+          {!trusted && (
+            <Button type="button" size="sm" variant="secondary" onClick={() => trustFolder(rootPath)}>
+              Vertrauen
+            </Button>
+          )}
+        </div>
+      )}
+      <ul className="mt-2 space-y-1">
+        {trustedFolders.map((path) => (
+          <li
+            key={path}
+            className="flex items-center justify-between rounded border px-2 py-1 text-sm"
+          >
+            <span className="truncate font-mono text-xs">{path}</span>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              className="size-6"
+              onClick={() => revokeTrust(path)}
+            >
+              <X className="size-3.5" />
+            </Button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

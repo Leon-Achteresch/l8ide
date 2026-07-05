@@ -8,6 +8,7 @@
     "build": "tsc && vite build",
     "test:move": "node scripts/test-move-logic.mjs",
     "test:url": "node scripts/test-url-normalize.mjs",
+    "test:trust": "node scripts/test-trust.mjs",
     "icons:generate": "node scripts/generate-icons.mjs",
     "preview": "vite preview",
     "tauri": "tauri"

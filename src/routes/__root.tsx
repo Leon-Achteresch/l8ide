@@ -5,6 +5,7 @@ import { BrowserPanel } from "@/components/browser/browser-panel";
 import { FileSearch } from "@/components/file-search";
 import { MonacoWorkspace } from "@/components/monaco-workspace";
 import { Sidebar } from "@/components/sidebar";
+import { WorkspaceTrustBanner } from "@/components/workspace-trust-banner";
 import { useTerminalStore } from "@/lib/terminal-store";
 import { lazy, Suspense } from "react";
 import "../App.css";
@@ -48,6 +49,7 @@ function RootComponent() {
         <div className="flex min-h-0 flex-1">
           <Sidebar />
           <div className="flex min-w-0 flex-1 flex-col">
+            <WorkspaceTrustBanner />
             <div className="flex min-h-0 min-w-0 flex-1">
               <div className="min-h-0 min-w-0 flex-1">
                 <Outlet />

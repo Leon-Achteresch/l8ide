@@ -6,6 +6,7 @@ import {
   splitLeaf,
 } from "@/lib/editor-groups";
 import { remap } from "@/lib/fs-move";
+import { isPathTrusted } from "@/lib/workspace-trust";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -41,6 +42,9 @@ export type GroupState = {
 type WorkspaceStore = {
   rootPath: string | null;
   recentFolders: string[];
+  trustedFolders: string[];
+  trustFolder: (path: string) => void;
+  revokeTrust: (path: string) => void;
   sidebarWidth: number;
   sidebarOpen: boolean;
   fileIcons: boolean;
@@ -127,6 +131,17 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
     (set) => ({
       rootPath: null,
       recentFolders: [],
+      trustedFolders: [],
+      trustFolder: (path) =>
+        set((s) =>
+          s.trustedFolders.includes(path)
+            ? s
+            : { trustedFolders: [...s.trustedFolders, path] },
+        ),
+      revokeTrust: (path) =>
+        set((s) => ({
+          trustedFolders: s.trustedFolders.filter((p) => p !== path),
+        })),
       sidebarWidth: 256,
       sidebarOpen: true,
       fileIcons: true,
@@ -369,7 +384,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
     }),
     {
       name: "workspace-store",
-      version: 2,
+      version: 3,
       migrate: (persisted) => {
         const s = persisted as Partial<WorkspaceStore>;
         const tabs = s.tabs ?? (s.activeFile ? [s.activeFile] : []);
@@ -383,6 +398,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
           hiddenNames: s.hiddenNames ?? [".git"],
           workspaceHidden: s.workspaceHidden ?? {},
           recentFolders: s.recentFolders ?? [],
+          trustedFolders: s.trustedFolders ?? [],
         };
         if (s.groups && s.layout && s.activeGroupId) {
           return { ...base, nextId: s.nextId ?? 1 };
@@ -398,6 +414,10 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
     },
   ),
 );
+
+export function useIsWorkspaceTrusted() {
+  return useWorkspaceStore((s) => isPathTrusted(s.trustedFolders, s.rootPath));
+}
 
 function closeActiveGroup(s: WorkspaceStore) {
   const layout = removeLeaf(s.layout, s.activeGroupId);

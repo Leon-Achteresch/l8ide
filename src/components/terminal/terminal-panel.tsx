@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
-import { Plus, Terminal as TerminalIcon, Trash2, X } from "lucide-react";
+import { Plus, ShieldAlert, Terminal as TerminalIcon, Trash2, X } from "lucide-react";
 import { attachSession, disposeSession, getSession } from "@/lib/terminal";
 import { useTerminalStore } from "@/lib/terminal-store";
-import { useWorkspaceStore } from "@/lib/workspace-store";
+import { useIsWorkspaceTrusted, useWorkspaceStore } from "@/lib/workspace-store";
 import { cn } from "@/lib/utils";
 
 function TerminalView({ id, visible }: { id: number; visible: boolean }) {
@@ -46,6 +46,7 @@ export function TerminalPanel() {
   const setActive = useTerminalStore((s) => s.setActive);
   const add = useTerminalStore((s) => s.add);
   const remove = useTerminalStore((s) => s.remove);
+  const trusted = useIsWorkspaceTrusted();
 
   function closeTerminal(id: number) {
     disposeSession(id);
@@ -121,7 +122,8 @@ export function TerminalPanel() {
         </div>
         <button
           onClick={add}
-          className="rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+          disabled={!trusted}
+          className="rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
           title="Neues Terminal"
         >
           <Plus className="size-4" />
@@ -135,9 +137,19 @@ export function TerminalPanel() {
         </button>
       </div>
       <div className="relative min-h-0 flex-1">
-        {tabs.map((id) => (
-          <TerminalView key={id} id={id} visible={active === id} />
-        ))}
+        {trusted ? (
+          tabs.map((id) => (
+            <TerminalView key={id} id={id} visible={active === id} />
+          ))
+        ) : (
+          <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center">
+            <ShieldAlert className="size-6 text-amber-500" />
+            <p className="text-sm font-medium">Terminal im eingeschränkten Modus deaktiviert</p>
+            <p className="max-w-sm text-xs text-muted-foreground">
+              Vertraue diesem Ordner, um Befehle auszuführen. Nutze das Banner oben oder die Einstellungen.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
