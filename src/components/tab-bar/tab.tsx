@@ -102,9 +102,11 @@ export function Tab({
         )}
         {PageIcon && <PageIcon className="size-3.5 shrink-0" strokeWidth={2} />}
         {FileIcon && <FileIcon className="size-3.5 shrink-0" />}
-        <span className="min-w-0 truncate">{name}</span>
-        {showDir && dir && (
-          <span className="shrink-0 text-[10px] text-muted-foreground/70">{dir}</span>
+        <span className="min-w-0 flex-1 truncate">{name}</span>
+        {showDir && dir && isActive && (
+          <span className="min-w-0 max-w-[3.5rem] shrink truncate text-[10px] text-muted-foreground/70">
+            {dir}
+          </span>
         )}
         {!isPinned && (
           <button

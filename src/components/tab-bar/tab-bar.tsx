@@ -30,7 +30,7 @@ export function TabBar({ groupId }: { groupId: string }) {
     >
       <div
         ref={setNodeRef}
-        className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto overflow-y-hidden py-1"
+        className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto overflow-y-hidden py-1 no-scrollbar"
       >
         {tabs.map((path, i) => {
           const prevPinned = i > 0 && pinned.includes(tabs[i - 1]);

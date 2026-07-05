@@ -59,7 +59,7 @@ export function EditorGroup({ id }: { id: string }) {
       {showBar && (
         <div
           className={cn(
-            "flex h-9 shrink-0 items-center gap-0.5 border-b px-2",
+            "flex h-9 min-w-0 shrink-0 items-center gap-0.5 overflow-hidden border-b px-2",
             isActive && multiple
               ? "border-b-border/60 bg-sidebar"
               : "border-b-border/40 bg-sidebar/50",
