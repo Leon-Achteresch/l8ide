@@ -6,7 +6,6 @@ import { BrowserPanel } from "@/components/browser/browser-panel";
 import { FileSearch } from "@/components/file-search";
 import { MonacoWorkspace } from "@/components/monaco-workspace";
 import { Sidebar } from "@/components/sidebar";
-import { TabBar } from "@/components/tab-bar/tab-bar";
 import { TerminalPanel } from "@/components/terminal/terminal-panel";
 import "../App.css";
 
@@ -25,7 +24,6 @@ function RootComponent() {
         <div className="flex min-h-0 flex-1">
           <Sidebar />
           <div className="flex min-w-0 flex-1 flex-col">
-            <TabBar />
             <div className="flex min-h-0 min-w-0 flex-1">
               <div className="min-h-0 min-w-0 flex-1">
                 <Outlet />

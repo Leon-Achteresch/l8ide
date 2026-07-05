@@ -83,6 +83,24 @@ export const COMMANDS: Command[] = [
     group: "Editor",
     hotkey: "Mod+0",
   },
+  {
+    id: "editor.splitRight",
+    label: "Editor rechts teilen",
+    group: "Editor",
+    hotkey: "Mod+\\",
+  },
+  {
+    id: "editor.splitDown",
+    label: "Editor nach unten teilen",
+    group: "Editor",
+    hotkey: "Mod+Shift+\\",
+  },
+  {
+    id: "editor.closeGroup",
+    label: "Editor-Gruppe schließen",
+    group: "Editor",
+    hotkey: "Mod+Alt+W",
+  },
   { id: "tab.close", label: "Tab schließen", group: "Tabs", hotkey: "Mod+W" },
   {
     id: "tab.closeAll",

@@ -12,9 +12,10 @@ import {
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { Redo2, Save, Undo2 } from "lucide-react";
+import { motion } from "motion/react";
 import { useTheme } from "next-themes";
 import { AppHeaderMenuAction } from "./app-header-menu-action";
-import { AUTOSAVE_DELAYS } from "./constants";
+import { AUTOSAVE_DELAYS, SIDEBAR_TAB_SPRING } from "./constants";
 
 export function AppHeaderLogoMenu() {
   const autoSave = useWorkspaceStore((s) => s.autoSave);
@@ -22,6 +23,8 @@ export function AppHeaderLogoMenu() {
   const autoSaveDelay = useWorkspaceStore((s) => s.autoSaveDelay);
   const setAutoSaveDelay = useWorkspaceStore((s) => s.setAutoSaveDelay);
   const { resolvedTheme } = useTheme();
+  const logoSrc =
+    resolvedTheme === "dark" ? "/logo_black.png" : "/logo_white.png";
 
   return (
     <Popover>
@@ -31,60 +34,93 @@ export function AppHeaderLogoMenu() {
             type="button"
             aria-label="Menü"
             title="Menü"
-            className="inline-flex shrink-0 items-center rounded-md px-1 py-0.5 transition-colors hover:bg-foreground/8"
+            className={cn(
+              "inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150",
+              "hover:bg-foreground/8 hover:text-foreground",
+              "data-popup-open:bg-foreground/10 data-popup-open:text-foreground",
+            )}
           >
-            <img
-              src={
-                resolvedTheme === "dark"
-                  ? "/logo_black.png"
-                  : "/logo_white.png"
-              }
-              alt="Logo"
-              className="h-5 w-auto opacity-90"
-            />
+            <img src={logoSrc} alt="Logo" className="h-4 w-auto opacity-90" />
           </button>
         }
       />
-      <PopoverContent align="start" className="w-64 gap-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium">AutoSave</p>
-            <p className="text-xs text-muted-foreground">
-              Änderungen automatisch speichern
-            </p>
-          </div>
-          <Switch checked={autoSave} onCheckedChange={setAutoSave} />
+      <PopoverContent
+        align="start"
+        sideOffset={6}
+        className="w-56 gap-0 overflow-hidden p-0"
+      >
+        <div className="flex items-center gap-2 border-b border-border/60 px-3 py-2">
+          <img src={logoSrc} alt="" className="h-4 w-auto opacity-90" />
+          <span className="text-xs font-semibold tracking-tight">l8ide</span>
         </div>
 
-        {autoSave && (
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground">Verzögerung</p>
-            <div className="inline-flex rounded-md bg-foreground/[0.05] p-0.5 ring-1 ring-foreground/[0.06]">
-              {AUTOSAVE_DELAYS.map((ms) => (
-                <button
-                  key={ms}
-                  type="button"
-                  onClick={() => setAutoSaveDelay(ms)}
-                  className={cn(
-                    "rounded px-2 py-0.5 text-xs font-medium transition-colors",
-                    autoSaveDelay === ms
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground",
-                  )}
-                >
-                  {ms < 1000 ? `${ms}ms` : `${ms / 1000}s`}
-                </button>
-              ))}
+        <div className="flex flex-col gap-3 p-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-xs font-medium">AutoSave</p>
+              <p className="text-[11px] leading-4 text-muted-foreground">
+                Automatisch speichern
+              </p>
             </div>
+            <Switch checked={autoSave} onCheckedChange={setAutoSave} />
           </div>
-        )}
 
-        <div className="h-px bg-border/60" aria-hidden />
+          {autoSave ? (
+            <div className="flex flex-col gap-1.5">
+              <p className="text-[10px] font-medium tracking-wide text-muted-foreground/70 uppercase">
+                Verzögerung
+              </p>
+              <div className="relative inline-flex h-7 items-center self-start rounded-lg bg-foreground/[0.05] p-0.5 ring-1 ring-foreground/[0.04]">
+                {AUTOSAVE_DELAYS.map((ms) => {
+                  const active = autoSaveDelay === ms;
+                  return (
+                    <button
+                      key={ms}
+                      type="button"
+                      onClick={() => setAutoSaveDelay(ms)}
+                      className={cn(
+                        "relative z-10 rounded-md px-2.5 py-0.5 text-[11px] font-medium transition-colors duration-150",
+                        active
+                          ? "text-foreground"
+                          : "text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      {active ? (
+                        <motion.span
+                          layoutId="autosave-delay-indicator"
+                          transition={SIDEBAR_TAB_SPRING}
+                          className="absolute inset-0 -z-10 rounded-md bg-background shadow-sm ring-1 ring-foreground/8"
+                          aria-hidden
+                        />
+                      ) : null}
+                      {ms < 1000 ? `${ms}ms` : `${ms / 1000}s`}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
+        </div>
 
-        <div className="grid grid-cols-3 gap-1.5">
-          <AppHeaderMenuAction icon={Save} label="Speichern" onClick={saveActiveFile} />
-          <AppHeaderMenuAction icon={Undo2} label="Rückgängig" onClick={undoActive} />
-          <AppHeaderMenuAction icon={Redo2} label="Wiederholen" onClick={redoActive} />
+        <div className="border-t border-border/60 p-1">
+          <AppHeaderMenuAction
+            icon={Save}
+            label="Speichern"
+            shortcut="Mod+S"
+            onClick={saveActiveFile}
+          />
+          <AppHeaderMenuAction
+            icon={Undo2}
+            label="Rückgängig"
+            shortcut="Mod+Z"
+            onClick={undoActive}
+          />
+          <AppHeaderMenuAction
+            icon={Redo2}
+            label="Wiederholen"
+            shortcut="Mod+Shift+Z"
+            onClick={redoActive}
+          />
         </div>
       </PopoverContent>
     </Popover>

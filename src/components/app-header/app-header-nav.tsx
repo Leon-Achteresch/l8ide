@@ -1,42 +1,42 @@
 import { cn } from "@/lib/utils";
-import { Link, useRouterState } from "@tanstack/react-router";
+import { pageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { Keyboard, Settings } from "lucide-react";
 import { type CSSProperties } from "react";
 
 export function AppHeaderNav() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const activeFile = useWorkspaceStore((s) => s.activeFile);
+  const openFile = useWorkspaceStore((s) => s.openFile);
+
+  const button = (route: string) =>
+    cn(
+      "inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-all duration-150",
+      "hover:bg-foreground/10 hover:text-foreground",
+      activeFile === pageTab(route) && "bg-foreground/10 text-foreground",
+    );
 
   return (
     <div
       className="flex shrink-0 items-center gap-0.5 pr-1.5"
       style={{ WebkitAppRegion: "no-drag" } as CSSProperties}
     >
-      <Link
-        to="/shortcuts"
+      <button
+        type="button"
         aria-label="Shortcuts"
         title="Shortcuts"
-        className={cn(
-          "inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-all duration-150",
-          "hover:bg-foreground/10 hover:text-foreground",
-          pathname.startsWith("/shortcuts") &&
-            "bg-foreground/10 text-foreground",
-        )}
+        onClick={() => openFile(pageTab("/shortcuts"))}
+        className={button("/shortcuts")}
       >
         <Keyboard className="size-4" strokeWidth={2} />
-      </Link>
-      <Link
-        to="/settings"
+      </button>
+      <button
+        type="button"
         aria-label="Settings"
         title="Settings"
-        className={cn(
-          "inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-all duration-150",
-          "hover:bg-foreground/10 hover:text-foreground",
-          pathname.startsWith("/settings") &&
-            "bg-foreground/10 text-foreground",
-        )}
+        onClick={() => openFile(pageTab("/settings"))}
+        className={button("/settings")}
       >
         <Settings className="size-4" strokeWidth={2} />
-      </Link>
+      </button>
     </div>
   );
 }
