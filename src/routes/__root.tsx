@@ -1,6 +1,6 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { AppHeader } from "@/components/app-header";
+import { AppHeader } from "@/components/app-header/app-header";
 import { AppHotkeys } from "@/components/app-hotkeys";
 import { BrowserPanel } from "@/components/browser/browser-panel";
 import { FileSearch } from "@/components/file-search";

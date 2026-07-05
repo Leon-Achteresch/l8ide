@@ -5,17 +5,13 @@ import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import {
-  type HiddenScope,
-  pageTab,
-  useWorkspaceStore,
-} from "@/lib/workspace-store";
+import { type HiddenScope, useWorkspaceStore } from "@/lib/workspace-store";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
 });
 
-function SettingsPage() {
+export function SettingsPage() {
   const { resolvedTheme, setTheme } = useTheme();
   const fileIcons = useWorkspaceStore((s) => s.fileIcons);
   const setFileIcons = useWorkspaceStore((s) => s.setFileIcons);
@@ -25,7 +21,6 @@ function SettingsPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    useWorkspaceStore.getState().openFile(pageTab("/settings"));
     setMounted(true);
   }, []);
 

@@ -1,7 +1,7 @@
 import { parentDir, store, tabClass, tabName } from "@/components/tab-bar/lib";
 import { Tab } from "@/components/tab-bar/tab";
 import { cn } from "@/lib/utils";
-import { isPageTab, pageRoute, useWorkspaceStore } from "@/lib/workspace-store";
+import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import {
   closestCenter,
   DndContext,
@@ -19,15 +19,14 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import { useRouter } from "@tanstack/react-router";
 import { Pin } from "lucide-react";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 
-export function TabBar() {
-  const tabs = useWorkspaceStore((s) => s.tabs);
-  const pinned = useWorkspaceStore((s) => s.pinned);
-  const activeFile = useWorkspaceStore((s) => s.activeFile);
-  const router = useRouter();
+const EMPTY: string[] = [];
+
+export function TabBar({ groupId }: { groupId: string }) {
+  const tabs = useWorkspaceStore((s) => s.groups[groupId]?.tabs ?? EMPTY);
+  const pinned = useWorkspaceStore((s) => s.groups[groupId]?.pinned ?? EMPTY);
   const [dragged, setDragged] = useState<string | null>(null);
   const draggedPinned = dragged !== null && pinned.includes(dragged);
   const sensors = useSensors(
@@ -36,16 +35,6 @@ export function TabBar() {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
-
-  useEffect(() => {
-    const target =
-      activeFile && isPageTab(activeFile) ? pageRoute(activeFile) : "/";
-    if (router.state.location.pathname !== target) {
-      router.history.push(target);
-    }
-  }, [activeFile, router]);
-
-  if (tabs.length === 0) return null;
 
   const nameCounts = new Map<string, number>();
   for (const t of tabs) {
@@ -63,6 +52,7 @@ export function TabBar() {
     setDragged(null);
     const { active, over } = e;
     if (!over || active.id === over.id) return;
+    store().focusGroup(groupId);
     const s = store();
     const path = String(active.id);
     const to = s.tabs.indexOf(String(over.id));
@@ -74,6 +64,8 @@ export function TabBar() {
     s.moveTab(path, to);
   }
 
+  if (tabs.length === 0) return null;
+
   return (
     <DndContext
       sensors={sensors}
@@ -83,7 +75,7 @@ export function TabBar() {
       onDragEnd={handleDragEnd}
       onDragCancel={() => setDragged(null)}
     >
-      <div className="flex h-9 shrink-0 items-center gap-0.5 overflow-x-auto overflow-y-hidden border-b border-border/60 bg-sidebar px-2">
+      <div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto overflow-y-hidden">
         <SortableContext items={tabs} strategy={horizontalListSortingStrategy}>
           {tabs.map((path, i) => {
             const prevPinned = i > 0 && pinned.includes(tabs[i - 1]);
@@ -97,7 +89,7 @@ export function TabBar() {
                     aria-hidden
                   />
                 )}
-                <Tab path={path} showDir={showDir(path)} />
+                <Tab groupId={groupId} path={path} showDir={showDir(path)} />
               </Fragment>
             );
           })}

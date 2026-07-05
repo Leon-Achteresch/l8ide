@@ -1,12 +1,13 @@
 import { collapseAll, refreshTree } from "@/components/file-tree";
+import { ProjectLogo } from "@/components/project-logo";
 import { Button } from "@/components/ui/button";
 import { basename } from "@/lib/fs-move";
-import { ChevronsDownUp, FolderOpen, RefreshCw } from "lucide-react";
+import { ChevronsDownUp, RefreshCw } from "lucide-react";
 
 export function FileTreeHeader({ rootPath }: { rootPath: string }) {
   return (
     <div className="flex shrink-0 items-center gap-2 border-b bg-muted/20 px-2 py-1.5">
-      <FolderOpen className="size-3.5 shrink-0 text-muted-foreground" />
+      <ProjectLogo rootPath={rootPath} />
       <span
         className="min-w-0 flex-1 truncate text-sm font-medium"
         title={basename(rootPath)}

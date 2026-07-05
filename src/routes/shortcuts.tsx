@@ -11,7 +11,6 @@ import {
 } from "@/lib/hotkeys";
 import { useHotkeyRecording } from "@/lib/hotkey-recording";
 import { cn } from "@/lib/utils";
-import { pageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import {
   formatForDisplay,
   normalizeHotkey,
@@ -27,17 +26,13 @@ export const Route = createFileRoute("/shortcuts")({
 
 const GROUPS = [...new Set(COMMANDS.map((c) => c.group))];
 
-function ShortcutsPage() {
+export function ShortcutsPage() {
   const overrides = useHotkeySettings((s) => s.overrides);
   const resetAll = useHotkeySettings((s) => s.resetAll);
   const setOverride = useHotkeySettings((s) => s.setOverride);
   const setRecording = useHotkeyRecording((s) => s.setRecording);
   const [editing, setEditing] = useState<string | null>(null);
   const editingRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    useWorkspaceStore.getState().openFile(pageTab("/shortcuts"));
-  }, []);
 
   useEffect(() => {
     return () => useHotkeyRecording.getState().setRecording(false);

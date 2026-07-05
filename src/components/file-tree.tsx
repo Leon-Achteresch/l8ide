@@ -12,6 +12,7 @@ import { useCommandHotkeys } from "@/lib/hotkeys";
 import { basename, canMove, dragRoots, parentDir } from "@/lib/fs-move";
 import { cn } from "@/lib/utils";
 import { refreshFileIndex } from "@/lib/file-index";
+import { useProjectLogoStore } from "@/lib/project-logo-store";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { CollisionPriority } from "@dnd-kit/abstract";
 import { pointerIntersection } from "@dnd-kit/collision";
@@ -242,6 +243,7 @@ export function collapseAll() {
 export function refreshTree() {
 	useTreeStore.getState().refresh();
 	refreshFileIndex();
+	useProjectLogoStore.getState().invalidate();
 }
 
 function EntryIcon({ entry, open }: { entry: Entry; open?: boolean }) {

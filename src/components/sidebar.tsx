@@ -1,10 +1,44 @@
-import { FileTree } from "@/components/file-tree";
-import { FileTreeHeader } from "@/components/file-tree-header";
+import { FileTree, collapseAll, refreshTree } from "@/components/file-tree";
 import { SearchPanel } from "@/components/search-panel/search-panel";
 import { SidebarActions } from "@/components/sidebar-actions";
+import { Button } from "@/components/ui/button";
+import { basename } from "@/lib/fs-move";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
+import { ChevronsDownUp, RefreshCw } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+
+function FileTreeHeader({ rootPath }: { rootPath: string }) {
+	return (
+		<div className="group flex shrink-0 items-center gap-1 px-2 py-1">
+			<span className="min-w-0 flex-1 truncate text-xs font-medium uppercase tracking-wide text-muted-foreground">
+				{basename(rootPath)}
+			</span>
+			<div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+				<Button
+					type="button"
+					variant="ghost"
+					size="icon-sm"
+					className="text-muted-foreground hover:text-foreground"
+					onClick={collapseAll}
+					title="Alle einklappen"
+				>
+					<ChevronsDownUp />
+				</Button>
+				<Button
+					type="button"
+					variant="ghost"
+					size="icon-sm"
+					className="text-muted-foreground hover:text-foreground"
+					onClick={refreshTree}
+					title="Aktualisieren"
+				>
+					<RefreshCw />
+				</Button>
+			</div>
+		</div>
+	);
+}
 
 export function Sidebar() {
 	const rootPath = useWorkspaceStore((s) => s.rootPath);

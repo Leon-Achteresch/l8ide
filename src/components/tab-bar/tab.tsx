@@ -14,13 +14,22 @@ import { CSS } from "@dnd-kit/utilities";
 import { Pin, X } from "lucide-react";
 import { motion } from "motion/react";
 
-export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
+export function Tab({
+  groupId,
+  path,
+  showDir,
+}: {
+  groupId: string;
+  path: string;
+  showDir: boolean;
+}) {
   const isPage = isPageTab(path);
   const name = tabName(path);
   const dir = isPage ? undefined : parentDir(path);
-  const isActive = useWorkspaceStore((s) => s.activeFile === path);
-  const isPinned = useWorkspaceStore((s) => s.pinned.includes(path));
-  const isLast = useWorkspaceStore((s) => s.tabs[s.tabs.length - 1] === path);
+  const group = useWorkspaceStore((s) => s.groups[groupId]);
+  const isActive = group?.activeFile === path;
+  const isPinned = group?.pinned.includes(path) ?? false;
+  const isLast = group?.tabs[group.tabs.length - 1] === path;
   const tabIcons = useWorkspaceStore((s) => s.tabIcons);
   const {
     attributes,
@@ -30,6 +39,11 @@ export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
     transition,
     isDragging,
   } = useSortable({ id: path });
+
+  function act(fn: (s: ReturnType<typeof store>) => void) {
+    store().focusGroup(groupId);
+    fn(store());
+  }
 
   function copyRelativePath() {
     const root = store().rootPath;
@@ -48,9 +62,9 @@ export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
         style={{ transform: CSS.Transform.toString(transform), transition }}
         {...attributes}
         {...listeners}
-        onClick={() => store().setActiveFile(path)}
+        onClick={() => act((s) => s.setActiveFile(path))}
         onAuxClick={(e) => {
-          if (e.button === 1 && !isPinned) store().closeTab(path);
+          if (e.button === 1 && !isPinned) act((s) => s.closeTab(path));
         }}
         className={cn(
           "group",
@@ -61,7 +75,7 @@ export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
       >
         {isActive && (
           <motion.span
-            layoutId="tab-bar-indicator"
+            layoutId={`tab-bar-indicator-${groupId}`}
             transition={TAB_SPRING}
             className="absolute inset-0 -z-10 rounded-md bg-background shadow-sm ring-1 ring-foreground/8"
             aria-hidden
@@ -79,7 +93,7 @@ export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
             aria-label="Unpin tab"
             onClick={(e) => {
               e.stopPropagation();
-              store().togglePin(path);
+              act((s) => s.togglePin(path));
             }}
             className="shrink-0 rounded p-0.5 text-muted-foreground transition-colors hover:bg-foreground/8 hover:text-foreground"
           >
@@ -98,7 +112,7 @@ export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
             aria-label="Close tab"
             onClick={(e) => {
               e.stopPropagation();
-              store().closeTab(path);
+              act((s) => s.closeTab(path));
             }}
             className={cn(
               "ml-0.5 shrink-0 rounded p-0.5 text-muted-foreground transition-all duration-150 hover:bg-foreground/8 hover:text-foreground",
@@ -110,23 +124,23 @@ export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
         )}
       </ContextMenuTrigger>
       <ContextMenuContent className="min-w-48">
-        <ContextMenuItem onClick={() => store().closeTab(path)}>
+        <ContextMenuItem onClick={() => act((s) => s.closeTab(path))}>
           Close
         </ContextMenuItem>
-        <ContextMenuItem onClick={() => store().closeOthers(path)}>
+        <ContextMenuItem onClick={() => act((s) => s.closeOthers(path))}>
           Close Others
         </ContextMenuItem>
         <ContextMenuItem
           disabled={isLast}
-          onClick={() => store().closeToRight(path)}
+          onClick={() => act((s) => s.closeToRight(path))}
         >
           Close to the Right
         </ContextMenuItem>
-        <ContextMenuItem onClick={() => store().closeAll()}>
+        <ContextMenuItem onClick={() => act((s) => s.closeAll())}>
           Close All
         </ContextMenuItem>
         <ContextMenuSeparator />
-        <ContextMenuItem onClick={() => store().togglePin(path)}>
+        <ContextMenuItem onClick={() => act((s) => s.togglePin(path))}>
           {isPinned ? "Unpin" : "Pin"}
         </ContextMenuItem>
         {!isPage && (
