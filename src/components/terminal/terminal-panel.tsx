@@ -30,7 +30,7 @@ function TerminalView({ id, visible }: { id: number; visible: boolean }) {
   return (
     <div
       ref={ref}
-      className={cn("absolute inset-0 overflow-hidden pl-2 pt-1", !visible && "invisible")}
+      className={cn("absolute inset-0 overflow-hidden", !visible && "invisible")}
     />
   );
 }
