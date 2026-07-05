@@ -40,15 +40,19 @@ export function AppHeader() {
         <AppHeaderBranch />
       </div>
 
-      <AppHeaderTitle />
-
-      <div className="flex items-center">
+      <div
+        className="ml-auto flex items-center"
+        style={{ WebkitAppRegion: "no-drag" } as CSSProperties}
+      >
         <AppHeaderRun />
+
+        <div className="mx-0.5 h-4 w-px shrink-0 bg-border/60" aria-hidden />
+
+        <AppHeaderNav />
+        {IS_WINDOWS && <WindowControls />}
       </div>
 
-      <AppHeaderNav />
-
-      {IS_WINDOWS && <WindowControls />}
+      <AppHeaderTitle />
     </header>
   );
 }
