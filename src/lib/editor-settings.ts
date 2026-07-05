@@ -15,6 +15,8 @@ type EditorSettings = {
   renderWhitespace: WhitespaceRender;
   renderControlCharacters: boolean;
   semanticHighlighting: boolean;
+  stickyScroll: boolean;
+  breadcrumbs: boolean;
   setWordWrap: (v: boolean) => void;
   setWordWrapColumn: (v: number) => void;
   setFontLigatures: (v: boolean) => void;
@@ -24,6 +26,8 @@ type EditorSettings = {
   setRenderWhitespace: (v: WhitespaceRender) => void;
   setRenderControlCharacters: (v: boolean) => void;
   setSemanticHighlighting: (v: boolean) => void;
+  setStickyScroll: (v: boolean) => void;
+  setBreadcrumbs: (v: boolean) => void;
 };
 
 export const useEditorSettings = create<EditorSettings>()(
@@ -38,6 +42,8 @@ export const useEditorSettings = create<EditorSettings>()(
       renderWhitespace: "selection",
       renderControlCharacters: true,
       semanticHighlighting: true,
+      stickyScroll: true,
+      breadcrumbs: true,
       setWordWrap: (wordWrap) => set({ wordWrap }),
       setWordWrapColumn: (wordWrapColumn) =>
         set({ wordWrapColumn: Math.max(0, Math.min(400, Math.round(wordWrapColumn))) }),
@@ -50,6 +56,8 @@ export const useEditorSettings = create<EditorSettings>()(
         set({ renderControlCharacters }),
       setSemanticHighlighting: (semanticHighlighting) =>
         set({ semanticHighlighting }),
+      setStickyScroll: (stickyScroll) => set({ stickyScroll }),
+      setBreadcrumbs: (breadcrumbs) => set({ breadcrumbs }),
     }),
     { name: "editor-settings" },
   ),
@@ -70,6 +78,7 @@ export function toMonacoOptions(s: EditorSettings): editor.IEditorOptions {
     },
     renderWhitespace: s.renderWhitespace,
     renderControlCharacters: s.renderControlCharacters,
+    stickyScroll: { enabled: s.stickyScroll },
   };
   (opts as Record<string, unknown>)["semanticHighlighting.enabled"] =
     s.semanticHighlighting;

@@ -6,6 +6,9 @@ import { useTerminalStore } from "@/lib/terminal-store";
 import { toggleFullscreen, useViewStore } from "@/lib/view-store";
 import { isPageTab, pageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { useFileSearchStore } from "@/components/file-search";
+import { useCommandPalette } from "@/components/command-palette";
+import { setCommandRegistry } from "@/lib/command-registry";
+import { useNavHistory } from "@/lib/nav-history";
 import { open } from "@tauri-apps/plugin-dialog";
 import { useTheme } from "next-themes";
 import { SEARCH_INPUT_ID } from "@/components/search-panel/search-panel";
@@ -31,7 +34,8 @@ export function AppHotkeys() {
 
   useModZoomInHotkey(textEditorActive);
 
-  useCommandHotkeys({
+  const handlers: Record<string, () => void> = {
+    "command.palette": () => useCommandPalette.getState().setOpen(true),
     "sidebar.toggle": () => useWorkspaceStore.getState().toggleSidebar(),
     "folder.open": async () => {
       const selected = await open({ directory: true, multiple: false });
@@ -44,6 +48,7 @@ export function AppHotkeys() {
     "shortcuts.open": () =>
       useWorkspaceStore.getState().openFile(pageTab("/shortcuts")),
     "file.search": () => useFileSearchStore.getState().setOpen(true),
+    "symbol.workspace": () => useFileSearchStore.getState().openWith("#"),
     "search.workspace": () => {
       const s = useWorkspaceStore.getState();
       s.setSidebarMode("Search");
@@ -104,12 +109,16 @@ export function AppHotkeys() {
       const s = useWorkspaceStore.getState();
       s.closeGroup(s.activeGroupId);
     },
+    "nav.back": () => useNavHistory.getState().back(),
+    "nav.forward": () => useNavHistory.getState().forward(),
     "view.zen": () => useViewStore.getState().toggleZen(),
     "view.centered": () => useViewStore.getState().toggleCentered(),
     "view.fullscreen": () => toggleFullscreen(),
-  },
-  undefined,
-  {
+  };
+
+  setCommandRegistry(handlers);
+
+  useCommandHotkeys(handlers, undefined, {
     "editor.zoomIn": { preventDefault: true, enabled: textEditorActive },
     "editor.zoomOut": { preventDefault: true, enabled: textEditorActive },
     "editor.zoomReset": { preventDefault: true, enabled: textEditorActive },

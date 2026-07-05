@@ -26,15 +26,15 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 
 * [x] **Kommentar-Toggle**: Zeilen- (Cmd+/) und Blockkommentare (Shift+Alt+A)
 
-* [ ] **Groß-/Kleinschreibung transformieren**: Uppercase, Lowercase, Title Case, Snake Case, Camel Case
+* [x] **Groß-/Kleinschreibung transformieren**: Upper, Lower, Title, Snake, Kebab — Monaco-Aktionen über die Befehlspalette (Cmd+Shift+P)
 
-* [ ] **Sortieren von Zeilen**: Aufsteigend/absteigend
+* [x] **Sortieren von Zeilen**: Aufsteigend/absteigend über die Befehlspalette
 
-* [ ] **Whitespace-Handling**: Trailing Whitespace anzeigen/entfernen, Render Whitespace
+* [x] **Whitespace-Handling**: Render Whitespace vorhanden; nachgestellte Leerzeichen entfernen über die Befehlspalette (`trimTrailingWhitespace`)
 
 * [x] **Emmet**: Integrierte Abkürzungs-Expansion für HTML/CSS (z.B. `ul>li*5`)
 
-* [ ] **Column Edit Mode**
+* [x] **Column Edit Mode**: entspricht der Box-Selection (Shift+Alt+Drag) mit Multi-Cursor-Bearbeitung
 
 * [x] **Undo/Redo mit Cursor-Historie**
 
@@ -66,29 +66,29 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 
 * [x] **Go to Type Definition**
 
-* [ ] **Go to Implementation**
+* [x] **Go to Implementation**: Monaco `goToImplementation` (Cmd+F12, Rechtsklick, Befehlspalette) über den TS-Language-Service
 
-* [ ] **Go to References / Find All References** mit References-View
+* [x] **Go to References / Find All References**: Monaco Referenz-Peek (Shift+F12, Rechtsklick, Befehlspalette)
 
-* [ ] **Go to Symbol in File** (Cmd+Shift+O) mit Gruppierung nach Kategorie
+* [x] **Go to Symbol in File** (Cmd+Shift+O): Monaco `quickOutline`, auch über die Befehlspalette
 
-* [ ] **Go to Symbol in Workspace** (Cmd+T)
+* [x] **Go to Symbol in Workspace** (Cmd+T): Quick-Open `#`-Modus, Symbole projektweit via TS-Worker `getNavigateToItems` (`workspace-symbols.ts`)
 
-* [ ] **Go to Line/Column** (Ctrl+G)
+* [x] **Go to Line/Column**: Monaco `gotoLine` über die Befehlspalette
 
-* [ ] **Breadcrumbs**: Pfad + Symbolhierarchie über dem Editor, navigierbar
+* [x] **Breadcrumbs**: Pfad-Segmente + Symbolkette an der Cursorposition über dem Editor, Symbol-Klick springt zur Stelle; abschaltbar in den Einstellungen (`breadcrumbs.tsx`, `symbolChainAt`)
 
-* [ ] **Outline-View**: Symbolbaum der aktuellen Datei in der Sidebar
+* [x] **Outline-View**: Symbolbaum der aktuellen Datei in der Sidebar (eigener „Outline"-Tab), kollabierbar, Klick springt zur Stelle; Symbole via TS-Worker `getNavigationTree` (`outline.ts`, `outline-panel.tsx`)
 
 * [x] **Bracket Matching + Jump to Bracket**
 
-* [ ] **Navigationshistorie**: Zurück/Vorwärts durch Cursor-Positionen (Ctrl+-/Ctrl+Shift+-)
+* [x] **Navigationshistorie**: Zurück/Vorwärts durch Cursor-Positionen (Ctrl+-/Ctrl+Shift+-, auch Befehlspalette); koalesziert nahe Positionen, dateiübergreifend (`nav-history.ts`, `nav-history-core.ts`)
 
 * [ ] **Call Hierarchy**: Eingehende/ausgehende Aufrufe eines Symbols
 
 * [ ] **Type Hierarchy**: Vererbungshierarchie
 
-* [ ] **Sticky Scroll**: Aktuelle Scope-Header (Funktion/Klasse) bleiben oben kleben
+* [x] **Sticky Scroll**: Aktuelle Scope-Header bleiben oben kleben (Monaco `stickyScroll`, abschaltbar in den Einstellungen)
 
 * [ ] **Minimap**: Verkleinerte Code-Übersicht mit Highlight-Markern (aktuell deaktiviert)
 
@@ -186,15 +186,15 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Tabs**: Öffnen, Schließen, Pinning, Drag\&Drop, Umsortieren, Mod+1–9
 
-* [ ] **Preview-Tabs**: Kursiv, wiederverwendet beim Einzelklick
+* [x] **Preview-Tabs**: Kursiv dargestellt, Einzelklick verwendet den Preview-Tab wieder, Doppelklick/Bearbeiten fixiert ihn (`preview` pro Gruppe, `openPreview`/`promoteTab`)
 
 * [ ] **Tab-Größenmodi & Wheel-Navigation**
 
-* [ ] **Zen Mode**: Ablenkungsfreier Vollbildmodus
+* [x] **Zen Mode**: Ablenkungsfreier Vollbildmodus (Mod+Alt+Z, `view-store`)
 
-* [ ] **Centered Layout**
+* [x] **Centered Layout** (Mod+Alt+C, `view-store`)
 
-* [ ] **Fullscreen-Modus**
+* [x] **Fullscreen-Modus** (F11, Tauri `setFullscreen`)
 
 * [x] **Neues App-Fenster**: Zweites Fenster via Tauri WebviewWindow
 
@@ -206,11 +206,11 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 ### 2.2 Kommando-Zugriff
 
-* [ ] **Command Palette** (Cmd+Shift+P): Alle Befehle durchsuchbar
+* [x] **Command Palette** (Cmd+Shift+P / F1): Alle App-Befehle + Editor-Aktionen (Transform Case, Sortieren, Trim, Go to Line) durchsuchbar mit Shortcut-Anzeige (`command-palette.tsx`)
 
 * [x] **Quick Open (Dateien)** (Cmd+P): Fuzzy-Dateisuche
 
-* [ ] **Quick Open (Modifikatoren)**: `@` Symbole, `#` Workspace-Symbole, `:` Zeile, `?` Hilfe
+* [x] **Quick Open (Modifikatoren)**: `@` Symbole (aktuelle Datei via Outline), `#` Workspace-Symbole, `:` Zeile, `?` Hilfe — im Cmd+P-Palette (`file-search.tsx`)
 
 * [x] **Keyboard Shortcuts Editor**: GUI mit Overrides und Konflikterkennung
 
@@ -228,9 +228,9 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Datei-Dekorationen (Icons)**: Datei- und Ordner-Icons nach Typ
 
-* [ ] **Datei-Dekorationen (Git/Fehler)**: Git-Status, Fehler-Badges, Farben
+* [x] **Datei-Dekorationen (Git/Fehler)**: Git-Status färbt Datei-/Ordnernamen + Buchstaben-Badge (M/A/D/R/U/!), Fehler-Badges bestehen; Quelle `git-store` (`git-decorations.ts`, `git-status-letter.ts`)
 
-* [ ] **Open Editors-Sektion**
+* [x] **Open Editors-Sektion**: einklappbare Liste offener Editoren über dem Dateibaum, aktiver Eintrag hervorgehoben, Klick fokussiert, X schließt; gruppiert bei Splits (`open-editors.tsx`)
 
 * [ ] **Timeline-View**: Lokale Historie + Git-Historie pro Datei
 

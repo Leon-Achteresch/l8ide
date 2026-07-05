@@ -12,6 +12,7 @@ import { useCommandHotkeys } from "@/lib/hotkeys";
 import { basename, canMove, dragRoots, parentDir } from "@/lib/fs-move";
 import { cn } from "@/lib/utils";
 import { addPathsToGitignore } from "@/lib/gitignore";
+import { useGitDeco } from "@/lib/git-decorations";
 import { refreshFileIndex } from "@/lib/file-index";
 import { useMarkersStore } from "@/lib/markers-store";
 import { useProjectLogoStore } from "@/lib/project-logo-store";
@@ -294,6 +295,7 @@ const TreeNode = memo(function TreeNode({
 	const counts = useMarkersStore((s) =>
 		(entry.isDirectory ? s.dirCounts : s.fileCounts)[entry.path],
 	);
+	const gitDeco = useGitDeco(entry.path, entry.isDirectory);
 	const isSelected = useTreeStore((s) => s.selected.includes(entry.path));
 	const isDropTarget = useTreeStore((s) => s.dropTarget === entry.path);
 	const isDragSource = useTreeStore((s) => s.dragging.includes(entry.path));
@@ -534,8 +536,15 @@ const TreeNode = memo(function TreeNode({
 								/>
 							) : (
 								<>
-									<span className="relative z-10 min-w-0 truncate">{entry.name}</span>
-									{counts && (counts.errors > 0 || counts.warnings > 0) && (
+									<span
+										className={cn(
+											"relative z-10 min-w-0 truncate",
+											gitDeco?.className,
+										)}
+									>
+										{entry.name}
+									</span>
+									{counts && (counts.errors > 0 || counts.warnings > 0) ? (
 										<span
 											className={cn(
 												"relative z-10 ml-auto shrink-0 rounded-full px-1.5 text-[10px] font-medium tabular-nums",
@@ -544,7 +553,16 @@ const TreeNode = memo(function TreeNode({
 										>
 											{counts.errors + counts.warnings}
 										</span>
-									)}
+									) : gitDeco?.letter ? (
+										<span
+											className={cn(
+												"relative z-10 ml-auto shrink-0 px-1.5 text-[11px] font-semibold tabular-nums",
+												gitDeco.className,
+											)}
+										>
+											{gitDeco.letter}
+										</span>
+									) : null}
 								</>
 							)}
 						</button>

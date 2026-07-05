@@ -3,6 +3,7 @@ import { AppHeader } from "@/components/app-header/app-header";
 import { AppHotkeys } from "@/components/app-hotkeys";
 import { BrowserPanel } from "@/components/browser/browser-panel";
 import { FileSearch } from "@/components/file-search";
+import { CommandPalette } from "@/components/command-palette";
 import { MonacoWorkspace } from "@/components/monaco-workspace";
 import { RefactorDialogs } from "@/components/refactor-preview-dialog";
 import { Sidebar } from "@/components/sidebar";
@@ -88,6 +89,7 @@ function RootComponent() {
       <AppHotkeys />
       <MonacoWorkspace />
       <FileSearch />
+      <CommandPalette />
       <div className="flex h-screen w-screen flex-col">
         {!zenMode && <AppHeader />}
         <div className="flex min-h-0 flex-1">

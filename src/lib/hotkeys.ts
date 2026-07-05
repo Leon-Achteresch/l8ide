@@ -18,6 +18,12 @@ export type Command = {
 
 export const COMMANDS: Command[] = [
   {
+    id: "command.palette",
+    label: "Befehlspalette",
+    group: "Allgemein",
+    hotkey: "Mod+Shift+P",
+  },
+  {
     id: "sidebar.toggle",
     label: "Sidebar ein-/ausblenden",
     group: "Allgemein",
@@ -118,7 +124,7 @@ export const COMMANDS: Command[] = [
     id: "tab.pin",
     label: "Tab anpinnen/lösen",
     group: "Tabs",
-    hotkey: "Mod+Shift+P",
+    hotkey: "Mod+Alt+P",
   },
   {
     id: "tab.next",
@@ -148,6 +154,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+P",
   },
   {
+    id: "symbol.workspace",
+    label: "Symbol im Workspace suchen",
+    group: "Allgemein",
+    hotkey: "Mod+T",
+  },
+  {
     id: "search.workspace",
     label: "Im Workspace suchen",
     group: "Allgemein",
@@ -158,6 +170,18 @@ export const COMMANDS: Command[] = [
     label: "Quellcodeverwaltung öffnen",
     group: "Allgemein",
     hotkey: "Mod+Shift+G",
+  },
+  {
+    id: "nav.back",
+    label: "Zurück navigieren",
+    group: "Navigation",
+    hotkey: "Control+-" as Hotkey,
+  },
+  {
+    id: "nav.forward",
+    label: "Vorwärts navigieren",
+    group: "Navigation",
+    hotkey: "Control+Shift+-" as Hotkey,
   },
   {
     id: "view.zen",
@@ -188,6 +212,7 @@ export const COMMANDS: Command[] = [
 
 export const COMMAND_HOTKEY_ALTERNATES: Partial<Record<string, Hotkey[]>> = {
   "editor.zoomIn": ["Mod+Shift+=" as Hotkey],
+  "command.palette": ["F1" as Hotkey],
 };
 
 export const NUMPAD_ADD_HOTKEY = "Mod+NumpadAdd";

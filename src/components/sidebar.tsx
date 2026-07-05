@@ -1,5 +1,7 @@
 import { FileTree } from "@/components/file-tree";
 import { FileTreeHeader } from "@/components/file-tree-header";
+import { OpenEditors } from "@/components/open-editors";
+import { OutlinePanel } from "@/components/outline-panel";
 import { ScmPanel } from "@/components/scm-panel/scm-panel";
 import { SearchPanel } from "@/components/search-panel/search-panel";
 import { SidebarActions } from "@/components/sidebar-actions";
@@ -80,6 +82,7 @@ export function Sidebar() {
                       className="flex min-h-0 flex-1 flex-col"
                     >
                       <FileTreeHeader rootPath={rootPath} />
+                      <OpenEditors />
                       <FileTree rootPath={rootPath} />
                     </motion.div>
                   ) : sidebarMode === "Search" ? (
@@ -93,6 +96,18 @@ export function Sidebar() {
                       className="flex min-h-0 flex-1 flex-col"
                     >
                       <SearchPanel rootPath={rootPath} />
+                    </motion.div>
+                  ) : sidebarMode === "Outline" ? (
+                    <motion.div
+                      key="outline"
+                      variants={MODE_VARIANTS}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                      className="flex min-h-0 flex-1 flex-col"
+                    >
+                      <OutlinePanel />
                     </motion.div>
                   ) : (
                     <motion.div

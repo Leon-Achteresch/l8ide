@@ -74,6 +74,22 @@ class RefactorTsWorker extends TypeScriptWorker {
     }
   }
 
+  async getNavigateToItems(
+    searchValue: string,
+    maxResultCount?: number,
+  ): Promise<ts.NavigateToItem[]> {
+    try {
+      return this._languageService.getNavigateToItems(
+        searchValue,
+        maxResultCount ?? 256,
+        undefined,
+        true,
+      );
+    } catch {
+      return [];
+    }
+  }
+
   async getEditsForFileRename(
     oldFilePath: string,
     newFilePath: string,

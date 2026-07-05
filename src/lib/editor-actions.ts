@@ -24,6 +24,12 @@ export function saveActiveFile() {
   if (model) saveModel(model);
 }
 
+export function runEditorAction(actionId: string) {
+  const editor = activeEditor();
+  editor?.focus();
+  void editor?.getAction(actionId)?.run();
+}
+
 export function undoActive() {
   activeEditor()?.trigger("editor-actions", "undo", null);
 }

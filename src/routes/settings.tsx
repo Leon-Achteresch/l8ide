@@ -167,6 +167,17 @@ function EditorDisplaySettings() {
           />
         </DisplayRow>
 
+        <DisplayRow label="Sticky Scroll">
+          <Switch
+            checked={s.stickyScroll}
+            onCheckedChange={s.setStickyScroll}
+          />
+        </DisplayRow>
+
+        <DisplayRow label="Breadcrumbs">
+          <Switch checked={s.breadcrumbs} onCheckedChange={s.setBreadcrumbs} />
+        </DisplayRow>
+
         <DisplayRow label="Zeilenumbruch (Word Wrap)">
           <Switch checked={s.wordWrap} onCheckedChange={s.setWordWrap} />
         </DisplayRow>

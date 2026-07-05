@@ -13,12 +13,11 @@ import { ideMonacoTheme } from "@/lib/ide-theme";
 import { formatAndSave, usePrettierSettings } from "@/lib/prettier-format";
 import { registerEditorRefactors } from "@/lib/ts-refactor";
 import { useWorkspaceStore } from "@/lib/workspace-store";
-import {
-  revealInEditor,
-  takePendingReveal,
-} from "@/lib/monaco-navigation";
-import { monacoUriForPath } from "@/lib/monaco-uri";
+import { revealInEditor, takePendingReveal } from "@/lib/monaco-navigation";
+import { monacoUriForPath, pathFromMonacoUri } from "@/lib/monaco-uri";
+import { useNavHistory } from "@/lib/nav-history";
 import { MarkdownRichEditor } from "@/components/markdown-rich-editor";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -103,6 +102,7 @@ function TextEditor({
 }) {
   const [file, setFile] = useState<OpenFile | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [editor, setEditor] = useState<monaco.editor.ICodeEditor | null>(null);
   const editorRef = useRef<monaco.editor.ICodeEditor | null>(null);
   const { resolvedTheme } = useTheme();
   const fontSize = useEditorZoom((s) => s.fontSize);
@@ -149,54 +149,78 @@ function TextEditor({
   }
 
   return (
-    <Editor
-      path={file.path}
-      defaultValue={file.content}
-      theme={ideMonacoTheme(resolvedTheme === "dark")}
-      options={{
-        ...displayOptions,
-        fontSize,
-        minimap: { enabled: false },
-        automaticLayout: true,
-        links: true,
-        inlayHints: { enabled: "on" },
-        formatOnPaste,
-        formatOnType,
-      }}
-      onMount={(editor) => {
-        editorRef.current = editor;
-        onEditor?.(editor);
-        editor.onDidDispose(() => onEditor?.(null));
-        registerEditorRefactors(editor, monaco);
-        const model = editor.getModel();
-        if (model && usePrettierSettings.getState().editorConfig) {
-          void applyEditorConfig(model);
-        }
-        const target = takePendingReveal(path);
-        if (target) revealInEditor(editor, target);
+    <div className="flex h-full w-full flex-col">
+      <Breadcrumbs path={path} editor={editor} />
+      <div className="relative min-h-0 flex-1">
+        <Editor
+          path={file.path}
+          defaultValue={file.content}
+          theme={ideMonacoTheme(resolvedTheme === "dark")}
+          options={{
+            ...displayOptions,
+            fontSize,
+            minimap: { enabled: false },
+            automaticLayout: true,
+            links: true,
+            inlayHints: { enabled: "on" },
+            formatOnPaste,
+            formatOnType,
+          }}
+          onMount={(editor) => {
+            editorRef.current = editor;
+            setEditor(editor);
+            onEditor?.(editor);
+            editor.onDidDispose(() => {
+              onEditor?.(null);
+              setEditor(null);
+            });
+            registerEditorRefactors(editor, monaco);
+            const model = editor.getModel();
+            if (model && usePrettierSettings.getState().editorConfig) {
+              void applyEditorConfig(model);
+            }
+            const target = takePendingReveal(path);
+            if (target) revealInEditor(editor, target);
 
-        const gutter = attachGitGutter(editor, monaco, path);
-        const unsubGutter = useGitStore.subscribe(() => void gutter.refresh());
-        let gutterTimer: ReturnType<typeof setTimeout> | undefined;
-        editor.onDidDispose(() => {
-          unsubGutter();
-          gutter.dispose();
-          clearTimeout(gutterTimer);
-        });
+            const gutter = attachGitGutter(editor, monaco, path);
+            const unsubGutter = useGitStore.subscribe(
+              () => void gutter.refresh(),
+            );
+            let gutterTimer: ReturnType<typeof setTimeout> | undefined;
+            editor.onDidDispose(() => {
+              unsubGutter();
+              gutter.dispose();
+              clearTimeout(gutterTimer);
+            });
 
-        let timer: ReturnType<typeof setTimeout> | undefined;
-        editor.onDidChangeModelContent(() => {
-          useWorkspaceStore.getState().promoteTab(path);
-          clearTimeout(gutterTimer);
-          gutterTimer = setTimeout(() => void gutter.refresh(), 400);
-          const { autoSave, autoSaveDelay } = useWorkspaceStore.getState();
-          if (!autoSave) return;
-          const model = editor.getModel();
-          if (!model) return;
-          clearTimeout(timer);
-          timer = setTimeout(() => void formatAndSave(model), autoSaveDelay);
-        });
-      }}
-    />
+            editor.onDidChangeCursorPosition((e) => {
+              const model = editor.getModel();
+              if (!model) return;
+              const p = pathFromMonacoUri(model.uri);
+              if (p)
+                useNavHistory
+                  .getState()
+                  .record(p, e.position.lineNumber, e.position.column);
+            });
+
+            let timer: ReturnType<typeof setTimeout> | undefined;
+            editor.onDidChangeModelContent(() => {
+              useWorkspaceStore.getState().promoteTab(path);
+              clearTimeout(gutterTimer);
+              gutterTimer = setTimeout(() => void gutter.refresh(), 400);
+              const { autoSave, autoSaveDelay } = useWorkspaceStore.getState();
+              if (!autoSave) return;
+              const model = editor.getModel();
+              if (!model) return;
+              clearTimeout(timer);
+              timer = setTimeout(
+                () => void formatAndSave(model),
+                autoSaveDelay,
+              );
+            });
+          }}
+        />
+      </div>
+    </div>
   );
 }
