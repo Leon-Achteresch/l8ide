@@ -93,7 +93,7 @@ export const COMMANDS: Command[] = [
     id: "editor.splitDown",
     label: "Editor nach unten teilen",
     group: "Editor",
-    hotkey: "Mod+Shift+\\",
+    hotkey: "Mod+Shift+\\" as Hotkey,
   },
   {
     id: "editor.closeGroup",

@@ -78,6 +78,12 @@ type WorkspaceStore = {
   splitGroup: (direction: SplitDirection) => void;
   focusGroup: (id: string) => void;
   closeGroup: (id: string) => void;
+  moveTabToGroup: (
+    path: string,
+    fromId: string,
+    toId: string,
+    toIndex: number,
+  ) => void;
 };
 
 function move(arr: string[], path: string, to: number) {
@@ -306,6 +312,49 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
             groups,
             activeGroupId: nextId,
             ...loadGroup(groups[nextId]),
+          };
+        }),
+      moveTabToGroup: (path, fromId, toId, toIndex) =>
+        set((s) => {
+          const from = s.groups[fromId];
+          const to = s.groups[toId];
+          if (!from || !to || fromId === toId) return s;
+          const fi = from.tabs.indexOf(path);
+          const fromTabs = from.tabs.filter((t) => t !== path);
+          const fromPinned = from.pinned.filter((t) => t !== path);
+          const fromActive =
+            from.activeFile === path
+              ? (fromTabs[Math.min(fi, fromTabs.length - 1)] ?? null)
+              : from.activeFile;
+          const insertAt = Math.max(
+            to.pinned.length,
+            Math.min(toIndex, to.tabs.length),
+          );
+          const toTabs = to.tabs.includes(path)
+            ? to.tabs
+            : [...to.tabs.slice(0, insertAt), path, ...to.tabs.slice(insertAt)];
+          const target: GroupState = {
+            tabs: toTabs,
+            pinned: to.pinned,
+            activeFile: path,
+          };
+          const groups = { ...s.groups, [toId]: target };
+          let layout = s.layout;
+          if (fromTabs.length === 0 && collectLeaves(s.layout).length > 1) {
+            delete groups[fromId];
+            layout = removeLeaf(s.layout, fromId);
+          } else {
+            groups[fromId] = {
+              tabs: fromTabs,
+              pinned: fromPinned,
+              activeFile: fromActive,
+            };
+          }
+          return {
+            groups,
+            layout,
+            activeGroupId: toId,
+            ...loadGroup(target),
           };
         }),
     }),

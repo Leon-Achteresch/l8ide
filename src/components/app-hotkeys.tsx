@@ -89,6 +89,12 @@ export function AppHotkeys() {
       if (!textEditorActive) return;
       useEditorZoom.getState().reset();
     },
+    "editor.splitRight": () => useWorkspaceStore.getState().splitGroup("row"),
+    "editor.splitDown": () => useWorkspaceStore.getState().splitGroup("col"),
+    "editor.closeGroup": () => {
+      const s = useWorkspaceStore.getState();
+      s.closeGroup(s.activeGroupId);
+    },
   },
   undefined,
   {

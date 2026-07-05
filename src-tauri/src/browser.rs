@@ -35,22 +35,22 @@ pub fn browser_open(
         .as_ref()
         .window();
 
-    let nav = app.clone();
     let title = app.clone();
     let load = app.clone();
     let builder = WebviewBuilder::new(LABEL, WebviewUrl::External(target))
-        .on_navigation(move |u| {
-            let _ = nav.emit("browser-url", u.to_string());
-            true
-        })
+        .on_navigation(|_| true)
         .on_document_title_changed(move |_, t| {
             let _ = title.emit("browser-title", t);
         })
-        .on_page_load(move |_, payload| {
-            let started = matches!(payload.event(), PageLoadEvent::Started);
-            let _ = load.emit("browser-loading", started);
-            if !started {
-                let _ = load.emit("browser-url", payload.url().to_string());
+        .on_page_load(move |view, payload| match payload.event() {
+            PageLoadEvent::Started => {
+                let _ = load.emit("browser-loading", true);
+            }
+            PageLoadEvent::Finished => {
+                let _ = load.emit("browser-loading", false);
+                if let Ok(u) = view.url() {
+                    let _ = load.emit("browser-url", u.to_string());
+                }
             }
         });
 

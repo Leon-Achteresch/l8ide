@@ -1,4 +1,4 @@
-import { pageIcons, parentDir, store, TAB_SPRING, tabClass, tabName } from "@/components/tab-bar/lib";
+import { pageIcons, parentDir, store, TAB_SPRING, tabClass, tabDragId, tabName } from "@/components/tab-bar/lib";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -38,7 +38,7 @@ export function Tab({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: path });
+  } = useSortable({ id: tabDragId(groupId, path) });
 
   function act(fn: (s: ReturnType<typeof store>) => void) {
     store().focusGroup(groupId);

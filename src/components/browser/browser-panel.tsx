@@ -87,9 +87,15 @@ function BrowserPanelInner() {
     ro.observe(observed);
     window.addEventListener("resize", sync);
 
+    const isObscured = () =>
+      Array.from(document.querySelectorAll(OVERLAY_SELECTOR)).some((el) => {
+        if (el.closest(".monaco-editor")) return false;
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && r.height > 0;
+      });
     let visible = true;
     const applyVisibility = () => {
-      const next = !document.querySelector(OVERLAY_SELECTOR);
+      const next = !isObscured();
       if (next === visible) return;
       visible = next;
       void showBrowser(next);
