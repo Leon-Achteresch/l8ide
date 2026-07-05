@@ -40,6 +40,7 @@ export type GroupState = {
 
 type WorkspaceStore = {
   rootPath: string | null;
+  recentFolders: string[];
   sidebarWidth: number;
   sidebarOpen: boolean;
   fileIcons: boolean;
@@ -125,6 +126,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
   persist(
     (set) => ({
       rootPath: null,
+      recentFolders: [],
       sidebarWidth: 256,
       sidebarOpen: true,
       fileIcons: true,
@@ -183,7 +185,14 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
       nextId: 1,
       sidebarMode: "FileTree",
       setSidebarMode: (mode) => set({ sidebarMode: mode }),
-      setRootPath: (path) => set({ rootPath: path, ...freshGroups() }),
+      setRootPath: (path) =>
+        set((s) => ({
+          rootPath: path,
+          recentFolders: path
+            ? [path, ...s.recentFolders.filter((p) => p !== path)].slice(0, 8)
+            : s.recentFolders,
+          ...freshGroups(),
+        })),
       openFile: (path) =>
         set((s) =>
           withGroupSync(s, {
@@ -373,6 +382,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
           activeFile,
           hiddenNames: s.hiddenNames ?? [".git"],
           workspaceHidden: s.workspaceHidden ?? {},
+          recentFolders: s.recentFolders ?? [],
         };
         if (s.groups && s.layout && s.activeGroupId) {
           return { ...base, nextId: s.nextId ?? 1 };

@@ -88,12 +88,12 @@ export default function SvgPathMorphingDemo({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex h-dvh w-full items-center justify-center bg-white dark:bg-black">
+    <div className="flex h-dvh w-full items-center justify-center bg-background">
       <button
         type="button"
         onClick={() => setOpen((p) => !p)}
         aria-label={open ? "Close" : "Open"}
-        className="text-black dark:text-white"
+        className="text-foreground"
       >
         <SvgPathMorphing
           size={size}

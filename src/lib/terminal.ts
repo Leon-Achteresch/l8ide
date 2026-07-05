@@ -3,6 +3,7 @@ import { FitAddon } from "@xterm/addon-fit";
 import { WebglAddon } from "@xterm/addon-webgl";
 import { Terminal, type ITheme } from "@xterm/xterm";
 import "@xterm/xterm/css/xterm.css";
+import { ideSurfaceColors } from "@/lib/ide-theme";
 import { useTerminalStore } from "@/lib/terminal-store";
 
 type PtyEvent =
@@ -19,56 +20,56 @@ type TermSession = {
 
 const SHELL_NAMES = new Set(["zsh", "bash", "fish", "sh", "nu", "pwsh", "powershell.exe"]);
 
-const DARK_THEME: ITheme = {
-  background: "#181818",
-  foreground: "#cccccc",
-  cursor: "#cccccc",
-  selectionBackground: "#264f78",
-  black: "#000000",
+const ANSI_DARK: Omit<ITheme, "background" | "foreground" | "cursor" | "selectionBackground"> = {
+  black: "#1a1a1c",
   red: "#cd3131",
   green: "#0dbc79",
   yellow: "#e5e510",
   blue: "#2472c8",
   magenta: "#bc3fbc",
   cyan: "#11a8cd",
-  white: "#e5e5e5",
-  brightBlack: "#666666",
+  white: "#d0d0d2",
+  brightBlack: "#6e6e73",
   brightRed: "#f14c4c",
   brightGreen: "#23d18b",
   brightYellow: "#f5f543",
   brightBlue: "#3b8eea",
   brightMagenta: "#d670d6",
   brightCyan: "#29b8db",
-  brightWhite: "#e5e5e5",
+  brightWhite: "#ececee",
 };
 
-const LIGHT_THEME: ITheme = {
-  background: "#ffffff",
-  foreground: "#3b3b3b",
-  cursor: "#3b3b3b",
-  selectionBackground: "#add6ff",
-  black: "#000000",
+const ANSI_LIGHT: Omit<ITheme, "background" | "foreground" | "cursor" | "selectionBackground"> = {
+  black: "#3a3a3c",
   red: "#cd3131",
   green: "#107c10",
   yellow: "#949800",
   blue: "#0451a5",
   magenta: "#bc05bc",
   cyan: "#0598bc",
-  white: "#555555",
-  brightBlack: "#666666",
+  white: "#6e6e73",
+  brightBlack: "#a0a0a4",
   brightRed: "#cd3131",
   brightGreen: "#14ce14",
   brightYellow: "#b5ba00",
   brightBlue: "#0451a5",
   brightMagenta: "#bc05bc",
   brightCyan: "#0598bc",
-  brightWhite: "#a5a5a5",
+  brightWhite: "#a0a0a4",
 };
 
 function currentTheme(): ITheme {
-  return document.documentElement.classList.contains("dark")
-    ? DARK_THEME
-    : LIGHT_THEME;
+  const { background, foreground, selection } = ideSurfaceColors();
+  const ansi = document.documentElement.classList.contains("dark")
+    ? ANSI_DARK
+    : ANSI_LIGHT;
+  return {
+    ...ansi,
+    background,
+    foreground,
+    cursor: foreground,
+    selectionBackground: selection,
+  };
 }
 
 const sessions = new Map<number, TermSession>();

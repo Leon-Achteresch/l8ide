@@ -24,6 +24,7 @@ tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+base64 = "0.22"
 grep = "0.3"
 ignore = "0.4"
 regex = "1"

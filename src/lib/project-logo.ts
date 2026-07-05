@@ -1,3 +1,4 @@
+import { invoke } from "@tauri-apps/api/core";
 import { exists, readTextFile } from "@tauri-apps/plugin-fs";
 
 const IMAGE_EXT = /\.(png|jpe?g|gif|webp|svg|bmp|ico|avif)$/i;
@@ -146,6 +147,19 @@ async function fromCandidateList(root: string) {
   return null;
 }
 
+async function fromRepoFavicon(rootPath: string) {
+  try {
+    const dataUrl = await invoke<string | null>("read_repo_favicon", {
+      path: rootPath,
+    });
+    return dataUrl
+      ? ({ path: dataUrl } satisfies ProjectLogoPaths)
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function findProjectLogo(rootPath: string) {
   const fromConfig = await fromL8ideConfig(rootPath);
   if (fromConfig) return fromConfig;
@@ -159,7 +173,10 @@ export async function findProjectLogo(rootPath: string) {
   const listed = await fromCandidateList(rootPath);
   if (listed) return listed;
 
-  return fromPackageJson(rootPath);
+  const fromPackage = await fromPackageJson(rootPath);
+  if (fromPackage) return fromPackage;
+
+  return fromRepoFavicon(rootPath);
 }
 
 export function pickProjectLogo(

@@ -41,12 +41,14 @@ export function ProjectLogo({ rootPath, className }: ProjectLogoProps) {
     );
   }
 
+  const src = logo.startsWith("data:") ? logo : convertFileSrc(logo);
+
   return (
     <img
-      src={convertFileSrc(logo)}
+      src={src}
       alt=""
       onError={() => setBroken(true)}
-      className={cn("size-4 shrink-0 rounded-sm object-contain", className)}
+      className={cn("size-8 shrink-0 rounded-sm object-contain", className)}
     />
   );
 }

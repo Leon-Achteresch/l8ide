@@ -1,4 +1,5 @@
 mod browser;
+mod favicon;
 mod terminal;
 
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -343,7 +344,8 @@ pub fn run() {
             browser::browser_show,
             browser::browser_navigate,
             browser::browser_eval,
-            browser::browser_close
+            browser::browser_close,
+            favicon::read_repo_favicon
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

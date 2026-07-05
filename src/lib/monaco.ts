@@ -1,4 +1,5 @@
 import { loader } from "@monaco-editor/react";
+import { initIdeMonacoThemes } from "@/lib/ide-theme";
 import { initMonacoWorkspace } from "@/lib/monaco-workspace";
 import * as monaco from "monaco-editor";
 import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
@@ -30,5 +31,6 @@ self.MonacoEnvironment = {
 };
 
 initMonacoWorkspace();
+initIdeMonacoThemes();
 
 loader.config({ monaco });

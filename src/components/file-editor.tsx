@@ -4,6 +4,7 @@ import { readTextFile } from "@tauri-apps/plugin-fs";
 import * as monaco from "monaco-editor";
 import { useTheme } from "next-themes";
 import { useEditorZoom } from "@/lib/editor-zoom";
+import { ideMonacoTheme } from "@/lib/ide-theme";
 import { saveModel } from "@/lib/editor-actions";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import {
@@ -86,7 +87,7 @@ function TextEditor({ path }: { path: string }) {
     <Editor
       path={file.path}
       defaultValue={file.content}
-      theme={resolvedTheme === "dark" ? "vs-dark" : "light"}
+      theme={ideMonacoTheme(resolvedTheme === "dark")}
       options={{
         fontSize,
         minimap: { enabled: false },
