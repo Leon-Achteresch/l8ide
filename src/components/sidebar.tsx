@@ -1,5 +1,5 @@
 import { FileTree } from "@/components/file-tree";
-import { SearchPanel } from "@/components/search-panel";
+import { SearchPanel } from "@/components/search-panel/search-panel";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { AnimatePresence, motion } from "motion/react";

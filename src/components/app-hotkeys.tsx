@@ -3,11 +3,11 @@ import { useEditorZoom, useModZoomInHotkey } from "@/lib/editor-zoom";
 import { useCommandHotkeys } from "@/lib/hotkeys";
 import { isPageTab, pageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { useFileSearchStore } from "@/components/file-search";
-import { SEARCH_INPUT_ID } from "@/components/search-panel";
 import { open } from "@tauri-apps/plugin-dialog";
 import { writeTextFile } from "@tauri-apps/plugin-fs";
 import * as monaco from "monaco-editor";
 import { useTheme } from "next-themes";
+import { SEARCH_INPUT_ID } from "@/components/search-panel/search-panel";
 
 const IMAGE_EXTENSIONS = /\.(png|jpe?g|gif|webp|svg|bmp|ico|avif)$/i;
 

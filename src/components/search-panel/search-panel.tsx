@@ -1,5 +1,5 @@
-import { SearchFileGroup } from "@/components/search-file-group";
-import { SearchFilenameGroup } from "@/components/search-filename-group";
+import { SearchFileGroup } from "@/components/search-panel/search-file-group";
+import { SearchFilenameGroup } from "@/components/search-panel/search-filename-group";
 import { Badge } from "@/components/ui/badge";
 import {
   InputGroup,

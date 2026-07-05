@@ -1,4 +1,4 @@
-import { SearchMatchPreview } from "@/components/search-match-preview";
+import { SearchMatchPreview } from "@/components/search-panel/search-match-preview";
 import { fileIcon } from "@/lib/file-icons";
 import { openFileAt } from "@/lib/monaco-navigation";
 import { useSearchStore, type FileMatches } from "@/lib/search-store";
