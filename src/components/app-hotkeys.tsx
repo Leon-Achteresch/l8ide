@@ -2,6 +2,7 @@ import { formatActiveEditor, formatAndSaveActive } from "@/lib/prettier-format";
 import { useEditorZoom, useModZoomInHotkey } from "@/lib/editor-zoom";
 import { useCommandHotkeys } from "@/lib/hotkeys";
 import { useBrowserStore } from "@/lib/browser-store";
+import { useChatStore } from "@/lib/chat-store";
 import { useTerminalStore } from "@/lib/terminal-store";
 import { toggleFullscreen, useViewStore } from "@/lib/view-store";
 import { isPageTab, pageTab, useWorkspaceStore } from "@/lib/workspace-store";
@@ -64,6 +65,7 @@ export function AppHotkeys() {
     },
     "terminal.toggle": () => useTerminalStore.getState().toggle(),
     "browser.toggle": () => useBrowserStore.getState().toggle(),
+    "chat.toggle": () => useChatStore.getState().toggle(),
     "theme.toggle": () =>
       setTheme(resolvedTheme === "dark" ? "light" : "dark"),
     "editor.save": () => void formatAndSaveActive(),

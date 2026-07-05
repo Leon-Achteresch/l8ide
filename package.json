@@ -19,6 +19,10 @@
     "test:navhistory": "node scripts/test-nav-history.mjs",
     "test:trust": "node scripts/test-trust.mjs",
     "test:mdsync": "node scripts/test-markdown-sync.mjs",
+    "test:editengine": "node scripts/test-edit-engine.mjs",
+    "test:aitools": "node scripts/test-ai-tools.mjs",
+    "test:aiagent": "node scripts/test-ai-agent.mjs",
+    "test:aisse": "node scripts/test-ai-sse.mjs",
     "icons:generate": "node scripts/generate-icons.mjs",
     "preview": "vite preview",
     "tauri": "tauri"

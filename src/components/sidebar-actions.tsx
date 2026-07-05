@@ -1,15 +1,18 @@
 import { useBrowserStore } from "@/lib/browser-store";
+import { useChatStore } from "@/lib/chat-store";
 import { useMarkersStore, useProblemsPanel } from "@/lib/markers-store";
 import { useTerminalStore } from "@/lib/terminal-store";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
-import { CircleAlert, Globe, Terminal } from "lucide-react";
+import { CircleAlert, Globe, Sparkles, Terminal } from "lucide-react";
 
 export function SidebarActions() {
   const terminalOpen = useTerminalStore((s) => s.open);
   const toggleTerminal = useTerminalStore((s) => s.toggle);
   const browserOpen = useBrowserStore((s) => s.open);
   const toggleBrowser = useBrowserStore((s) => s.toggle);
+  const chatOpen = useChatStore((s) => s.open);
+  const toggleChat = useChatStore((s) => s.toggle);
   const problemsOpen = useProblemsPanel((s) => s.open);
   const toggleProblems = useProblemsPanel((s) => s.toggle);
   const problemCount = useMarkersStore(
@@ -41,6 +44,12 @@ export function SidebarActions() {
           label="Browser"
           active={browserOpen}
           onClick={toggleBrowser}
+        />
+        <DockButton
+          icon={Sparkles}
+          label="KI-Chat"
+          active={chatOpen}
+          onClick={toggleChat}
         />
       </div>
     </div>

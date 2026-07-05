@@ -1,0 +1,5190 @@
+[
+  {
+    "model": "ibm-granite/granite-4.1-8b",
+    "free": false,
+    "pricing": {
+      "prompt": 5e-8,
+      "completion": 1e-7
+    },
+    "tools": 3,
+    "quality": 1,
+    "tokensOut": 122,
+    "tokensIn": 1209,
+    "cost": 0.00007265,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 0
+      }
+    },
+    "avgMs": 217,
+    "total": 4
+  },
+  {
+    "model": "google/gemini-3.1-flash-lite",
+    "free": false,
+    "pricing": {
+      "prompt": 2.5e-7,
+      "completion": 0.0000015
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 104,
+    "tokensIn": 437,
+    "cost": 0.00026525,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 709,
+    "total": 5
+  },
+  {
+    "model": "poolside/laguna-xs.2",
+    "free": false,
+    "pricing": {
+      "prompt": 1e-7,
+      "completion": 2e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1082,
+    "tokensIn": 1461,
+    "cost": 0.0003217,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 459,
+    "total": 6
+  },
+  {
+    "model": "poolside/laguna-xs-2.1",
+    "free": false,
+    "pricing": {
+      "prompt": 6e-8,
+      "completion": 1.2e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1627,
+    "tokensIn": 1263,
+    "cost": 0.00026238,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 239,
+    "total": 6
+  },
+  {
+    "model": "inclusionai/ring-2.6-1t",
+    "free": false,
+    "pricing": {
+      "prompt": 7.5e-8,
+      "completion": 6.25e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 632,
+    "tokensIn": 1390,
+    "cost": 0.00047735,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1127,
+    "total": 6
+  },
+  {
+    "model": "minimax/minimax-m3",
+    "free": false,
+    "pricing": {
+      "prompt": 3e-7,
+      "completion": 0.0000012
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 628,
+    "tokensIn": 2259,
+    "cost": 0.0011409,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 2537,
+    "total": 6
+  },
+  {
+    "model": "poolside/laguna-m.1",
+    "free": false,
+    "pricing": {
+      "prompt": 2e-7,
+      "completion": 4e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1984,
+    "tokensIn": 1263,
+    "cost": 0.0009774,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 397,
+    "total": 6
+  },
+  {
+    "model": "qwen/qwen3.6-flash",
+    "free": false,
+    "pricing": {
+      "prompt": 1.875e-7,
+      "completion": 0.000001125
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 2550,
+    "tokensIn": 1427,
+    "cost": 0.0031363125,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 735,
+    "total": 6
+  },
+  {
+    "model": "inclusionai/ling-2.6-1t",
+    "free": false,
+    "pricing": {
+      "prompt": 7.5e-8,
+      "completion": 6.25e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 116,
+    "tokensIn": 1184,
+    "cost": 0.00014324,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1319,
+    "total": 5
+  },
+  {
+    "model": "deepseek/deepseek-v4-pro",
+    "free": false,
+    "pricing": {
+      "prompt": 4.35e-7,
+      "completion": 8.7e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 817,
+    "tokensIn": 1422,
+    "cost": 0.0033859212,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1579,
+    "total": 6
+  },
+  {
+    "model": "qwen/qwen3.6-35b-a3b",
+    "free": false,
+    "pricing": {
+      "prompt": 1.4e-7,
+      "completion": 0.000001
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 3153,
+    "tokensIn": 1526,
+    "cost": 0.0033666399999999997,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 753,
+    "total": 6
+  },
+  {
+    "model": "deepseek/deepseek-v4-flash",
+    "free": false,
+    "pricing": {
+      "prompt": 9e-8,
+      "completion": 1.8e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 644,
+    "tokensIn": 1410,
+    "cost": 0.000278208,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1535,
+    "total": 5
+  },
+  {
+    "model": "tencent/hy3-preview",
+    "free": false,
+    "pricing": {
+      "prompt": 6.3e-8,
+      "completion": 2.1e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 1178,
+    "tokensIn": 1200,
+    "cost": 0.00033579,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 0
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1712,
+    "total": 5
+  },
+  {
+    "model": "inclusionai/ling-2.6-flash",
+    "free": false,
+    "pricing": {
+      "prompt": 1e-8,
+      "completion": 3e-8
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 123,
+    "tokensIn": 1184,
+    "cost": 0.000015530000000000002,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 697,
+    "total": 5
+  },
+  {
+    "model": "stepfun/step-3.7-flash",
+    "free": false,
+    "pricing": {
+      "prompt": 2e-7,
+      "completion": 0.00000115
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 2871,
+    "tokensIn": 1303,
+    "cost": 0.0035622499999999994,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 4228,
+    "total": 6
+  },
+  {
+    "model": "qwen/qwen3.7-plus",
+    "free": false,
+    "pricing": {
+      "prompt": 3.2e-7,
+      "completion": 0.00000128
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 2348,
+    "tokensIn": 1427,
+    "cost": 0.00346208,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1244,
+    "total": 6
+  },
+  {
+    "model": "xiaomi/mimo-v2.5-pro",
+    "free": false,
+    "pricing": {
+      "prompt": 4.35e-7,
+      "completion": 8.7e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 978,
+    "tokensIn": 2827,
+    "cost": 0.0027370524,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1249,
+    "total": 6
+  },
+  {
+    "model": "arcee-ai/trinity-large-thinking",
+    "free": false,
+    "pricing": {
+      "prompt": 2.5e-7,
+      "completion": 8e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 928,
+    "tokensIn": 1259,
+    "cost": 0.00105715,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 477,
+    "total": 6
+  },
+  {
+    "model": "kwaipilot/kat-coder-pro-v2",
+    "free": false,
+    "pricing": {
+      "prompt": 3e-7,
+      "completion": 0.0000012
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 119,
+    "tokensIn": 1670,
+    "cost": 0.0006438000000000001,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 866,
+    "total": 5
+  },
+  {
+    "model": "google/gemma-4-26b-a4b-it",
+    "free": false,
+    "pricing": {
+      "prompt": 6e-8,
+      "completion": 3.3e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 110,
+    "tokensIn": 727,
+    "cost": 0.00012143,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 2130,
+    "total": 5
+  },
+  {
+    "model": "mistralai/mistral-small-2603",
+    "free": false,
+    "pricing": {
+      "prompt": 1.5e-7,
+      "completion": 6e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 105,
+    "tokensIn": 840,
+    "cost": 0.00014363999999999997,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 344,
+    "total": 5
+  },
+  {
+    "model": "openai/gpt-5.4-nano",
+    "free": false,
+    "pricing": {
+      "prompt": 2e-7,
+      "completion": 0.00000125
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 103,
+    "tokensIn": 500,
+    "cost": 0.00022875,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 386,
+    "total": 5
+  },
+  {
+    "model": "xiaomi/mimo-v2.5",
+    "free": false,
+    "pricing": {
+      "prompt": 1.05e-7,
+      "completion": 2.8e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 535,
+    "tokensIn": 2176,
+    "cost": 0.000314678,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1233,
+    "total": 6
+  },
+  {
+    "model": "rekaai/reka-edge",
+    "free": false,
+    "pricing": {
+      "prompt": 1e-7,
+      "completion": 1e-7
+    },
+    "tools": 2,
+    "quality": 1,
+    "tokensOut": 127,
+    "tokensIn": 1030,
+    "cost": 0.00011570000000000001,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 0
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 0
+      }
+    },
+    "avgMs": 1267,
+    "total": 3
+  },
+  {
+    "model": "inception/mercury-2",
+    "free": false,
+    "pricing": {
+      "prompt": 2.5e-7,
+      "completion": 7.5e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 741,
+    "tokensIn": 2614,
+    "cost": 0.00078265,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 265,
+    "total": 6
+  },
+  {
+    "model": "google/gemini-3.1-flash-lite-preview",
+    "free": false,
+    "pricing": {
+      "prompt": 2.5e-7,
+      "completion": 0.0000015
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 103,
+    "tokensIn": 438,
+    "cost": 0.00026399999999999997,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 709,
+    "total": 5
+  },
+  {
+    "model": "nvidia/nemotron-3-super-120b-a12b",
+    "free": false,
+    "pricing": {
+      "prompt": 8e-8,
+      "completion": 4.5e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 696,
+    "tokensIn": 1470,
+    "cost": 0.0004217,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 293,
+    "total": 6
+  },
+  {
+    "model": "google/gemma-4-31b-it",
+    "free": false,
+    "pricing": {
+      "prompt": 1.2e-7,
+      "completion": 3.5e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 355,
+    "tokensIn": 5094,
+    "cost": 0.0020549,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1523,
+    "total": 5
+  },
+  {
+    "model": "minimax/minimax-m2.7",
+    "free": false,
+    "pricing": {
+      "prompt": 1.8e-7,
+      "completion": 7.2e-7
+    },
+    "tools": 1,
+    "quality": 3,
+    "tokensOut": 1061,
+    "tokensIn": 572,
+    "cost": 0.00210385,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 0
+      },
+      "tool_result": {
+        "score": 0
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 3200,
+    "total": 4
+  },
+  {
+    "model": "bytedance-seed/seed-2.0-mini",
+    "free": false,
+    "pricing": {
+      "prompt": 1e-7,
+      "completion": 4e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1319,
+    "tokensIn": 1928,
+    "cost": 0.0007204,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 663,
+    "total": 6
+  },
+  {
+    "model": "qwen/qwen3.5-plus-20260420",
+    "free": false,
+    "pricing": {
+      "prompt": 3e-7,
+      "completion": 0.0000018
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 4483,
+    "tokensIn": 1427,
+    "cost": 0.008497499999999998,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 852,
+    "total": 6
+  },
+  {
+    "model": "bytedance-seed/seed-2.0-lite",
+    "free": false,
+    "pricing": {
+      "prompt": 2.5e-7,
+      "completion": 0.000002
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 764,
+    "tokensIn": 1841,
+    "cost": 0.00198825,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 2727,
+    "total": 6
+  },
+  {
+    "model": "qwen/qwen3.5-35b-a3b",
+    "free": false,
+    "pricing": {
+      "prompt": 1.4e-7,
+      "completion": 0.000001
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 2530,
+    "tokensIn": 1526,
+    "cost": 0.0031869725,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 563,
+    "total": 6
+  },
+  {
+    "model": "qwen/qwen3-coder-next",
+    "free": false,
+    "pricing": {
+      "prompt": 1.1e-7,
+      "completion": 8e-7
+    },
+    "tools": 3,
+    "quality": 1,
+    "tokensOut": 115,
+    "tokensIn": 1528,
+    "cost": 0.00036714,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 0
+      }
+    },
+    "avgMs": 624,
+    "total": 4
+  },
+  {
+    "model": "qwen/qwen3.5-27b",
+    "free": false,
+    "pricing": {
+      "prompt": 1.95e-7,
+      "completion": 0.00000156
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1925,
+    "tokensIn": 1427,
+    "cost": 0.0032812650000000002,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 686,
+    "total": 6
+  },
+  {
+    "model": "qwen/qwen3.5-flash-02-23",
+    "free": false,
+    "pricing": {
+      "prompt": 6.5e-8,
+      "completion": 2.6e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 3712,
+    "tokensIn": 1427,
+    "cost": 0.001057875,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 595,
+    "total": 6
+  },
+  {
+    "model": "upstage/solar-pro-3",
+    "free": false,
+    "pricing": {
+      "prompt": 1.5e-7,
+      "completion": 6e-7
+    },
+    "tools": 3,
+    "quality": 1,
+    "tokensOut": 173,
+    "tokensIn": 1714,
+    "cost": 0.00031338,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 0
+      }
+    },
+    "avgMs": 1081,
+    "total": 4
+  },
+  {
+    "model": "minimax/minimax-m2.5",
+    "free": false,
+    "pricing": {
+      "prompt": 1.2e-7,
+      "completion": 4.8e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1283,
+    "tokensIn": 1242,
+    "cost": 0.00138992,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 718,
+    "total": 6
+  },
+  {
+    "model": "qwen/qwen3.6-plus",
+    "free": false,
+    "pricing": {
+      "prompt": 3.25e-7,
+      "completion": 0.00000195
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 3486,
+    "tokensIn": 1427,
+    "cost": 0.007261475,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1205,
+    "total": 6
+  },
+  {
+    "model": "bytedance-seed/seed-1.6-flash",
+    "free": false,
+    "pricing": {
+      "prompt": 7.5e-8,
+      "completion": 3e-7
+    },
+    "tools": 2,
+    "quality": 3,
+    "tokensOut": 1987,
+    "tokensIn": 2057,
+    "cost": 0.000750375,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 0
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 393,
+    "total": 5
+  },
+  {
+    "model": "minimax/minimax-m2.1",
+    "free": false,
+    "pricing": {
+      "prompt": 3e-7,
+      "completion": 0.0000012
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1658,
+    "tokensIn": 1260,
+    "cost": 0.0027743999999999998,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 958,
+    "total": 6
+  },
+  {
+    "model": "nvidia/nemotron-3-nano-30b-a3b",
+    "free": false,
+    "pricing": {
+      "prompt": 5e-8,
+      "completion": 2e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1545,
+    "tokensIn": 1470,
+    "cost": 0.00040754,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 263,
+    "total": 6
+  },
+  {
+    "model": "z-ai/glm-4.7",
+    "free": false,
+    "pricing": {
+      "prompt": 4e-7,
+      "completion": 0.00000175
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1692,
+    "tokensIn": 1043,
+    "cost": 0.00389436,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1311,
+    "total": 6
+  },
+  {
+    "model": "mistralai/ministral-14b-2512",
+    "free": false,
+    "pricing": {
+      "prompt": 2e-7,
+      "completion": 2e-7
+    },
+    "tools": 2,
+    "quality": 2,
+    "tokensOut": 116,
+    "tokensIn": 768,
+    "cost": 0.00014409999999999998,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 0
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 387,
+    "total": 4
+  },
+  {
+    "model": "mistralai/ministral-8b-2512",
+    "free": false,
+    "pricing": {
+      "prompt": 1.5e-7,
+      "completion": 1.5e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 105,
+    "tokensIn": 768,
+    "cost": 0.00010319999999999999,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 380,
+    "total": 5
+  },
+  {
+    "model": "mistralai/ministral-3b-2512",
+    "free": false,
+    "pricing": {
+      "prompt": 1e-7,
+      "completion": 1e-7
+    },
+    "tools": 2,
+    "quality": 2,
+    "tokensOut": 115,
+    "tokensIn": 768,
+    "cost": 0.0000595,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 0
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 269,
+    "total": 4
+  },
+  {
+    "model": "bytedance-seed/seed-1.6",
+    "free": false,
+    "pricing": {
+      "prompt": 2.5e-7,
+      "completion": 0.000002
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1246,
+    "tokensIn": 2084,
+    "cost": 0.003013,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 875,
+    "total": 6
+  },
+  {
+    "model": "mistralai/mistral-large-2512",
+    "free": false,
+    "pricing": {
+      "prompt": 5e-7,
+      "completion": 0.0000015
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 99,
+    "tokensIn": 768,
+    "cost": 0.0005325,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 583,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen3.5-9b",
+    "free": false,
+    "pricing": {
+      "prompt": 1e-7,
+      "completion": 1.5e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 5570,
+    "tokensIn": 1472,
+    "cost": 0.00108943,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 0
+      }
+    },
+    "avgMs": 490,
+    "total": 5
+  },
+  {
+    "model": "mistralai/devstral-2512",
+    "free": false,
+    "pricing": {
+      "prompt": 4e-7,
+      "completion": 0.000002
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 96,
+    "tokensIn": 768,
+    "cost": 0.00036096,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 2025,
+    "total": 5
+  },
+  {
+    "model": "mistralai/voxtral-small-24b-2507",
+    "free": false,
+    "pricing": {
+      "prompt": 1e-7,
+      "completion": 3e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 116,
+    "tokensIn": 795,
+    "cost": 0.00007973999999999999,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 349,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen3.5-plus-02-15",
+    "free": false,
+    "pricing": {
+      "prompt": 2.6e-7,
+      "completion": 0.00000156
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 3639,
+    "tokensIn": 1427,
+    "cost": 0.00604786,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1135,
+    "total": 6
+  },
+  {
+    "model": "openai/gpt-5.1-codex-mini",
+    "free": false,
+    "pricing": {
+      "prompt": 2.5e-7,
+      "completion": 0.000002
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 360,
+    "tokensIn": 497,
+    "cost": 0.0008442500000000001,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 422,
+    "total": 6
+  },
+  {
+    "model": "openai/gpt-oss-safeguard-20b",
+    "free": false,
+    "pricing": {
+      "prompt": 7.5e-8,
+      "completion": 3e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 670,
+    "tokensIn": 981,
+    "cost": 0.000274575,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 205,
+    "total": 6
+  },
+  {
+    "model": "arcee-ai/trinity-mini",
+    "free": false,
+    "pricing": {
+      "prompt": 4.5e-8,
+      "completion": 1.5e-7
+    },
+    "tools": 1,
+    "quality": 2,
+    "tokensOut": 1691,
+    "tokensIn": 1079,
+    "cost": 0.000302205,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 0
+      },
+      "tool_select": {
+        "score": 0
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 0
+      }
+    },
+    "avgMs": 332,
+    "total": 3
+  },
+  {
+    "model": "deepseek/deepseek-v3.2",
+    "free": false,
+    "pricing": {
+      "prompt": 2.288e-7,
+      "completion": 3.432e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 191,
+    "tokensIn": 1486,
+    "cost": 0.00036297980000000004,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 748,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen3-vl-32b-instruct",
+    "free": false,
+    "pricing": {
+      "prompt": 1.04e-7,
+      "completion": 4.16e-7
+    },
+    "tools": 3,
+    "quality": 1,
+    "tokensOut": 105,
+    "tokensIn": 1048,
+    "cost": 0.000152672,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 0
+      }
+    },
+    "avgMs": 817,
+    "total": 4
+  },
+  {
+    "model": "qwen/qwen3-vl-8b-instruct",
+    "free": false,
+    "pricing": {
+      "prompt": 1.17e-7,
+      "completion": 4.55e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 110,
+    "tokensIn": 1048,
+    "cost": 0.00017266599999999998,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 427,
+    "total": 5
+  },
+  {
+    "model": "z-ai/glm-4.6v",
+    "free": false,
+    "pricing": {
+      "prompt": 3e-7,
+      "completion": 9e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1394,
+    "tokensIn": 1034,
+    "cost": 0.00152997,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1699,
+    "total": 6
+  },
+  {
+    "model": "qwen/qwen3-vl-30b-a3b-instruct",
+    "free": false,
+    "pricing": {
+      "prompt": 1.3e-7,
+      "completion": 5.2e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 385,
+    "tokensIn": 1057,
+    "cost": 0.00036558999999999995,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 294,
+    "total": 6
+  },
+  {
+    "model": "minimax/minimax-m2",
+    "free": false,
+    "pricing": {
+      "prompt": 2.55e-7,
+      "completion": 0.00000102
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1042,
+    "tokensIn": 1248,
+    "cost": 0.0014323349999999999,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1419,
+    "total": 6
+  },
+  {
+    "model": "google/gemini-2.5-flash-lite-preview-09-2025",
+    "free": false,
+    "pricing": {
+      "prompt": 1e-7,
+      "completion": 4e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 95,
+    "tokensIn": 337,
+    "cost": 0.0000717,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 588,
+    "total": 5
+  },
+  {
+    "model": "deepseek/deepseek-v3.2-exp",
+    "free": false,
+    "pricing": {
+      "prompt": 2.7e-7,
+      "completion": 4.1e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 190,
+    "tokensIn": 1480,
+    "cost": 0.0004775,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1331,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen3-vl-8b-thinking",
+    "free": false,
+    "pricing": {
+      "prompt": 1.17e-7,
+      "completion": 0.000001365
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 3691,
+    "tokensIn": 1060,
+    "cost": 0.005162234999999999,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 681,
+    "total": 6
+  },
+  {
+    "model": "qwen/qwen3-vl-235b-a22b-instruct",
+    "free": false,
+    "pricing": {
+      "prompt": 2e-7,
+      "completion": 8.8e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 108,
+    "tokensIn": 1057,
+    "cost": 0.00034226,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 435,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen3-coder-flash",
+    "free": false,
+    "pricing": {
+      "prompt": 1.95e-7,
+      "completion": 9.75e-7
+    },
+    "tools": 1,
+    "quality": 3,
+    "tokensOut": 220,
+    "tokensIn": 1474,
+    "cost": 0.000461994,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 0
+      },
+      "tool_select": {
+        "score": 0
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 873,
+    "total": 4
+  },
+  {
+    "model": "deepseek/deepseek-v3.1-terminus",
+    "free": false,
+    "pricing": {
+      "prompt": 2.7e-7,
+      "completion": 9.5e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 120,
+    "tokensIn": 907,
+    "cost": 0.00029548,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 886,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen3-next-80b-a3b-instruct",
+    "free": false,
+    "pricing": {
+      "prompt": 9e-8,
+      "completion": 0.0000011
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 94,
+    "tokensIn": 1048,
+    "cost": 0.0001822875,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 996,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen-plus-2025-07-28",
+    "free": false,
+    "pricing": {
+      "prompt": 2.6e-7,
+      "completion": 7.8e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 99,
+    "tokensIn": 1048,
+    "cost": 0.0003497,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 559,
+    "total": 5
+  },
+  {
+    "model": "z-ai/glm-4.6",
+    "free": false,
+    "pricing": {
+      "prompt": 4.3e-7,
+      "completion": 0.00000174
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 2095,
+    "tokensIn": 1072,
+    "cost": 0.0047661100000000005,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1859,
+    "total": 6
+  },
+  {
+    "model": "nvidia/llama-3.3-nemotron-super-49b-v1.5",
+    "free": false,
+    "pricing": {
+      "prompt": 4e-7,
+      "completion": 4e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 2442,
+    "tokensIn": 1276,
+    "cost": 0.0014872,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 212,
+    "total": 6
+  },
+  {
+    "model": "mistralai/mistral-medium-3.1",
+    "free": false,
+    "pricing": {
+      "prompt": 4e-7,
+      "completion": 0.000002
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 100,
+    "tokensIn": 768,
+    "cost": 0.00038624,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 337,
+    "total": 5
+  },
+  {
+    "model": "z-ai/glm-4.7-flash",
+    "free": false,
+    "pricing": {
+      "prompt": 6e-8,
+      "completion": 4e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1922,
+    "tokensIn": 1052,
+    "cost": 0.00080131,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 373,
+    "total": 6
+  },
+  {
+    "model": "qwen/qwen3-vl-30b-a3b-thinking",
+    "free": false,
+    "pricing": {
+      "prompt": 1.3e-7,
+      "completion": 0.00000156
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 2508,
+    "tokensIn": 1060,
+    "cost": 0.00360364,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 617,
+    "total": 6
+  },
+  {
+    "model": "deepseek/deepseek-chat-v3.1",
+    "free": false,
+    "pricing": {
+      "prompt": 2.1e-7,
+      "completion": 7.9e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 131,
+    "tokensIn": 914,
+    "cost": 0.00031081000000000007,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 997,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen3-30b-a3b-thinking-2507",
+    "free": false,
+    "pricing": {
+      "prompt": 1.3e-7,
+      "completion": 0.00000156
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 3529,
+    "tokensIn": 1048,
+    "cost": 0.00564148,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 420,
+    "total": 6
+  },
+  {
+    "model": "mistralai/codestral-2508",
+    "free": false,
+    "pricing": {
+      "prompt": 3e-7,
+      "completion": 9e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 96,
+    "tokensIn": 768,
+    "cost": 0.0002304,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 278,
+    "total": 5
+  },
+  {
+    "model": "openai/gpt-5-mini",
+    "free": false,
+    "pricing": {
+      "prompt": 2.5e-7,
+      "completion": 0.000002
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1247,
+    "tokensIn": 497,
+    "cost": 0.00261825,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 361,
+    "total": 6
+  },
+  {
+    "model": "qwen/qwen3-30b-a3b-instruct-2507",
+    "free": false,
+    "pricing": {
+      "prompt": 4.815e-8,
+      "completion": 1.9305e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 98,
+    "tokensIn": 1048,
+    "cost": 0.00018172999999999998,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 372,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen-plus-2025-07-28:thinking",
+    "free": false,
+    "pricing": {
+      "prompt": 2.6e-7,
+      "completion": 7.8e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 2450,
+    "tokensIn": 1048,
+    "cost": 0.00218348,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 575,
+    "total": 6
+  },
+  {
+    "model": "openai/gpt-oss-20b",
+    "free": false,
+    "pricing": {
+      "prompt": 2.9e-8,
+      "completion": 1.4e-7
+    },
+    "tools": 2,
+    "quality": 3,
+    "tokensOut": 891,
+    "tokensIn": 906,
+    "cost": 0.00015036,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 0
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 421,
+    "total": 5
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "free": false,
+    "pricing": {
+      "prompt": 3e-8,
+      "completion": 1.5e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 815,
+    "tokensIn": 906,
+    "cost": 0.00016301200000000003,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 582,
+    "total": 6
+  },
+  {
+    "model": "qwen/qwen3-next-80b-a3b-thinking",
+    "free": false,
+    "pricing": {
+      "prompt": 9.75e-8,
+      "completion": 7.8e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 5608,
+    "tokensIn": 1050,
+    "cost": 0.0047865749999999995,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 704,
+    "total": 6
+  },
+  {
+    "model": "openai/gpt-5-nano",
+    "free": false,
+    "pricing": {
+      "prompt": 5e-8,
+      "completion": 4e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1967,
+    "tokensIn": 497,
+    "cost": 0.0008116500000000001,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 668,
+    "total": 6
+  },
+  {
+    "model": "google/gemini-2.5-flash-lite",
+    "free": false,
+    "pricing": {
+      "prompt": 1e-7,
+      "completion": 4e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 87,
+    "tokensIn": 337,
+    "cost": 0.0000685,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 387,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen3-coder",
+    "free": false,
+    "pricing": {
+      "prompt": 2.2e-7,
+      "completion": 0.0000018
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 109,
+    "tokensIn": 1465,
+    "cost": 0.00037956,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 462,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen3-coder-30b-a3b-instruct",
+    "free": false,
+    "pricing": {
+      "prompt": 7e-8,
+      "completion": 2.7e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 99,
+    "tokensIn": 1048,
+    "cost": 0.00010009,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 2638,
+    "total": 5
+  },
+  {
+    "model": "mistralai/mistral-medium-3",
+    "free": false,
+    "pricing": {
+      "prompt": 4e-7,
+      "completion": 0.000002
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 98,
+    "tokensIn": 782,
+    "cost": 0.00039359999999999997,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 403,
+    "total": 5
+  },
+  {
+    "model": "mistralai/mistral-small-3.2-24b-instruct",
+    "free": false,
+    "pricing": {
+      "prompt": 7.5e-8,
+      "completion": 2e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 96,
+    "tokensIn": 782,
+    "cost": 0.000093025,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 466,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen3-235b-a22b-2507",
+    "free": false,
+    "pricing": {
+      "prompt": 9e-8,
+      "completion": 1e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 99,
+    "tokensIn": 1047,
+    "cost": 0.00015861999999999997,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 730,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen3-30b-a3b",
+    "free": false,
+    "pricing": {
+      "prompt": 1.2e-7,
+      "completion": 5e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1679,
+    "tokensIn": 1058,
+    "cost": 0.0009892,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 630,
+    "total": 6
+  },
+  {
+    "model": "qwen/qwen3-235b-a22b",
+    "free": false,
+    "pricing": {
+      "prompt": 4.55e-7,
+      "completion": 0.00000182
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1970,
+    "tokensIn": 1047,
+    "cost": 0.004061785,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 628,
+    "total": 6
+  },
+  {
+    "model": "qwen/qwen3-32b",
+    "free": false,
+    "pricing": {
+      "prompt": 8e-8,
+      "completion": 2.8e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 2211,
+    "tokensIn": 1057,
+    "cost": 0.00107137,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 537,
+    "total": 6
+  },
+  {
+    "model": "openai/gpt-4.1-mini",
+    "free": false,
+    "pricing": {
+      "prompt": 4e-7,
+      "completion": 0.0000016
+    },
+    "tools": 3,
+    "quality": 1,
+    "tokensOut": 106,
+    "tokensIn": 479,
+    "cost": 0.0003612,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 0
+      }
+    },
+    "avgMs": 316,
+    "total": 4
+  },
+  {
+    "model": "openai/gpt-4.1-nano",
+    "free": false,
+    "pricing": {
+      "prompt": 1e-7,
+      "completion": 4e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 113,
+    "tokensIn": 479,
+    "cost": 0.0000931,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 346,
+    "total": 5
+  },
+  {
+    "model": "meta-llama/llama-4-scout",
+    "free": false,
+    "pricing": {
+      "prompt": 1e-7,
+      "completion": 3e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 123,
+    "tokensIn": 2646,
+    "cost": 0.00033088999999999997,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 167,
+    "total": 5
+  },
+  {
+    "model": "meta-llama/llama-4-maverick",
+    "free": false,
+    "pricing": {
+      "prompt": 1.5e-7,
+      "completion": 6e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 78,
+    "tokensIn": 2724,
+    "cost": 0.0007186699999999999,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 460,
+    "total": 5
+  },
+  {
+    "model": "z-ai/glm-4.5-air",
+    "free": false,
+    "pricing": {
+      "prompt": 1.3e-7,
+      "completion": 8.5e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 3688,
+    "tokensIn": 1018,
+    "cost": 0.00320582,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 712,
+    "total": 6
+  },
+  {
+    "model": "google/gemma-3-12b-it",
+    "free": false,
+    "pricing": {
+      "prompt": 5e-8,
+      "completion": 1.5e-7
+    },
+    "tools": 1,
+    "quality": 2,
+    "tokensOut": 100,
+    "tokensIn": 1672,
+    "cost": 0.0000986,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 0
+      },
+      "tool_select": {
+        "score": 0
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 223,
+    "total": 3
+  },
+  {
+    "model": "qwen/qwen3-235b-a22b-thinking-2507",
+    "free": false,
+    "pricing": {
+      "prompt": 1.495e-7,
+      "completion": 0.000001495
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 3154,
+    "tokensIn": 1049,
+    "cost": 0.005725194500000001,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 496,
+    "total": 6
+  },
+  {
+    "model": "mistralai/mistral-saba",
+    "free": false,
+    "pricing": {
+      "prompt": 2e-7,
+      "completion": 6e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 108,
+    "tokensIn": 840,
+    "cost": 0.00017232,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 370,
+    "total": 5
+  },
+  {
+    "model": "google/gemma-3-27b-it",
+    "free": false,
+    "pricing": {
+      "prompt": 8e-8,
+      "completion": 1.6e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 100,
+    "tokensIn": 1671,
+    "cost": 0.000156977,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 387,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen3-14b",
+    "free": false,
+    "pricing": {
+      "prompt": 1e-7,
+      "completion": 2.4e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1455,
+    "tokensIn": 1173,
+    "cost": 0.0008810000000000001,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 462,
+    "total": 6
+  },
+  {
+    "model": "qwen/qwen-plus",
+    "free": false,
+    "pricing": {
+      "prompt": 2.6e-7,
+      "completion": 7.8e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 104,
+    "tokensIn": 1048,
+    "cost": 0.000313664,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 575,
+    "total": 5
+  },
+  {
+    "model": "deepseek/deepseek-chat-v3-0324",
+    "free": false,
+    "pricing": {
+      "prompt": 2.4e-7,
+      "completion": 9e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 119,
+    "tokensIn": 1602,
+    "cost": 0.0004067,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 872,
+    "total": 5
+  },
+  {
+    "model": "amazon/nova-lite-v1",
+    "free": false,
+    "pricing": {
+      "prompt": 6e-8,
+      "completion": 2.4e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 298,
+    "tokensIn": 1669,
+    "cost": 0.00017166000000000002,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 382,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen3-8b",
+    "free": false,
+    "pricing": {
+      "prompt": 1.17e-7,
+      "completion": 4.55e-7
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 2701,
+    "tokensIn": 1048,
+    "cost": 0.001351571,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1472,
+    "total": 6
+  },
+  {
+    "model": "deepseek/deepseek-chat",
+    "free": false,
+    "pricing": {
+      "prompt": 2.002e-7,
+      "completion": 8.001e-7
+    },
+    "tools": 2,
+    "quality": 2,
+    "tokensOut": 129,
+    "tokensIn": 1776,
+    "cost": 0.00048474689999999996,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 0
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1052,
+    "total": 4
+  },
+  {
+    "model": "amazon/nova-micro-v1",
+    "free": false,
+    "pricing": {
+      "prompt": 3.5e-8,
+      "completion": 1.4e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 539,
+    "tokensIn": 1669,
+    "cost": 0.000133875,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 0
+      }
+    },
+    "avgMs": 640,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen-2.5-7b-instruct",
+    "free": false,
+    "pricing": {
+      "prompt": 4e-8,
+      "completion": 1e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 113,
+    "tokensIn": 1173,
+    "cost": 0.00005822,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 532,
+    "total": 5
+  },
+  {
+    "model": "meta-llama/llama-3.3-70b-instruct",
+    "free": false,
+    "pricing": {
+      "prompt": 1e-7,
+      "completion": 3.2e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 109,
+    "tokensIn": 1475,
+    "cost": 0.00024338999999999999,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 322,
+    "total": 5
+  },
+  {
+    "model": "qwen/qwen-2.5-72b-instruct",
+    "free": false,
+    "pricing": {
+      "prompt": 3.6e-7,
+      "completion": 4e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 112,
+    "tokensIn": 1612,
+    "cost": 0.0006251199999999998,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 267,
+    "total": 5
+  },
+  {
+    "model": "cohere/command-r-08-2024",
+    "free": false,
+    "pricing": {
+      "prompt": 1.5e-7,
+      "completion": 6e-7
+    },
+    "tools": 2,
+    "quality": 2,
+    "tokensOut": 106,
+    "tokensIn": 328,
+    "cost": 0.00011279999999999999,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 0
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 535,
+    "total": 4
+  },
+  {
+    "model": "meta-llama/llama-3.1-70b-instruct",
+    "free": false,
+    "pricing": {
+      "prompt": 4e-7,
+      "completion": 4e-7
+    },
+    "tools": 2,
+    "quality": 2,
+    "tokensOut": 83,
+    "tokensIn": 974,
+    "cost": 0.00042280000000000003,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 0
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 273,
+    "total": 4
+  },
+  {
+    "model": "openai/gpt-4o-mini",
+    "free": false,
+    "pricing": {
+      "prompt": 1.5e-7,
+      "completion": 6e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 96,
+    "tokensIn": 499,
+    "cost": 0.00013245,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 808,
+    "total": 5
+  },
+  {
+    "model": "openai/gpt-4o-mini-2024-07-18",
+    "free": false,
+    "pricing": {
+      "prompt": 1.5e-7,
+      "completion": 6e-7
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 91,
+    "tokensIn": 499,
+    "cost": 0.00012945,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 833,
+    "total": 5
+  },
+  {
+    "model": "anthropic/claude-3-haiku",
+    "free": false,
+    "pricing": {
+      "prompt": 2.5e-7,
+      "completion": 0.00000125
+    },
+    "tools": 3,
+    "quality": 1,
+    "tokensOut": 208,
+    "tokensIn": 1641,
+    "cost": 0.00067025,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 0
+      }
+    },
+    "avgMs": 590,
+    "total": 4
+  },
+  {
+    "model": "mistralai/mistral-nemo",
+    "free": false,
+    "pricing": {
+      "prompt": 2e-8,
+      "completion": 3e-8
+    },
+    "tools": 2,
+    "quality": 2,
+    "tokensOut": 101,
+    "tokensIn": 812,
+    "cost": 0.00009309,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 0
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 542,
+    "total": 4
+  },
+  {
+    "model": "openai/gpt-3.5-turbo",
+    "free": false,
+    "pricing": {
+      "prompt": 5e-7,
+      "completion": 0.0000015
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 91,
+    "tokensIn": 524,
+    "cost": 0.00039850000000000004,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 841,
+    "total": 5
+  },
+  {
+    "model": "thedrummer/unslopnemo-12b",
+    "free": false,
+    "pricing": {
+      "prompt": 4e-7,
+      "completion": 4e-7
+    },
+    "tools": 0,
+    "quality": 2,
+    "tokensOut": 1354,
+    "tokensIn": 172,
+    "cost": 0.0006104,
+    "errors": [
+      "tool_simple: Provider returned error",
+      "tool_select: Provider returned error",
+      "tool_result: Provider returned error"
+    ],
+    "tests": {
+      "tool_simple": {
+        "score": 0,
+        "error": "Provider returned error"
+      },
+      "tool_select": {
+        "score": 0,
+        "error": "Provider returned error"
+      },
+      "tool_result": {
+        "score": 0,
+        "error": "Provider returned error"
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 365,
+    "total": 2
+  },
+  {
+    "model": "openrouter/auto",
+    "free": false,
+    "pricing": {
+      "prompt": -1,
+      "completion": -1
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 292,
+    "tokensIn": 454,
+    "cost": 0.010641900000000001,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 719,
+    "total": 6
+  },
+  {
+    "model": "poolside/laguna-xs-2.1:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1796,
+    "tokensIn": 1263,
+    "cost": 0,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 253,
+    "total": 6
+  },
+  {
+    "model": "cohere/north-mini-code:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 3,
+    "quality": 2.5,
+    "tokensOut": 848,
+    "tokensIn": 433,
+    "cost": 0,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 0.5
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 609,
+    "total": 5.5
+  },
+  {
+    "model": "stepfun/step-3.5-flash",
+    "free": false,
+    "pricing": {
+      "prompt": 1e-7,
+      "completion": 3e-7
+    },
+    "tools": 3,
+    "quality": 1,
+    "tokensOut": 426,
+    "tokensIn": 1179,
+    "cost": 0.0002457,
+    "errors": [
+      "q_extract: HTTP 200",
+      "q_format: HTTP 200"
+    ],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 0,
+        "error": "HTTP 200"
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 0,
+        "error": "HTTP 200"
+      }
+    },
+    "avgMs": 2713,
+    "total": 4
+  },
+  {
+    "model": "meta-llama/llama-3.1-8b-instruct",
+    "free": false,
+    "pricing": {
+      "prompt": 2e-8,
+      "completion": 3e-8
+    },
+    "tools": 2,
+    "quality": 2,
+    "tokensOut": 208,
+    "tokensIn": 1344,
+    "cost": 0.00003728,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 0
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 294,
+    "total": 4
+  },
+  {
+    "model": "poolside/laguna-xs.2:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 1329,
+    "tokensIn": 1461,
+    "cost": 0,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 0
+      }
+    },
+    "avgMs": 633,
+    "total": 5
+  },
+  {
+    "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1670,
+    "tokensIn": 1470,
+    "cost": 0,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 365,
+    "total": 6
+  },
+  {
+    "model": "nvidia/nemotron-3-nano-30b-a3b:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 2085,
+    "tokensIn": 1470,
+    "cost": 0,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 339,
+    "total": 6
+  },
+  {
+    "model": "openrouter/free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 2,
+    "quality": 3,
+    "tokensOut": 1238,
+    "tokensIn": 996,
+    "cost": 0,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 0
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1119,
+    "total": 5
+  },
+  {
+    "model": "liquid/lfm-2.5-1.2b-thinking:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 6366,
+    "tokensIn": 944,
+    "cost": 0,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 553,
+    "total": 6
+  },
+  {
+    "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 2,
+    "quality": 3,
+    "tokensOut": 617,
+    "tokensIn": 1070,
+    "cost": 0,
+    "errors": [
+      "tool_simple: Upstream error from Nvidia: ResourceExhausted: Worker local total request limit reached (130/32)"
+    ],
+    "tests": {
+      "tool_simple": {
+        "score": 0,
+        "error": "Upstream error from Nvidia: ResourceExhausted: Worker local total request limit reached (130/32)"
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 342,
+    "total": 5
+  },
+  {
+    "model": "nvidia/nemotron-3-super-120b-a12b:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 657,
+    "tokensIn": 1470,
+    "cost": 0,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 427,
+    "total": 6
+  },
+  {
+    "model": "nvidia/nemotron-nano-9b-v2:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 3,
+    "quality": 2,
+    "tokensOut": 1878,
+    "tokensIn": 1253,
+    "cost": 0,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 0
+      }
+    },
+    "avgMs": 291,
+    "total": 5
+  },
+  {
+    "model": "openai/gpt-oss-20b:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 2,
+    "quality": 3,
+    "tokensOut": 1179,
+    "tokensIn": 942,
+    "cost": 0,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 0
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 1782,
+    "total": 5
+  },
+  {
+    "model": "nvidia/nemotron-nano-12b-v2-vl:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 1,
+    "quality": 1,
+    "tokensOut": 84,
+    "tokensIn": 536,
+    "cost": 0,
+    "errors": [
+      "tool_simple: HTTP 200",
+      "tool_result: HTTP 200"
+    ],
+    "tests": {
+      "tool_simple": {
+        "score": 0,
+        "error": "HTTP 200"
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 0,
+        "error": "HTTP 200"
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 0
+      }
+    },
+    "avgMs": 274,
+    "total": 2
+  },
+  {
+    "model": "poolside/laguna-m.1:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 3,
+    "quality": 3,
+    "tokensOut": 1646,
+    "tokensIn": 1263,
+    "cost": 0,
+    "errors": [],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 1
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 601,
+    "total": 6
+  },
+  {
+    "model": "google/gemma-4-31b-it:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 2,
+    "quality": 1,
+    "tokensOut": 54,
+    "tokensIn": 488,
+    "cost": 0,
+    "errors": [
+      "tool_simple: HTTP 429",
+      "q_extract: HTTP 429"
+    ],
+    "tests": {
+      "tool_simple": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 721,
+    "total": 3
+  },
+  {
+    "model": "google/gemma-4-26b-a4b-it:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 1,
+    "quality": 2,
+    "tokensOut": 69,
+    "tokensIn": 305,
+    "cost": 0,
+    "errors": [
+      "tool_select: HTTP 429",
+      "tool_result: HTTP 429"
+    ],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "tool_result": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "q_extract": {
+        "score": 1
+      },
+      "q_code": {
+        "score": 0
+      },
+      "q_format": {
+        "score": 1
+      }
+    },
+    "avgMs": 891,
+    "total": 3
+  },
+  {
+    "model": "openai/gpt-oss-120b:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 3,
+    "quality": 0,
+    "tokensOut": 111,
+    "tokensIn": 576,
+    "cost": 0,
+    "errors": [
+      "q_extract: HTTP 429",
+      "q_code: HTTP 429",
+      "q_format: HTTP 429"
+    ],
+    "tests": {
+      "tool_simple": {
+        "score": 1
+      },
+      "tool_select": {
+        "score": 1
+      },
+      "tool_result": {
+        "score": 1
+      },
+      "q_extract": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "q_code": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "q_format": {
+        "score": 0,
+        "error": "HTTP 429"
+      }
+    },
+    "avgMs": 674,
+    "total": 3
+  },
+  {
+    "model": "qwen/qwen3-next-80b-a3b-instruct:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 0,
+    "quality": 0,
+    "tokensOut": 0,
+    "tokensIn": 0,
+    "cost": 0,
+    "errors": [
+      "tool_simple: HTTP 429",
+      "tool_select: HTTP 429",
+      "tool_result: HTTP 429",
+      "q_extract: HTTP 429",
+      "q_code: HTTP 429",
+      "q_format: HTTP 429"
+    ],
+    "tests": {
+      "tool_simple": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "tool_select": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "tool_result": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "q_extract": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "q_code": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "q_format": {
+        "score": 0,
+        "error": "HTTP 429"
+      }
+    },
+    "avgMs": null,
+    "total": 0
+  },
+  {
+    "model": "qwen/qwen3-coder:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 0,
+    "quality": 0,
+    "tokensOut": 0,
+    "tokensIn": 0,
+    "cost": 0,
+    "errors": [
+      "tool_simple: HTTP 429",
+      "tool_select: HTTP 429",
+      "tool_result: HTTP 429",
+      "q_extract: HTTP 429",
+      "q_code: HTTP 429",
+      "q_format: HTTP 429"
+    ],
+    "tests": {
+      "tool_simple": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "tool_select": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "tool_result": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "q_extract": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "q_code": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "q_format": {
+        "score": 0,
+        "error": "HTTP 429"
+      }
+    },
+    "avgMs": null,
+    "total": 0
+  },
+  {
+    "model": "meta-llama/llama-3.3-70b-instruct:free",
+    "free": true,
+    "pricing": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "tools": 0,
+    "quality": 0,
+    "tokensOut": 0,
+    "tokensIn": 0,
+    "cost": 0,
+    "errors": [
+      "tool_simple: HTTP 429",
+      "tool_select: HTTP 429",
+      "tool_result: HTTP 429",
+      "q_extract: HTTP 429",
+      "q_code: HTTP 429",
+      "q_format: HTTP 429"
+    ],
+    "tests": {
+      "tool_simple": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "tool_select": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "tool_result": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "q_extract": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "q_code": {
+        "score": 0,
+        "error": "HTTP 429"
+      },
+      "q_format": {
+        "score": 0,
+        "error": "HTTP 429"
+      }
+    },
+    "avgMs": null,
+    "total": 0
+  }
+]

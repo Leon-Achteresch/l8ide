@@ -24,6 +24,7 @@ import {
   useIsWorkspaceTrusted,
   useWorkspaceStore,
 } from "@/lib/workspace-store";
+import { AI_MODELS, useAiSettings } from "@/lib/ai-settings";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -108,10 +109,54 @@ export function SettingsPage() {
         description="Gilt in allen Workspaces"
       />
       <WorkspaceTrust />
+      <AiSettingsSection />
       <EditorDisplaySettings />
       <RefactorSettings />
       <TailwindSettings />
       <PrettierSettings />
+    </div>
+  );
+}
+
+function AiSettingsSection() {
+  const apiKey = useAiSettings((s) => s.apiKey);
+  const setApiKey = useAiSettings((s) => s.setApiKey);
+  const model = useAiSettings((s) => s.model);
+  const setModel = useAiSettings((s) => s.setModel);
+  return (
+    <div className="mt-6 max-w-sm">
+      <h2 className="text-sm font-semibold">KI</h2>
+      <div className="mt-3 space-y-1.5">
+        <p className="text-sm font-medium">OpenRouter API-Key</p>
+        <Input
+          type="password"
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+          placeholder="sk-or-v1-…"
+          autoComplete="off"
+          spellCheck={false}
+        />
+        <p className="text-xs text-muted-foreground">
+          Wird lokal gespeichert. Key unter openrouter.ai/keys erstellen.
+        </p>
+      </div>
+      <div className="mt-4 flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium">Modell</p>
+          <p className="text-xs text-muted-foreground">Für den KI-Chat (⌘L)</p>
+        </div>
+        <NativeSelect
+          size="sm"
+          value={model}
+          onChange={(e) => setModel(e.target.value)}
+        >
+          {AI_MODELS.map((m) => (
+            <NativeSelectOption key={m.id} value={m.id}>
+              {m.label}
+            </NativeSelectOption>
+          ))}
+        </NativeSelect>
+      </div>
     </div>
   );
 }

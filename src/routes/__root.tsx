@@ -2,6 +2,7 @@ import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { AppHeader } from "@/components/app-header/app-header";
 import { AppHotkeys } from "@/components/app-hotkeys";
 import { BrowserPanel } from "@/components/browser/browser-panel";
+import { ChatPanel } from "@/components/chat/chat-panel";
 import { FileSearch } from "@/components/file-search";
 import { CommandPalette } from "@/components/command-palette";
 import { MonacoWorkspace } from "@/components/monaco-workspace";
@@ -107,6 +108,7 @@ function RootComponent() {
                 )}
               </div>
               <BrowserPanel />
+              <ChatPanel />
             </div>
             {!zenMode && <ProblemsSlot />}
             {!zenMode && <TerminalSlot />}

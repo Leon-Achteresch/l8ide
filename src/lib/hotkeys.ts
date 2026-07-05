@@ -60,6 +60,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Shift+B",
   },
   {
+    id: "chat.toggle",
+    label: "KI-Chat ein-/ausblenden",
+    group: "Allgemein",
+    hotkey: "Mod+L",
+  },
+  {
     id: "theme.toggle",
     label: "Dark Mode umschalten",
     group: "Allgemein",
