@@ -1,4 +1,3 @@
-import { FileEditor } from "@/components/file-editor";
 import { store } from "@/components/tab-bar/lib";
 import { TabBar } from "@/components/tab-bar/tab-bar";
 import { collectLeaves } from "@/lib/editor-groups";
@@ -16,6 +15,11 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
+import { lazy, Suspense, useMemo } from "react";
+
+const FileEditor = lazy(() =>
+  import("@/components/file-editor").then((m) => ({ default: m.FileEditor })),
+);
 
 const PAGE_COMPONENTS: Record<string, () => React.JSX.Element> = {
   "/settings": SettingsPage,
@@ -41,14 +45,23 @@ function GroupContent({ activeFile }: { activeFile: string | null }) {
       </div>
     ) : null;
   }
-  return <FileEditor path={activeFile} />;
+  return (
+    <Suspense
+      fallback={
+        <div className="p-4 text-sm text-muted-foreground">Loading…</div>
+      }
+    >
+      <FileEditor path={activeFile} />
+    </Suspense>
+  );
 }
 
 export function EditorGroup({ id }: { id: string }) {
   const activeFile = useWorkspaceStore((s) => s.groups[id]?.activeFile ?? null);
   const hasTabs = useWorkspaceStore((s) => (s.groups[id]?.tabs.length ?? 0) > 0);
   const isActive = useWorkspaceStore((s) => s.activeGroupId === id);
-  const multiple = useWorkspaceStore((s) => collectLeaves(s.layout).length > 1);
+  const layout = useWorkspaceStore((s) => s.layout);
+  const multiple = useMemo(() => collectLeaves(layout).length > 1, [layout]);
   const showBar = hasTabs || multiple;
 
   return (

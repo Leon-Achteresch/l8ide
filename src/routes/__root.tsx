@@ -1,13 +1,37 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { AppHeader } from "@/components/app-header/app-header";
 import { AppHotkeys } from "@/components/app-hotkeys";
 import { BrowserPanel } from "@/components/browser/browser-panel";
 import { FileSearch } from "@/components/file-search";
 import { MonacoWorkspace } from "@/components/monaco-workspace";
 import { Sidebar } from "@/components/sidebar";
-import { TerminalPanel } from "@/components/terminal/terminal-panel";
+import { useTerminalStore } from "@/lib/terminal-store";
+import { lazy, Suspense } from "react";
 import "../App.css";
+
+const TerminalPanel = lazy(() =>
+  import("@/components/terminal/terminal-panel").then((m) => ({
+    default: m.TerminalPanel,
+  })),
+);
+
+const RouterDevtools = import.meta.env.DEV
+  ? lazy(() =>
+      import("@tanstack/react-router-devtools").then((m) => ({
+        default: m.TanStackRouterDevtools,
+      })),
+    )
+  : null;
+
+function TerminalSlot() {
+  const open = useTerminalStore((s) => s.open);
+  if (!open) return null;
+  return (
+    <Suspense fallback={null}>
+      <TerminalPanel />
+    </Suspense>
+  );
+}
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -30,11 +54,15 @@ function RootComponent() {
               </div>
               <BrowserPanel />
             </div>
-            <TerminalPanel />
+            <TerminalSlot />
           </div>
         </div>
       </div>
-      <TanStackRouterDevtools position="bottom-right" />
+      {RouterDevtools && (
+        <Suspense fallback={null}>
+          <RouterDevtools position="bottom-right" />
+        </Suspense>
+      )}
     </>
   );
 }

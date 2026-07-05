@@ -1,7 +1,8 @@
-import * as monaco from "monaco-editor";
+import { URI } from "monaco-editor/esm/vs/base/common/uri.js";
+import type * as monaco from "monaco-editor";
 
 export function monacoUriForPath(path: string): monaco.Uri {
-  return monaco.Uri.parse(path);
+  return URI.parse(path);
 }
 
 export function pathFromMonacoUri(uri: monaco.Uri): string {
@@ -11,7 +12,7 @@ export function pathFromMonacoUri(uri: monaco.Uri): string {
   if (uri.path.startsWith("/")) {
     return uri.path;
   }
-  const parsed = monaco.Uri.parse(uri.toString());
+  const parsed = URI.parse(uri.toString());
   if (parsed.scheme === "file") {
     return parsed.fsPath;
   }
@@ -20,9 +21,9 @@ export function pathFromMonacoUri(uri: monaco.Uri): string {
 
 export function normalizePath(path: string): string {
   if (path.startsWith("file://")) {
-    return monaco.Uri.parse(path).fsPath;
+    return URI.parse(path).fsPath;
   }
-  return pathFromMonacoUri(monaco.Uri.parse(path));
+  return pathFromMonacoUri(URI.parse(path));
 }
 
 export function pathsEqual(a: string, b: string): boolean {

@@ -1,4 +1,5 @@
-import * as monaco from "monaco-editor";
+import type * as monaco from "monaco-editor";
+import { getMonacoInstance } from "@/lib/monaco-instance";
 import {
   monacoUriForPath,
   pathFromMonacoUri,
@@ -57,10 +58,11 @@ export function revealInEditor(
 }
 
 export function openFileAt(path: string, target: RevealTarget) {
+  const m = getMonacoInstance();
   const activeFile = useWorkspaceStore.getState().activeFile;
-  if (activeFile && pathsEqual(activeFile, path)) {
+  if (m && activeFile && pathsEqual(activeFile, path)) {
     const uri = monacoUriForPath(path).toString();
-    const editor = monaco.editor
+    const editor = m.editor
       .getEditors()
       .find((e) => e.getModel()?.uri.toString() === uri);
     if (editor) {
@@ -73,10 +75,11 @@ export function openFileAt(path: string, target: RevealTarget) {
 }
 
 export function registerMonacoNavigation() {
-  if (openerRegistered) return;
+  const m = getMonacoInstance();
+  if (openerRegistered || !m) return;
   openerRegistered = true;
 
-  monaco.editor.registerEditorOpener({
+  m.editor.registerEditorOpener({
     openCodeEditor(source, resource, selectionOrPosition) {
       const path = pathFromMonacoUri(resource);
       if (!path) return false;

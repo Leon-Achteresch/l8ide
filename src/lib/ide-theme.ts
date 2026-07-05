@@ -1,4 +1,4 @@
-import * as monaco from "monaco-editor";
+import { getMonacoInstance } from "@/lib/monaco-instance";
 
 export const IDE_MONACO_THEME_LIGHT = "l8ide-light";
 export const IDE_MONACO_THEME_DARK = "l8ide-dark";
@@ -16,6 +16,8 @@ export function ideSurfaceColors() {
 }
 
 export function initIdeMonacoThemes() {
+  const monaco = getMonacoInstance();
+  if (!monaco) return;
   const light = {
     background: "#fafafa",
     foreground: "#3a3a3c",

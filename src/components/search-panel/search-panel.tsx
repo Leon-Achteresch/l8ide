@@ -24,7 +24,7 @@ import {
   SlidersHorizontal,
   WholeWord,
 } from "lucide-react";
-import { useEffect, useMemo, useRef } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef } from "react";
 
 export const SEARCH_INPUT_ID = "workspace-search-input";
 
@@ -113,10 +113,17 @@ export function SearchPanel({ rootPath }: { rootPath: string }) {
     return () => clearTimeout(t);
   }, [rootPath, query, caseSensitive, wholeWord, useRegex, include, exclude, search]);
 
+  const deferredQuery = useDeferredValue(query);
   const nameHits = useMemo(
     () =>
-      filenameMatches(indexedFiles, query, caseSensitive, wholeWord, useRegex),
-    [indexedFiles, query, caseSensitive, wholeWord, useRegex],
+      filenameMatches(
+        indexedFiles,
+        deferredQuery,
+        caseSensitive,
+        wholeWord,
+        useRegex,
+      ),
+    [indexedFiles, deferredQuery, caseSensitive, wholeWord, useRegex],
   );
 
   const busy = searching || replacing;

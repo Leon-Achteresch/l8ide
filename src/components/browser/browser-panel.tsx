@@ -132,9 +132,20 @@ function BrowserPanelInner() {
     e.preventDefault();
     const startX = e.clientX;
     const startWidth = width;
-    const onMove = (ev: PointerEvent) =>
-      setWidth(startWidth + startX - ev.clientX);
+    let x = startX;
+    let frame = 0;
+    const onMove = (ev: PointerEvent) => {
+      x = ev.clientX;
+      if (!frame) {
+        frame = requestAnimationFrame(() => {
+          frame = 0;
+          setWidth(startWidth + startX - x);
+        });
+      }
+    };
     const onUp = () => {
+      if (frame) cancelAnimationFrame(frame);
+      setWidth(startWidth + startX - x);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
       document.body.style.cursor = "";

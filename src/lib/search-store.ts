@@ -1,7 +1,7 @@
+import { getMonacoInstance } from "@/lib/monaco-instance";
 import { monacoUriForPath } from "@/lib/monaco-uri";
 import { invoke } from "@tauri-apps/api/core";
 import { readTextFile } from "@tauri-apps/plugin-fs";
-import * as monaco from "monaco-editor";
 import { create } from "zustand";
 
 export type SearchMatch = {
@@ -71,6 +71,8 @@ function backendOptions(s: SearchStore) {
 }
 
 async function syncOpenModels(paths: string[]) {
+  const monaco = getMonacoInstance();
+  if (!monaco) return;
   for (const path of paths) {
     const model = monaco.editor.getModel(monacoUriForPath(path));
     if (!model) continue;

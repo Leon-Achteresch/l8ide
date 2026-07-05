@@ -1,6 +1,7 @@
 import { loader } from "@monaco-editor/react";
 import { initIdeMonacoThemes } from "@/lib/ide-theme";
-import { initMonacoWorkspace } from "@/lib/monaco-workspace";
+import { setMonacoInstance } from "@/lib/monaco-instance";
+import { registerMonacoNavigation } from "@/lib/monaco-navigation";
 import * as monaco from "monaco-editor";
 import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
 import cssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker";
@@ -30,7 +31,8 @@ self.MonacoEnvironment = {
   },
 };
 
-initMonacoWorkspace();
+setMonacoInstance(monaco);
+registerMonacoNavigation();
 initIdeMonacoThemes();
 
 loader.config({ monaco });

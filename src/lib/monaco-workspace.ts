@@ -2,7 +2,7 @@ import { readTextFile } from "@tauri-apps/plugin-fs";
 import * as monaco from "monaco-editor";
 import { typescript as ts } from "monaco-editor";
 import { monacoUriForPath } from "@/lib/monaco-uri";
-import { registerMonacoNavigation } from "@/lib/monaco-navigation";
+import "@/lib/monaco";
 
 type CompilerOptions = Parameters<
   typeof ts.typescriptDefaults.setCompilerOptions
@@ -10,6 +10,8 @@ type CompilerOptions = Parameters<
 
 const SOURCE_FILE = /\.(tsx?|jsx?|mts|cts)$/i;
 const SYNC_CONCURRENCY = 20;
+const MAX_SYNC_FILES = 2000;
+const MAX_SYNC_FILE_CHARS = 1_000_000;
 
 let configuredRoot: string | null = null;
 let syncGeneration = 0;
@@ -101,7 +103,9 @@ export async function configureMonacoWorkspace(rootPath: string) {
 
 export async function syncMonacoWorkspaceModels(files: string[]) {
   const generation = syncGeneration;
-  const sources = files.filter((f) => SOURCE_FILE.test(f));
+  const sources = files
+    .filter((f) => SOURCE_FILE.test(f))
+    .slice(0, MAX_SYNC_FILES);
 
   let index = 0;
   async function worker() {
@@ -113,6 +117,7 @@ export async function syncMonacoWorkspaceModels(files: string[]) {
       try {
         const content = await readTextFile(path);
         if (generation !== syncGeneration) return;
+        if (content.length > MAX_SYNC_FILE_CHARS) continue;
         if (monaco.editor.getModel(uri)) continue;
         monaco.editor.createModel(content, languageForPath(path), uri);
       } catch {
@@ -126,8 +131,4 @@ export async function syncMonacoWorkspaceModels(files: string[]) {
       worker(),
     ),
   );
-}
-
-export function initMonacoWorkspace() {
-  registerMonacoNavigation();
 }

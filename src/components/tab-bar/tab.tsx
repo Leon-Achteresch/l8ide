@@ -117,7 +117,7 @@ export function Tab({
               act((s) => s.closeTab(path));
             }}
             className={cn(
-              "ml-0.5 shrink-0 rounded p-0.5 text-muted-foreground transition-all duration-150 hover:bg-foreground/8 hover:text-foreground",
+              "ml-0.5 shrink-0 rounded p-0.5 text-muted-foreground transition-colors duration-150 hover:bg-foreground/8 hover:text-foreground",
               isActive ? "opacity-70 hover:opacity-100" : "opacity-0 group-hover:opacity-70 group-hover:hover:opacity-100",
             )}
           >

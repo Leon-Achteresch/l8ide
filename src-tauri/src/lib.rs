@@ -261,6 +261,37 @@ fn replace_match(
 }
 
 #[tauri::command]
+fn list_files(root: String, hidden: Vec<String>) -> Vec<String> {
+    let hidden: std::collections::HashSet<String> = hidden.into_iter().collect();
+    let results = Mutex::new(Vec::<String>::new());
+
+    WalkBuilder::new(&root)
+        .hidden(false)
+        .filter_entry(move |entry| {
+            let name = entry.file_name().to_string_lossy();
+            name != ".git" && name != "node_modules" && !hidden.contains(name.as_ref())
+        })
+        .build_parallel()
+        .run(|| {
+            let results = &results;
+            Box::new(move |entry| {
+                let Ok(entry) = entry else {
+                    return WalkState::Continue;
+                };
+                if entry.file_type().is_some_and(|t| t.is_file()) {
+                    let path = entry.path().to_string_lossy().replace('\\', "/");
+                    results.lock().unwrap().push(path);
+                }
+                WalkState::Continue
+            })
+        });
+
+    let mut files = results.into_inner().unwrap();
+    files.sort();
+    files
+}
+
+#[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
@@ -278,6 +309,31 @@ mod tests {
             include: String::new(),
             exclude: String::new(),
         }
+    }
+
+    #[test]
+    fn list_files_skips_hidden_and_ignored() {
+        let dir = std::env::temp_dir().join("l8ide-list-test");
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(dir.join("src")).unwrap();
+        std::fs::create_dir_all(dir.join("node_modules/pkg")).unwrap();
+        std::fs::create_dir_all(dir.join("secret")).unwrap();
+        std::fs::write(dir.join("src/a.ts"), "a").unwrap();
+        std::fs::write(dir.join(".env"), "x").unwrap();
+        std::fs::write(dir.join("node_modules/pkg/b.js"), "b").unwrap();
+        std::fs::write(dir.join("secret/c.txt"), "c").unwrap();
+
+        let root = dir.to_string_lossy().into_owned();
+        let files = list_files(root.clone(), vec!["secret".into()]);
+        let names: Vec<&str> = files
+            .iter()
+            .map(|f| f.rsplit('/').next().unwrap())
+            .collect();
+        assert!(names.contains(&"a.ts"));
+        assert!(names.contains(&".env"));
+        assert!(!names.iter().any(|n| *n == "b.js" || *n == "c.txt"));
+
+        let _ = std::fs::remove_dir_all(&dir);
     }
 
     #[test]
@@ -330,6 +386,7 @@ pub fn run() {
         .manage(terminal::PtyState::default())
         .invoke_handler(tauri::generate_handler![
             greet,
+            list_files,
             search_in_files,
             replace_in_files,
             replace_match,

@@ -1,4 +1,4 @@
-import * as monaco from "monaco-editor";
+import { getMonacoInstance } from "@/lib/monaco-instance";
 import { useEffect } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -18,7 +18,7 @@ type EditorZoomState = {
 };
 
 function applyFontSize(fontSize: number) {
-  for (const editor of monaco.editor.getEditors()) {
+  for (const editor of getMonacoInstance()?.editor.getEditors() ?? []) {
     editor.updateOptions({ fontSize });
   }
 }

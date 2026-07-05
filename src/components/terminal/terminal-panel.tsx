@@ -56,10 +56,20 @@ export function TerminalPanel() {
     e.preventDefault();
     const startY = e.clientY;
     const startHeight = height;
+    let y = startY;
+    let frame = 0;
     function onMove(ev: PointerEvent) {
-      setHeight(startHeight + startY - ev.clientY);
+      y = ev.clientY;
+      if (!frame) {
+        frame = requestAnimationFrame(() => {
+          frame = 0;
+          setHeight(startHeight + startY - y);
+        });
+      }
     }
     function onUp() {
+      if (frame) cancelAnimationFrame(frame);
+      setHeight(startHeight + startY - y);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
       document.body.style.cursor = "";

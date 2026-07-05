@@ -56,6 +56,7 @@ import {
 } from "lucide-react";
 import {
 	createContext,
+	memo,
 	useCallback,
 	useContext,
 	useEffect,
@@ -266,14 +267,24 @@ type TreeCtxType = {
 
 const TreeCtx = createContext<TreeCtxType>(null!);
 
-function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
+const TreeNode = memo(function TreeNode({
+	entry,
+	depth,
+}: {
+	entry: Entry;
+	depth: number;
+}) {
 	const ctx = useContext(TreeCtx);
 	const [open, setOpen] = useState(false);
 	const renaming = useTreeStore((s) => s.renamingPath === entry.path);
 	const cancelRename = useRef(false);
 	const [children, setChildren] = useState<Entry[] | null>(null);
 	const isActive = useWorkspaceStore((s) => s.activeFile === entry.path);
-	const activeFile = useWorkspaceStore((s) => s.activeFile);
+	const activeDescendant = useWorkspaceStore((s) =>
+		entry.isDirectory && s.activeFile?.startsWith(`${entry.path}/`)
+			? s.activeFile
+			: null,
+	);
 	const openFile = useWorkspaceStore((s) => s.openFile);
 	const isSelected = useTreeStore((s) => s.selected.includes(entry.path));
 	const isDropTarget = useTreeStore((s) => s.dropTarget === entry.path);
@@ -281,7 +292,13 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
 	const tick = useTreeStore((s) => s.refreshTicks[entry.path] ?? 0);
 	const refreshEpoch = useTreeStore((s) => s.refreshEpoch);
 	const collapseEpoch = useTreeStore((s) => s.collapseEpoch);
-	const reveal = useTreeStore((s) => s.reveal);
+	const reveal = useTreeStore((s) =>
+		s.reveal &&
+		entry.isDirectory &&
+		(s.reveal === entry.path || s.reveal.startsWith(`${entry.path}/`))
+			? s.reveal
+			: null,
+	);
 	const buttonRef = useRef<HTMLButtonElement | null>(null);
 	const expandTimer = useRef<number | null>(null);
 
@@ -298,14 +315,14 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
 	});
 
 	useEffect(() => {
-		if (entry.isDirectory && activeFile?.startsWith(`${entry.path}/`)) {
+		if (activeDescendant) {
 			setOpen(true);
 			setChildren((c) => {
 				if (c === null) listDir(entry.path).then(setChildren);
 				return c;
 			});
 		}
-	}, [activeFile, entry.path, entry.isDirectory]);
+	}, [activeDescendant, entry.path]);
 
 	useEffect(() => {
 		if (isActive) buttonRef.current?.scrollIntoView({ block: "nearest" });
@@ -332,18 +349,14 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
 	}, [collapseEpoch]);
 
 	useEffect(() => {
-		if (
-			reveal &&
-			entry.isDirectory &&
-			(reveal === entry.path || reveal.startsWith(`${entry.path}/`))
-		) {
+		if (reveal) {
 			setOpen(true);
 			setChildren((c) => {
 				if (c === null) listDir(entry.path).then(setChildren);
 				return c;
 			});
 		}
-	}, [reveal, entry.path, entry.isDirectory]);
+	}, [reveal, entry.path]);
 
 	useEffect(() => {
 		if (isDropTarget && entry.isDirectory && !open) {
@@ -554,7 +567,7 @@ function TreeNode({ entry, depth }: { entry: Entry; depth: number }) {
 			)}
 		</div>
 	);
-}
+});
 
 function TreeContainer({
 	rootPath,

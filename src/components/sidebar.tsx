@@ -5,6 +5,7 @@ import { SidebarActions } from "@/components/sidebar-actions";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { AnimatePresence, motion } from "motion/react";
+import { useState } from "react";
 
 export function Sidebar() {
 	const rootPath = useWorkspaceStore((s) => s.rootPath);
@@ -12,15 +13,28 @@ export function Sidebar() {
 	const sidebarOpen = useWorkspaceStore((s) => s.sidebarOpen);
 	const sidebarMode = useWorkspaceStore((s) => s.sidebarMode);
 	const setSidebarWidth = useWorkspaceStore((s) => s.setSidebarWidth);
+	const [resizing, setResizing] = useState(false);
 
 	function startResize(e: React.PointerEvent) {
 		e.preventDefault();
+		setResizing(true);
 		const startX = e.clientX;
 		const startWidth = sidebarWidth;
+		let x = startX;
+		let frame = 0;
 		function onMove(ev: PointerEvent) {
-			setSidebarWidth(startWidth + ev.clientX - startX);
+			x = ev.clientX;
+			if (!frame) {
+				frame = requestAnimationFrame(() => {
+					frame = 0;
+					setSidebarWidth(startWidth + x - startX);
+				});
+			}
 		}
 		function onUp() {
+			if (frame) cancelAnimationFrame(frame);
+			setSidebarWidth(startWidth + x - startX);
+			setResizing(false);
 			window.removeEventListener("pointermove", onMove);
 			window.removeEventListener("pointerup", onUp);
 			document.body.style.cursor = "";
@@ -37,7 +51,11 @@ export function Sidebar() {
 					initial={{ width: 0, opacity: 0 }}
 					animate={{ width: sidebarWidth, opacity: 1 }}
 					exit={{ width: 0, opacity: 0 }}
-					transition={{ type: "spring", stiffness: 400, damping: 40 }}
+					transition={
+						resizing
+							? { duration: 0 }
+							: { type: "spring", stiffness: 400, damping: 40 }
+					}
 					className="relative flex h-full shrink-0 flex-col overflow-hidden border-r bg-sidebar"
 				>
 					<div style={{ width: sidebarWidth }} className="flex h-full flex-col">

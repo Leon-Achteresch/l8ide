@@ -1,4 +1,4 @@
-import { readDir } from "@tauri-apps/plugin-fs";
+import { invoke } from "@tauri-apps/api/core";
 import { create } from "zustand";
 import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
 
@@ -15,31 +15,12 @@ type FileIndexState = {
   invalidate: () => void;
 };
 
-async function collectFiles(dir: string, hidden: Set<string>): Promise<string[]> {
-  let entries;
+async function collectFiles(root: string, hidden: Set<string>): Promise<string[]> {
   try {
-    entries = await readDir(dir);
+    return await invoke<string[]>("list_files", { root, hidden: [...hidden] });
   } catch {
     return [];
   }
-
-  const files: string[] = [];
-  const dirs: Promise<string[]>[] = [];
-
-  for (const entry of entries) {
-    const name = entry.name ?? "";
-    if (hidden.has(name)) continue;
-    const fullPath = `${dir}/${name}`;
-    if (entry.isDirectory) {
-      dirs.push(collectFiles(fullPath, hidden));
-    } else {
-      files.push(fullPath);
-    }
-  }
-
-  const nested = await Promise.all(dirs);
-  for (const chunk of nested) files.push(...chunk);
-  return files;
 }
 
 function fuzzyScore(query: string, text: string): number {
@@ -86,7 +67,7 @@ export function filterFiles(
 
   const ranked: { path: string; score: number }[] = [];
   for (const path of files) {
-    const name = path.split("/").pop() ?? path;
+    const name = path.slice(path.lastIndexOf("/") + 1);
     const score = Math.max(fuzzyScore(trimmed, name) * 3, fuzzyScore(trimmed, path));
     if (score > 0) ranked.push({ path, score });
   }

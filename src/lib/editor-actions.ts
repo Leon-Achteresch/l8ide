@@ -1,10 +1,11 @@
+import { getMonacoInstance } from "@/lib/monaco-instance";
 import { monacoUriForPath, pathFromMonacoUri } from "@/lib/monaco-uri";
 import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { writeTextFile } from "@tauri-apps/plugin-fs";
-import * as monaco from "monaco-editor";
+import type * as monaco from "monaco-editor";
 
 function activeEditor(): monaco.editor.ICodeEditor | null {
-  const editors = monaco.editor.getEditors();
+  const editors = getMonacoInstance()?.editor.getEditors() ?? [];
   return editors.find((e) => e.hasTextFocus()) ?? editors[0] ?? null;
 }
 
@@ -16,9 +17,10 @@ export function saveModel(model: monaco.editor.ITextModel) {
 }
 
 export function saveActiveFile() {
+  const m = getMonacoInstance();
   const path = useWorkspaceStore.getState().activeFile;
-  if (!path || isPageTab(path)) return;
-  const model = monaco.editor.getModel(monacoUriForPath(path));
+  if (!m || !path || isPageTab(path)) return;
+  const model = m.editor.getModel(monacoUriForPath(path));
   if (model) saveModel(model);
 }
 

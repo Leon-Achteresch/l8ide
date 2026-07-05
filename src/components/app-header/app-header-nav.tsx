@@ -9,7 +9,7 @@ export function AppHeaderNav() {
 
   const button = (route: string) =>
     cn(
-      "inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-all duration-150",
+      "inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150",
       "hover:bg-foreground/10 hover:text-foreground",
       activeFile === pageTab(route) && "bg-foreground/10 text-foreground",
     );
