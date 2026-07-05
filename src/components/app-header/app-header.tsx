@@ -5,6 +5,7 @@ import { AppHeaderBranch } from "./app-header-branch";
 import { AppHeaderFolderButton } from "./app-header-folder-button";
 import { AppHeaderLogoMenu } from "./app-header-logo-menu";
 import { AppHeaderNav } from "./app-header-nav";
+import { AppHeaderRun } from "./app-header-run";
 import { AppHeaderSidebarTabs } from "./app-header-sidebar-tabs";
 import { AppHeaderSidebarToggle } from "./app-header-sidebar-toggle";
 import { AppHeaderTitle } from "./app-header-title";
@@ -40,6 +41,10 @@ export function AppHeader() {
       </div>
 
       <AppHeaderTitle />
+
+      <div className="flex items-center">
+        <AppHeaderRun />
+      </div>
 
       <AppHeaderNav />
 

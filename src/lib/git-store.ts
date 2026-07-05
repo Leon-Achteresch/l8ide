@@ -24,12 +24,27 @@ type FullStatus = {
   has_upstream: boolean;
 };
 
+export type BranchInfo = {
+  name: string;
+  is_current: boolean;
+  is_remote: boolean;
+  tip: string;
+  behind: number | null;
+};
+
+type RepoInfo = {
+  path: string;
+  branch: string;
+  branches: BranchInfo[];
+};
+
 type GitStore = {
   branch: string | null;
   ahead: number;
   behind: number;
   hasUpstream: boolean;
   entries: StatusEntry[];
+  branches: BranchInfo[];
   commitMessage: string;
   busy: boolean;
   loaded: boolean;
@@ -37,6 +52,8 @@ type GitStore = {
   setCommitMessage: (v: string) => void;
   reset: () => void;
   refresh: () => Promise<void>;
+  loadBranches: () => Promise<void>;
+  createBranch: (name: string) => Promise<void>;
   stage: (files: string[]) => Promise<void>;
   unstage: (files: string[]) => Promise<void>;
   stageAll: () => Promise<void>;
@@ -66,6 +83,7 @@ export const useGitStore = create<GitStore>()((set, get) => ({
   behind: 0,
   hasUpstream: false,
   entries: [],
+  branches: [],
   commitMessage: "",
   busy: false,
   loaded: false,
@@ -170,6 +188,32 @@ export const useGitStore = create<GitStore>()((set, get) => ({
       toast.error(describeError(e));
     }
     await get().refresh();
+  },
+
+  loadBranches: async () => {
+    const path = root();
+    if (!path) return;
+    try {
+      const info = await invoke<RepoInfo>("open_repo", { path });
+      set({ branches: info.branches });
+    } catch (e) {
+      set({ error: describeError(e) });
+    }
+  },
+
+  createBranch: async (name) => {
+    const path = root();
+    const n = name.trim();
+    if (!path || !n) return;
+    try {
+      await invoke("git_create_branch", { path, name: n, checkout: true });
+      toast.success(`Branch „${n}“ erstellt`);
+    } catch (e) {
+      toast.error(describeError(e));
+      return;
+    }
+    await get().refresh();
+    await get().loadBranches();
   },
 
   fetch: async () => {

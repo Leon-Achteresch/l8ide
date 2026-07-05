@@ -332,6 +332,21 @@ export function runCommand(id: number, text: string) {
   session.term.focus();
 }
 
+export async function runInTerminal(text: string) {
+  const store = useTerminalStore.getState();
+  store.setOpen(true);
+  if (store.activePane == null) store.addGroup();
+  const paneId = useTerminalStore.getState().activePane;
+  if (paneId == null) return;
+  for (let i = 0; i < 100; i++) {
+    if (sessions.get(paneId)?.ptyId != null) {
+      runCommand(paneId, text);
+      return;
+    }
+    await sleep(50);
+  }
+}
+
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

@@ -13,6 +13,7 @@
     "test:tw": "node scripts/test-tailwind.mjs",
     "test:url": "node scripts/test-url-normalize.mjs",
     "test:editorconfig": "node scripts/test-editorconfig.mjs",
+    "test:gitgutter": "node scripts/test-git-gutter.mjs",
     "test:trust": "node scripts/test-trust.mjs",
     "icons:generate": "node scripts/generate-icons.mjs",
     "preview": "vite preview",
