@@ -1,3 +1,5 @@
+mod terminal;
+
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
 
@@ -323,11 +325,17 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
+        .manage(terminal::PtyState::default())
         .invoke_handler(tauri::generate_handler![
             greet,
             search_in_files,
             replace_in_files,
-            replace_match
+            replace_match,
+            terminal::pty_spawn,
+            terminal::pty_write,
+            terminal::pty_resize,
+            terminal::pty_ack,
+            terminal::pty_kill
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

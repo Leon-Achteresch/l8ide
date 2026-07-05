@@ -42,6 +42,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+/",
   },
   {
+    id: "terminal.toggle",
+    label: "Terminal ein-/ausblenden",
+    group: "Allgemein",
+    hotkey: "Mod+J",
+  },
+  {
     id: "theme.toggle",
     label: "Dark Mode umschalten",
     group: "Allgemein",

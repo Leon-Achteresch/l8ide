@@ -6,6 +6,7 @@ import { FileSearch } from "@/components/file-search";
 import { MonacoWorkspace } from "@/components/monaco-workspace";
 import { Sidebar } from "@/components/sidebar";
 import { TabBar } from "@/components/tab-bar/tab-bar";
+import { TerminalPanel } from "@/components/terminal/terminal-panel";
 import "../App.css";
 
 export const Route = createRootRoute({
@@ -27,6 +28,7 @@ function RootComponent() {
             <div className="min-h-0 min-w-0 flex-1">
               <Outlet />
             </div>
+            <TerminalPanel />
           </div>
         </div>
       </div>

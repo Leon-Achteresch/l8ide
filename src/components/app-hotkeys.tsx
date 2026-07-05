@@ -1,6 +1,7 @@
 import { monacoUriForPath } from "@/lib/monaco-uri";
 import { useEditorZoom, useModZoomInHotkey } from "@/lib/editor-zoom";
 import { useCommandHotkeys } from "@/lib/hotkeys";
+import { useTerminalStore } from "@/lib/terminal-store";
 import { isPageTab, pageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { useFileSearchStore } from "@/components/file-search";
 import { open } from "@tauri-apps/plugin-dialog";
@@ -51,6 +52,7 @@ export function AppHotkeys() {
         document.getElementById(SEARCH_INPUT_ID)?.focus();
       });
     },
+    "terminal.toggle": () => useTerminalStore.getState().toggle(),
     "theme.toggle": () =>
       setTheme(resolvedTheme === "dark" ? "light" : "dark"),
     "editor.save": () => {
