@@ -14,6 +14,8 @@ import htmlWorker from "monaco-editor/esm/vs/language/html/html.worker?worker";
 import jsonWorker from "monaco-editor/esm/vs/language/json/json.worker?worker";
 import tsWorker from "@/lib/ts.worker?worker";
 import { registerRefactorProviders } from "@/lib/ts-refactor";
+import { registerSemanticTokens } from "@/lib/semantic-tokens";
+import { registerTailwind } from "@/lib/tailwind";
 
 self.MonacoEnvironment = {
   getWorker(_workerId, label) {
@@ -58,6 +60,8 @@ initPrettier(monaco);
 initMarkers(monaco);
 registerMonacoNavigation();
 registerRefactorProviders();
+registerSemanticTokens();
+registerTailwind(monaco);
 initIdeMonacoThemes();
 void configureJsonSchemas();
 

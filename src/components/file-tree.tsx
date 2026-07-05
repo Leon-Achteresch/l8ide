@@ -290,6 +290,7 @@ const TreeNode = memo(function TreeNode({
 			: null,
 	);
 	const openFile = useWorkspaceStore((s) => s.openFile);
+	const openPreview = useWorkspaceStore((s) => s.openPreview);
 	const counts = useMarkersStore((s) =>
 		(entry.isDirectory ? s.dirCounts : s.fileCounts)[entry.path],
 	);
@@ -387,7 +388,7 @@ const TreeNode = memo(function TreeNode({
 
 	async function toggle() {
 		if (!entry.isDirectory) {
-			openFile(entry.path);
+			openPreview(entry.path);
 			return;
 		}
 		if (!open && children === null) {
@@ -451,6 +452,9 @@ const TreeNode = memo(function TreeNode({
 							onClick={(e) => {
 								ctx.onRowClick(entry, e);
 								if (!e.metaKey && !e.ctrlKey && !e.shiftKey) toggle();
+							}}
+							onDoubleClick={() => {
+								if (!entry.isDirectory) openFile(entry.path);
 							}}
 							className={cn(
 								"relative flex w-full select-none items-center gap-1.5 rounded-lg px-2 py-1 text-left text-[13px] transition-colors duration-100",

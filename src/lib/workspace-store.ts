@@ -1,6 +1,7 @@
 import {
   collectLeaves,
   type LayoutNode,
+  openPreviewTabs,
   removeLeaf,
   type SplitDirection,
   splitLeaf,
@@ -37,6 +38,7 @@ export type GroupState = {
   tabs: string[];
   pinned: string[];
   activeFile: string | null;
+  preview: string | null;
 };
 
 type WorkspaceStore = {
@@ -78,6 +80,8 @@ type WorkspaceStore = {
   closeToRight: (path: string) => void;
   closeAll: () => void;
   togglePin: (path: string) => void;
+  openPreview: (path: string) => void;
+  promoteTab: (path: string) => void;
   moveTab: (path: string, toIndex: number) => void;
   remapPath: (src: string, dest: string) => void;
   splitGroup: (direction: SplitDirection) => void;
@@ -103,11 +107,15 @@ function withGroupSync(s: WorkspaceStore, patch: Partial<GroupState>) {
   const tabs = patch.tabs ?? s.tabs;
   const pinned = patch.pinned ?? s.pinned;
   const activeFile = "activeFile" in patch ? patch.activeFile ?? null : s.activeFile;
+  const current = s.groups[s.activeGroupId];
+  let preview =
+    "preview" in patch ? patch.preview ?? null : current?.preview ?? null;
+  if (preview && !tabs.includes(preview)) preview = null;
   return {
     tabs,
     pinned,
     activeFile,
-    groups: { ...s.groups, [s.activeGroupId]: { tabs, pinned, activeFile } },
+    groups: { ...s.groups, [s.activeGroupId]: { tabs, pinned, activeFile, preview } },
   };
 }
 
@@ -116,7 +124,7 @@ function loadGroup(g: GroupState) {
 }
 
 function freshGroups() {
-  const group: GroupState = { tabs: [], pinned: [], activeFile: null };
+  const group: GroupState = { tabs: [], pinned: [], activeFile: null, preview: null };
   return {
     groups: { g0: group },
     layout: { type: "leaf", id: "g0" } as LayoutNode,
@@ -194,7 +202,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
       activeFile: null,
       tabs: [],
       pinned: [],
-      groups: { g0: { tabs: [], pinned: [], activeFile: null } },
+      groups: { g0: { tabs: [], pinned: [], activeFile: null, preview: null } },
       layout: { type: "leaf", id: "g0" },
       activeGroupId: "g0",
       nextId: 1,
@@ -213,7 +221,32 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
           withGroupSync(s, {
             activeFile: path,
             tabs: s.tabs.includes(path) ? s.tabs : [...s.tabs, path],
+            ...(s.groups[s.activeGroupId]?.preview === path
+              ? { preview: null }
+              : {}),
           }),
+        ),
+      openPreview: (path) =>
+        set((s) => {
+          if (s.tabs.includes(path)) {
+            return withGroupSync(s, { activeFile: path });
+          }
+          return withGroupSync(s, {
+            tabs: openPreviewTabs(
+              s.tabs,
+              s.pinned,
+              s.groups[s.activeGroupId]?.preview ?? null,
+              path,
+            ),
+            activeFile: path,
+            preview: path,
+          });
+        }),
+      promoteTab: (path) =>
+        set((s) =>
+          s.groups[s.activeGroupId]?.preview === path
+            ? withGroupSync(s, { preview: null })
+            : s,
         ),
       setActiveFile: (path) => set((s) => withGroupSync(s, { activeFile: path })),
       closeTab: (path) =>
@@ -265,7 +298,13 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
             ? s.pinned.filter((t) => t !== path)
             : [...s.pinned, path];
           const to = isPinned ? pinned.length : pinned.length - 1;
-          return withGroupSync(s, { pinned, tabs: move(s.tabs, path, to) });
+          return withGroupSync(s, {
+            pinned,
+            tabs: move(s.tabs, path, to),
+            ...(s.groups[s.activeGroupId]?.preview === path
+              ? { preview: null }
+              : {}),
+          });
         }),
       moveTab: (path, toIndex) =>
         set((s) => {
@@ -285,6 +324,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
               tabs: g.tabs.map(map),
               pinned: g.pinned.map(map),
               activeFile: g.activeFile ? map(g.activeFile) : null,
+              preview: g.preview ? map(g.preview) : null,
             };
           }
           return {
@@ -302,6 +342,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
             tabs: s.activeFile ? [s.activeFile] : [],
             pinned: [],
             activeFile: s.activeFile,
+            preview: null,
           };
           return {
             nextId: s.nextId + 2,
@@ -361,6 +402,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
             tabs: toTabs,
             pinned: to.pinned,
             activeFile: path,
+            preview: to.preview === path ? null : to.preview,
           };
           const groups = { ...s.groups, [toId]: target };
           let layout = s.layout;
@@ -372,6 +414,7 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
               tabs: fromTabs,
               pinned: fromPinned,
               activeFile: fromActive,
+              preview: from.preview === path ? null : from.preview,
             };
           }
           return {
@@ -401,11 +444,15 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
           trustedFolders: s.trustedFolders ?? [],
         };
         if (s.groups && s.layout && s.activeGroupId) {
-          return { ...base, nextId: s.nextId ?? 1 };
+          const groups: Record<string, GroupState> = {};
+          for (const [id, g] of Object.entries(s.groups)) {
+            groups[id] = { ...g, preview: g.preview ?? null };
+          }
+          return { ...base, groups, nextId: s.nextId ?? 1 };
         }
         return {
           ...base,
-          groups: { g0: { tabs, pinned, activeFile } },
+          groups: { g0: { tabs, pinned, activeFile, preview: null } },
           layout: { type: "leaf", id: "g0" },
           activeGroupId: "g0",
           nextId: 1,

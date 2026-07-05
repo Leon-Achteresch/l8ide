@@ -49,6 +49,20 @@ export function splitLeaf(
   };
 }
 
+export function openPreviewTabs(
+  tabs: string[],
+  pinned: string[],
+  oldPreview: string | null,
+  path: string,
+): string[] {
+  if (tabs.includes(path)) return tabs;
+  const base =
+    oldPreview && oldPreview !== path && !pinned.includes(oldPreview)
+      ? tabs.filter((t) => t !== oldPreview)
+      : tabs;
+  return [...base, path];
+}
+
 export function removeLeaf(node: LayoutNode, targetId: string): LayoutNode {
   if (node.type === "leaf") return node;
   const children = node.children

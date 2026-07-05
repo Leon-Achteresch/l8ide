@@ -58,6 +58,22 @@ class RefactorTsWorker extends TypeScriptWorker {
     }
   }
 
+  async getEncodedSemanticClassifications(
+    fileName: string,
+    span: ts.TextSpan,
+    format?: ts.SemanticClassificationFormat,
+  ): Promise<ts.Classifications | undefined> {
+    try {
+      return this._languageService.getEncodedSemanticClassifications(
+        fileName,
+        span,
+        format ?? ("2020" as ts.SemanticClassificationFormat),
+      );
+    } catch {
+      return undefined;
+    }
+  }
+
   async getEditsForFileRename(
     oldFilePath: string,
     newFilePath: string,

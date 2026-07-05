@@ -3,6 +3,7 @@ import { useEditorZoom, useModZoomInHotkey } from "@/lib/editor-zoom";
 import { useCommandHotkeys } from "@/lib/hotkeys";
 import { useBrowserStore } from "@/lib/browser-store";
 import { useTerminalStore } from "@/lib/terminal-store";
+import { toggleFullscreen, useViewStore } from "@/lib/view-store";
 import { isPageTab, pageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { useFileSearchStore } from "@/components/file-search";
 import { open } from "@tauri-apps/plugin-dialog";
@@ -98,6 +99,9 @@ export function AppHotkeys() {
       const s = useWorkspaceStore.getState();
       s.closeGroup(s.activeGroupId);
     },
+    "view.zen": () => useViewStore.getState().toggleZen(),
+    "view.centered": () => useViewStore.getState().toggleCentered(),
+    "view.fullscreen": () => toggleFullscreen(),
   },
   undefined,
   {

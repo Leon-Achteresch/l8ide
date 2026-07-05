@@ -3,6 +3,7 @@ import { resolveEditorConfig } from "@/lib/editorconfig";
 import { getMonacoInstance } from "@/lib/monaco-instance";
 import { monacoUriForPath, pathFromMonacoUri } from "@/lib/monaco-uri";
 import { organizeImportsModel, useRefactorSettings } from "@/lib/ts-refactor";
+import { sortTailwindClasses } from "@/lib/tailwind";
 import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import type * as monaco from "monaco-editor";
 import { toast } from "sonner";
@@ -208,13 +209,14 @@ export async function formatCode(
   const plugins = await Promise.all(cfg.plugins.map(loadPlugin));
   const { options } = usePrettierSettings.getState();
   const overrides = await editorConfigOverrides(filepath);
-  return prettier.format(code, {
+  const out = await prettier.format(code, {
     parser: cfg.parser,
     plugins,
     ...options,
     ...overrides,
     ...(range ? { rangeStart: range.start, rangeEnd: range.end } : {}),
   });
+  return range ? out : sortTailwindClasses(out, languageId);
 }
 
 function minimalEdit(a: string, b: string) {

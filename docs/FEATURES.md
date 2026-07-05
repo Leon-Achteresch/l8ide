@@ -9,6 +9,7 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 ## 1. Editor-Kern
 
 ### 1.1 Textbearbeitung
+
 - [x] **Multi-Cursor-Editing**: Mehrere Cursor gleichzeitig (Alt+Klick, Cmd+D für nächstes Vorkommen, Cmd+Shift+L für alle Vorkommen)
 - [x] **Spaltenauswahl / Box-Selection**: Rechteckige Textauswahl (Shift+Alt+Drag)
 - [x] **Zeilenoperationen**: Zeile verschieben (Alt+↑/↓), duplizieren (Shift+Alt+↑/↓), löschen (Cmd+Shift+K), Zeilen joinen
@@ -25,10 +26,11 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 - [x] **Undo/Redo mit Cursor-Historie**
 
 ### 1.2 Code-Intelligenz (IntelliSense)
+
 - [x] **Completions**: Kontextabhängige Vorschläge (Wörter, Symbole, Snippets)
 - [x] **Parameter Hints / Signature Help**: Anzeige von Funktionssignaturen beim Tippen
 - [x] **Quick Info / Hover**: Typinformationen, Dokumentation, JSDoc beim Hovern
-- [ ] **Semantic Highlighting**: Einfärbung basierend auf Symbol-Semantik (nicht nur Syntax) — Monaco TS-Worker liefert keine Semantic Tokens; braucht eigenen Provider
+- [x] **Semantic Highlighting**: Einfärbung basierend auf Symbol-Semantik (nicht nur Syntax) — Custom-Worker (`getEncodedSemanticClassifications`) + eigener DocumentSemanticTokensProvider
 - [x] **Inlay Hints**: Inline-Anzeige von Parameternamen und inferierten Typen
 - [ ] **Auto-Imports**: Automatisches Hinzufügen von Import-Statements bei Completion — Monaco-Stock-Worker reicht keine Modul-Export-Preferences durch; braucht Custom-Worker
 - [x] **Snippet-Support (eingebaut)**: Monaco-Snippets mit Tabstops und Platzhaltern
@@ -37,6 +39,7 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 - [x] **Suggestion-Ranking**: Sortierung nach Relevanz, zuletzt genutzt, Lokalität
 
 ### 1.3 Navigation
+
 - [x] **Go to Definition** (F12) und **Peek Definition** (Alt+F12, Inline-Vorschau)
 - [x] **Go to Type Definition**
 - [ ] **Go to Implementation**
@@ -54,6 +57,7 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 - [ ] **Minimap**: Verkleinerte Code-Übersicht mit Highlight-Markern (aktuell deaktiviert)
 
 ### 1.4 Refactoring
+
 - [x] **Rename Symbol** (F2): Projektweites Umbenennen — Monaco-Inline-Rename (F2) plus „Umbenennen (Vorschau)" (Shift+F2) mit Diff-Prüfung
 - [x] **Quick Fixes / Code Actions** (Cmd+.): TS/JS-Refactors + Organize Imports über eigenen CodeActionProvider
 - [x] **Extract Method / Extract Function** — TS-Refactor, danach Inline-Rename des neuen Symbols
@@ -67,6 +71,7 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 Umgesetzt via eigenem TypeScript-Worker (`ts.worker.ts`), der die TS-Language-Service-Refactorings (`getApplicableRefactors`, `getEditsForRefactor`, `organizeImports`) freilegt, die Monacos Stock-Worker nicht durchreicht.
 
 ### 1.5 Formatierung & Linting
+
 - [x] **Format Document / Format Selection** (Prettier, Shift+Alt+F)
 - [x] **Format on Save**
 - [x] **Format on Paste / on Type** — Monaco-Editor-Optionen `formatOnPaste`/`formatOnType`, in den Einstellungen umschaltbar
@@ -79,26 +84,28 @@ Umgesetzt via eigenem TypeScript-Worker (`ts.worker.ts`), der die TS-Language-Se
 Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers-store.ts`. Aktuell nur Syntax- + JSON-Schema-Marker (semantische TS-Validierung ist in `monaco-workspace.ts` deaktiviert — `noSemanticValidation: true` umlegen für Typfehler).
 
 ### 1.6 Darstellung
+
 - [x] **Syntax Highlighting** via Monaco-Grammatiken
-- [ ] **Semantic Token Highlighting**: Tree-Sitter-ähnliche semantische Token
+- [x] **Semantic Token Highlighting**: Tree-Sitter-ähnliche semantische Token
 - [x] **Bracket Pair Colorization**: Farbliche Klammernpaare + Guides
 - [x] **Indent Guides** (aktive Einrückungsebene hervorgehoben)
 - [x] **Code Folding**: Nach Einrückung oder Sprach-Regionen, Folding-Ranges, `#region`-Marker
-- [ ] **Word Wrap**: Konfigurierbar (Spaltenbreite, eingerückt)
+- [x] **Word Wrap**: Konfigurierbar (Spaltenbreite, eingerückt)
 - [x] **Zoom (Editor)**: Schriftgröße per Mod+/−/0
-- [ ] **Zoom (UI)**: Gesamte Workbench-Skalierung
-- [ ] **Font-Ligaturen-Support**
-- [ ] **Rulers**: Vertikale Hilfslinien bei definierten Spalten
+- [x] **Zoom (UI)**: Gesamte Workbench-Skalierung
+- [x] **Font-Ligaturen-Support**
+- [x] **Rulers**: Vertikale Hilfslinien bei definierten Spalten
 - [x] **Render Line Highlight**: Aktuelle Zeile hervorheben
 - [x] **Cursor-Stile & Animationen**: Block, Line, Underline, Blinken, Smooth Caret Animation
 - [x] **Smooth Scrolling**
-- [ ] **Color Decorators**: Inline-Farbvorschau + Color Picker in CSS/etc.
-- [ ] **Unicode Highlighting**: Warnung vor verwechselbaren/unsichtbaren Zeichen
-- [ ] **Whitespace/Control-Character-Rendering**
+- [x] **Color Decorators**: Inline-Farbvorschau + Color Picker in CSS/etc.
+- [x] **Unicode Highlighting**: Warnung vor verwechselbaren/unsichtbaren Zeichen
+- [x] **Whitespace/Control-Character-Rendering**
 
 ## 2. Workbench / UI
 
 ### 2.1 Layout
+
 - [ ] **Activity Bar**: Umschaltbare Haupt-Views (Explorer, Search, SCM, Debug, Extensions)
 - [x] **Primary Sidebar**: Explorer und Suche, ein-/ausblendbar, resizable
 - [ ] **Secondary Sidebar**: Zwei unabhängige Seitenleisten
@@ -117,6 +124,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 - [ ] **Custom Layout-Presets** (Customize-Layout-Kontrolle)
 
 ### 2.2 Kommando-Zugriff
+
 - [ ] **Command Palette** (Cmd+Shift+P): Alle Befehle durchsuchbar
 - [x] **Quick Open (Dateien)** (Cmd+P): Fuzzy-Dateisuche
 - [ ] **Quick Open (Modifikatoren)**: `@` Symbole, `#` Workspace-Symbole, `:` Zeile, `?` Hilfe
@@ -125,6 +133,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 - [ ] **Keymap-Extensions**: Vim, Emacs, Sublime, IntelliJ-Emulation
 
 ### 2.3 Dateiverwaltung (Explorer)
+
 - [x] **Dateibaum**: Erstellen, Umbenennen, Löschen, Drag&Drop, Multi-Select
 - [ ] **Compact Folders**: Zusammenfassen einzelner verschachtelter Ordner
 - [ ] **File Nesting**: Zugehörige Dateien unterordnen (z.B. `.js` unter `.ts`)
@@ -144,6 +153,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 - [x] **`.git` standardmäßig ausblenden**
 
 ### 2.4 Suche
+
 - [x] **Volltextsuche im Workspace** (ripgrep-basiert): Regex, Case, Whole Word
 - [x] **Include/Exclude-Globs**
 - [x] **Respektierung von `.gitignore`** in Workspace-Suche und Datei-Index
@@ -157,6 +167,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 - [x] **In-File-Suche** (Cmd+F) via Monaco
 
 ### 2.5 Personalisierung
+
 - [x] **Color Themes**: Hell/Dunkel mit OS-Sync via next-themes
 - [ ] **Color Themes (Marketplace)**: Installierbar, eigene definierbar
 - [x] **File Icon Themes (Basis)**: Datei-/Ordner-Icons ein-/ausschaltbar

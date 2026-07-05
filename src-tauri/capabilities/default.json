@@ -5,6 +5,8 @@
   "windows": ["main", "w-*"],
   "permissions": [
     "core:default",
+    "core:window:allow-set-fullscreen",
+    "core:window:allow-is-fullscreen",
     "core:webview:allow-create-webview-window",
     "opener:default",
     "dialog:allow-open",

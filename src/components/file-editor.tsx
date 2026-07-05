@@ -6,6 +6,7 @@ import * as monaco from "monaco-editor";
 import { useTheme } from "next-themes";
 import { applyEditorConfig } from "@/lib/editorconfig";
 import { useEditorZoom } from "@/lib/editor-zoom";
+import { useEditorDisplayOptions } from "@/lib/editor-settings";
 import { ideMonacoTheme } from "@/lib/ide-theme";
 import { formatAndSave, usePrettierSettings } from "@/lib/prettier-format";
 import { registerEditorRefactors } from "@/lib/ts-refactor";
@@ -96,6 +97,7 @@ function TextEditor({ path }: { path: string }) {
   const editorRef = useRef<monaco.editor.ICodeEditor | null>(null);
   const { resolvedTheme } = useTheme();
   const fontSize = useEditorZoom((s) => s.fontSize);
+  const displayOptions = useEditorDisplayOptions();
   const formatOnPaste = usePrettierSettings((s) => s.formatOnPaste);
   const formatOnType = usePrettierSettings((s) => s.formatOnType);
 
@@ -143,6 +145,7 @@ function TextEditor({ path }: { path: string }) {
       defaultValue={file.content}
       theme={ideMonacoTheme(resolvedTheme === "dark")}
       options={{
+        ...displayOptions,
         fontSize,
         minimap: { enabled: false },
         automaticLayout: true,
@@ -163,6 +166,7 @@ function TextEditor({ path }: { path: string }) {
 
         let timer: ReturnType<typeof setTimeout> | undefined;
         editor.onDidChangeModelContent(() => {
+          useWorkspaceStore.getState().promoteTab(path);
           const { autoSave, autoSaveDelay } = useWorkspaceStore.getState();
           if (!autoSave) return;
           const model = editor.getModel();

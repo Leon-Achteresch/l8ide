@@ -10,7 +10,10 @@ import { Toaster } from "@/components/ui/sonner";
 import { WorkspaceTrustBanner } from "@/components/workspace-trust-banner";
 import { useProblemsPanel } from "@/lib/markers-store";
 import { useTerminalStore } from "@/lib/terminal-store";
-import { lazy, Suspense } from "react";
+import { useUiZoom } from "@/lib/ui-zoom";
+import { useViewStore } from "@/lib/view-store";
+import { Minimize2 } from "lucide-react";
+import { lazy, Suspense, useEffect } from "react";
 import "../App.css";
 
 const TerminalPanel = lazy(() =>
@@ -53,33 +56,62 @@ function ProblemsSlot() {
   );
 }
 
+function ZenExit() {
+  const exitZen = useViewStore((s) => s.exitZen);
+  return (
+    <button
+      type="button"
+      onClick={exitZen}
+      title="Zen-Modus verlassen (⌥⌘Z)"
+      className="fixed right-3 top-3 z-50 inline-flex items-center gap-1.5 rounded-md bg-foreground/8 px-2 py-1 text-xs font-medium text-muted-foreground opacity-30 backdrop-blur-md transition-opacity duration-200 hover:bg-foreground/12 hover:text-foreground hover:opacity-100 focus-visible:opacity-100"
+    >
+      <Minimize2 className="size-3.5" strokeWidth={2} />
+      Zen verlassen
+    </button>
+  );
+}
+
 export const Route = createRootRoute({
   component: RootComponent,
 });
 
 function RootComponent() {
+  const uiZoom = useUiZoom((z) => z.zoom);
+  const zenMode = useViewStore((s) => s.zenMode);
+  const centeredLayout = useViewStore((s) => s.centeredLayout);
+  useEffect(() => {
+    document.documentElement.style.zoom = String(uiZoom);
+  }, [uiZoom]);
+
   return (
     <>
       <AppHotkeys />
       <MonacoWorkspace />
       <FileSearch />
       <div className="flex h-screen w-screen flex-col">
-        <AppHeader />
+        {!zenMode && <AppHeader />}
         <div className="flex min-h-0 flex-1">
-          <Sidebar />
+          {!zenMode && <Sidebar />}
           <div className="flex min-w-0 flex-1 flex-col">
             <WorkspaceTrustBanner />
             <div className="flex min-h-0 min-w-0 flex-1">
               <div className="min-h-0 min-w-0 flex-1">
-                <Outlet />
+                {centeredLayout ? (
+                  <div className="mx-auto flex h-full w-full max-w-[1100px] flex-col">
+                    <Outlet />
+                  </div>
+                ) : (
+                  <Outlet />
+                )}
               </div>
               <BrowserPanel />
             </div>
-            <ProblemsSlot />
-            <TerminalSlot />
+            {!zenMode && <ProblemsSlot />}
+            {!zenMode && <TerminalSlot />}
           </div>
         </div>
       </div>
+      {zenMode && <ZenExit />}
       <RefactorDialogs />
       <Toaster />
       {RouterDevtools && (

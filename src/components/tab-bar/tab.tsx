@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/context-menu";
 import { fileIcon } from "@/lib/file-icons";
 import { cn } from "@/lib/utils";
+import { useViewStore } from "@/lib/view-store";
 import { isPageTab, pageRoute, useWorkspaceStore } from "@/lib/workspace-store";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -29,8 +30,10 @@ export function Tab({
   const group = useWorkspaceStore((s) => s.groups[groupId]);
   const isActive = group?.activeFile === path;
   const isPinned = group?.pinned.includes(path) ?? false;
+  const isPreview = group?.preview === path;
   const isLast = group?.tabs[group.tabs.length - 1] === path;
   const tabIcons = useWorkspaceStore((s) => s.tabIcons);
+  const tabSizing = useViewStore((s) => s.tabSizing);
   const {
     attributes,
     listeners,
@@ -63,12 +66,14 @@ export function Tab({
         {...attributes}
         {...listeners}
         onClick={() => act((s) => s.setActiveFile(path))}
+        onDoubleClick={() => act((s) => s.promoteTab(path))}
         onAuxClick={(e) => {
           if (e.button === 1 && !isPinned) act((s) => s.closeTab(path));
         }}
         className={cn(
           "group",
           tabClass,
+          tabSizing === "fixed" && "w-36 max-w-none shrink-0",
           isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
           isDragging && "opacity-30",
         )}
@@ -102,7 +107,9 @@ export function Tab({
         )}
         {PageIcon && <PageIcon className="size-3.5 shrink-0" strokeWidth={2} />}
         {FileIcon && <FileIcon className="size-3.5 shrink-0" />}
-        <span className="min-w-0 flex-1 truncate">{name}</span>
+        <span className={cn("min-w-0 flex-1 truncate", isPreview && "italic")}>
+          {name}
+        </span>
         {showDir && dir && isActive && (
           <span className="min-w-0 max-w-[3.5rem] shrink truncate text-[10px] text-muted-foreground/70">
             {dir}

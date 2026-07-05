@@ -5,8 +5,19 @@ import { useTheme } from "next-themes";
 import { PrettierSettings } from "@/components/prettier-settings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from "@/components/ui/native-select";
 import { Switch } from "@/components/ui/switch";
+import {
+  useEditorSettings,
+  type WhitespaceRender,
+} from "@/lib/editor-settings";
+import { useUiZoom } from "@/lib/ui-zoom";
+import { type TabSizing, useViewStore } from "@/lib/view-store";
 import { useRefactorSettings } from "@/lib/ts-refactor";
+import { useTailwindSettings } from "@/lib/tailwind";
 import { cn } from "@/lib/utils";
 import {
   type HiddenScope,
@@ -24,6 +35,8 @@ export function SettingsPage() {
   const setFileIcons = useWorkspaceStore((s) => s.setFileIcons);
   const tabIcons = useWorkspaceStore((s) => s.tabIcons);
   const setTabIcons = useWorkspaceStore((s) => s.setTabIcons);
+  const tabSizing = useViewStore((s) => s.tabSizing);
+  const setTabSizing = useViewStore((s) => s.setTabSizing);
   const rootPath = useWorkspaceStore((s) => s.rootPath);
   const [mounted, setMounted] = useState(false);
 
@@ -66,6 +79,22 @@ export function SettingsPage() {
         </div>
         <Switch checked={tabIcons} onCheckedChange={setTabIcons} />
       </div>
+      <div className="mt-4 flex items-center justify-between max-w-sm">
+        <div>
+          <p className="text-sm font-medium">Tab-Größe</p>
+          <p className="text-xs text-muted-foreground">
+            Tabs verkleinern oder mit fester Breite anzeigen
+          </p>
+        </div>
+        <NativeSelect
+          size="sm"
+          value={tabSizing}
+          onChange={(e) => setTabSizing(e.target.value as TabSizing)}
+        >
+          <NativeSelectOption value="shrink">Verkleinern</NativeSelectOption>
+          <NativeSelectOption value="fixed">Feste Breite</NativeSelectOption>
+        </NativeSelect>
+      </div>
       {rootPath && (
         <HiddenList
           scope="workspace"
@@ -79,8 +108,182 @@ export function SettingsPage() {
         description="Gilt in allen Workspaces"
       />
       <WorkspaceTrust />
+      <EditorDisplaySettings />
       <RefactorSettings />
+      <TailwindSettings />
       <PrettierSettings />
+    </div>
+  );
+}
+
+const WHITESPACE_OPTIONS: WhitespaceRender[] = [
+  "none",
+  "boundary",
+  "trailing",
+  "selection",
+  "all",
+];
+
+function DisplayRow({
+  label,
+  description,
+  children,
+}: {
+  label: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4 py-1.5">
+      <div>
+        <p className="text-sm">{label}</p>
+        {description && (
+          <p className="text-xs text-muted-foreground">{description}</p>
+        )}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function EditorDisplaySettings() {
+  const s = useEditorSettings();
+  const uiZoom = useUiZoom((z) => z.zoom);
+  const zoomIn = useUiZoom((z) => z.zoomIn);
+  const zoomOut = useUiZoom((z) => z.zoomOut);
+  const zoomReset = useUiZoom((z) => z.reset);
+
+  return (
+    <div className="mt-8 max-w-sm">
+      <p className="text-sm font-medium">Editor: Darstellung</p>
+      <p className="text-xs text-muted-foreground">
+        Anzeigeoptionen für den Code-Editor
+      </p>
+      <div className="mt-2 space-y-1">
+        <DisplayRow label="Semantische Hervorhebung">
+          <Switch
+            checked={s.semanticHighlighting}
+            onCheckedChange={s.setSemanticHighlighting}
+          />
+        </DisplayRow>
+
+        <DisplayRow label="Zeilenumbruch (Word Wrap)">
+          <Switch checked={s.wordWrap} onCheckedChange={s.setWordWrap} />
+        </DisplayRow>
+
+        <DisplayRow
+          label="Umbruchspalte"
+          description="0 = Editorbreite"
+        >
+          <Input
+            type="number"
+            min={0}
+            max={400}
+            value={s.wordWrapColumn}
+            onChange={(e) => s.setWordWrapColumn(Number(e.target.value))}
+            className="h-8 w-20"
+          />
+        </DisplayRow>
+
+        <DisplayRow label="Font-Ligaturen">
+          <Switch
+            checked={s.fontLigatures}
+            onCheckedChange={s.setFontLigatures}
+          />
+        </DisplayRow>
+
+        <DisplayRow
+          label="Rulers (Spalten)"
+          description="Kommagetrennt, z.B. 80, 120"
+        >
+          <Input
+            value={s.rulers.join(", ")}
+            onChange={(e) =>
+              s.setRulers(
+                e.target.value
+                  .split(",")
+                  .map((n) => Math.round(Number(n.trim())))
+                  .filter((n) => Number.isFinite(n) && n > 0),
+              )
+            }
+            placeholder="80, 120"
+            className="h-8 w-24"
+          />
+        </DisplayRow>
+
+        <DisplayRow label="Farbvorschau (Color Decorators)">
+          <Switch
+            checked={s.colorDecorators}
+            onCheckedChange={s.setColorDecorators}
+          />
+        </DisplayRow>
+
+        <DisplayRow
+          label="Unicode-Warnungen"
+          description="Verwechselbare/unsichtbare Zeichen"
+        >
+          <Switch
+            checked={s.unicodeHighlight}
+            onCheckedChange={s.setUnicodeHighlight}
+          />
+        </DisplayRow>
+
+        <DisplayRow label="Whitespace anzeigen">
+          <NativeSelect
+            size="sm"
+            value={s.renderWhitespace}
+            onChange={(e) =>
+              s.setRenderWhitespace(e.target.value as WhitespaceRender)
+            }
+          >
+            {WHITESPACE_OPTIONS.map((o) => (
+              <NativeSelectOption key={o} value={o}>
+                {o}
+              </NativeSelectOption>
+            ))}
+          </NativeSelect>
+        </DisplayRow>
+
+        <DisplayRow label="Steuerzeichen anzeigen">
+          <Switch
+            checked={s.renderControlCharacters}
+            onCheckedChange={s.setRenderControlCharacters}
+          />
+        </DisplayRow>
+
+        <DisplayRow
+          label="UI-Zoom"
+          description="Gesamte Oberfläche skalieren"
+        >
+          <div className="flex items-center gap-1">
+            <Button
+              type="button"
+              size="icon"
+              variant="secondary"
+              className="size-7"
+              onClick={zoomOut}
+            >
+              −
+            </Button>
+            <button
+              type="button"
+              onClick={zoomReset}
+              className="w-12 text-center text-xs tabular-nums text-muted-foreground hover:text-foreground"
+            >
+              {Math.round(uiZoom * 100)}%
+            </button>
+            <Button
+              type="button"
+              size="icon"
+              variant="secondary"
+              className="size-7"
+              onClick={zoomIn}
+            >
+              +
+            </Button>
+          </div>
+        </DisplayRow>
+      </div>
     </div>
   );
 }
@@ -110,6 +313,39 @@ function RefactorSettings() {
           checked={organizeImportsOnSave}
           onCheckedChange={setOrganizeImportsOnSave}
         />
+      </div>
+    </div>
+  );
+}
+
+function TailwindSettings() {
+  const s = useTailwindSettings();
+  return (
+    <div className="mt-8 max-w-sm">
+      <p className="text-sm font-medium">Tailwind CSS</p>
+      <p className="text-xs text-muted-foreground">
+        Autovervollständigung, Vorschau, Sortierung und Linting für
+        Utility-Klassen
+      </p>
+      <div className="mt-2 space-y-1">
+        <DisplayRow
+          label="Aktiviert"
+          description="Vorschläge, Hover-Vorschau und Farbfelder"
+        >
+          <Switch checked={s.enabled} onCheckedChange={s.setEnabled} />
+        </DisplayRow>
+        <DisplayRow
+          label="Klassen beim Formatieren sortieren"
+          description="Reihenfolge wie prettier-plugin-tailwindcss"
+        >
+          <Switch checked={s.sortClasses} onCheckedChange={s.setSortClasses} />
+        </DisplayRow>
+        <DisplayRow
+          label="Linting"
+          description="Kollidierende Klassen und unbekannte @apply-Utilities"
+        >
+          <Switch checked={s.lint} onCheckedChange={s.setLint} />
+        </DisplayRow>
       </div>
     </div>
   );

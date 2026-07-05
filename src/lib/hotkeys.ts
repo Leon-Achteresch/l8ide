@@ -153,6 +153,24 @@ export const COMMANDS: Command[] = [
     group: "Allgemein",
     hotkey: "Mod+Shift+F",
   },
+  {
+    id: "view.zen",
+    label: "Zen-Modus",
+    group: "Ansicht",
+    hotkey: "Mod+Alt+Z",
+  },
+  {
+    id: "view.centered",
+    label: "Zentriertes Layout",
+    group: "Ansicht",
+    hotkey: "Mod+Alt+C",
+  },
+  {
+    id: "view.fullscreen",
+    label: "Vollbild",
+    group: "Ansicht",
+    hotkey: "F11" as Hotkey,
+  },
   { id: "file.rename", label: "Umbenennen", group: "Dateien", hotkey: "F2" },
   {
     id: "file.delete",

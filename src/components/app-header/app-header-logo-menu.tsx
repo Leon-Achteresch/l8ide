@@ -7,16 +7,20 @@ import { Switch } from "@/components/ui/switch";
 import { redoActive, undoActive } from "@/lib/editor-actions";
 import { formatAndSaveActive } from "@/lib/prettier-format";
 import { cn } from "@/lib/utils";
+import { toggleFullscreen, useViewStore } from "@/lib/view-store";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { open } from "@tauri-apps/plugin-dialog";
 import { LogicalPosition } from "@tauri-apps/api/dpi";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import {
+  AlignCenter,
   AppWindow,
   ChevronRight,
   FileText,
   FolderOpen,
   History,
+  Maximize2,
+  Minimize2,
   Redo2,
   Save,
   Undo2,
@@ -275,6 +279,30 @@ export function AppHeaderLogoMenu() {
               label="Wiederholen"
               shortcut="Mod+Shift+Z"
               onClick={redoActive}
+            />
+          </motion.div>
+
+          <motion.div
+            variants={MENU_ITEM}
+            className="border-t border-border/60 p-1"
+          >
+            <AppHeaderMenuAction
+              icon={Minimize2}
+              label="Zen-Modus"
+              shortcut="Mod+Alt+Z"
+              onClick={() => useViewStore.getState().toggleZen()}
+            />
+            <AppHeaderMenuAction
+              icon={AlignCenter}
+              label="Zentriertes Layout"
+              shortcut="Mod+Alt+C"
+              onClick={() => useViewStore.getState().toggleCentered()}
+            />
+            <AppHeaderMenuAction
+              icon={Maximize2}
+              label="Vollbild"
+              shortcut="F11"
+              onClick={toggleFullscreen}
             />
           </motion.div>
         </motion.div>

@@ -15,6 +15,33 @@ export function ideSurfaceColors() {
   };
 }
 
+function semanticRules(c: {
+  type: string;
+  iface: string;
+  func: string;
+  variable: string;
+  parameter: string;
+  property: string;
+  constant: string;
+}) {
+  return [
+    { token: "class", foreground: c.type },
+    { token: "enum", foreground: c.type },
+    { token: "interface", foreground: c.iface },
+    { token: "namespace", foreground: c.type },
+    { token: "typeParameter", foreground: c.type },
+    { token: "type", foreground: c.type },
+    { token: "function", foreground: c.func },
+    { token: "member", foreground: c.func },
+    { token: "property", foreground: c.property },
+    { token: "variable", foreground: c.variable },
+    { token: "parameter", foreground: c.parameter },
+    { token: "enumMember", foreground: c.constant },
+    { token: "variable.readonly", foreground: c.constant },
+    { token: "variable.defaultLibrary", foreground: c.type },
+  ];
+}
+
 export function initIdeMonacoThemes() {
   const monaco = getMonacoInstance();
   if (!monaco) return;
@@ -43,7 +70,15 @@ export function initIdeMonacoThemes() {
   monaco.editor.defineTheme(IDE_MONACO_THEME_LIGHT, {
     base: "vs",
     inherit: true,
-    rules: [],
+    rules: semanticRules({
+      type: "267f99",
+      iface: "267f99",
+      func: "795e26",
+      variable: "001080",
+      parameter: "001080",
+      property: "0451a5",
+      constant: "0070c1",
+    }),
     colors: {
       "editor.background": light.background,
       "editor.foreground": light.foreground,
@@ -64,7 +99,15 @@ export function initIdeMonacoThemes() {
   monaco.editor.defineTheme(IDE_MONACO_THEME_DARK, {
     base: "vs-dark",
     inherit: true,
-    rules: [],
+    rules: semanticRules({
+      type: "4ec9b0",
+      iface: "4ec9b0",
+      func: "dcdcaa",
+      variable: "9cdcfe",
+      parameter: "9cdcfe",
+      property: "9cdcfe",
+      constant: "4fc1ff",
+    }),
     colors: {
       "editor.background": dark.background,
       "editor.foreground": dark.foreground,
