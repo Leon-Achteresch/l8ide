@@ -4,6 +4,7 @@ import { AppHotkeys } from "@/components/app-hotkeys";
 import { BrowserPanel } from "@/components/browser/browser-panel";
 import { FileSearch } from "@/components/file-search";
 import { MonacoWorkspace } from "@/components/monaco-workspace";
+import { RefactorDialogs } from "@/components/refactor-preview-dialog";
 import { Sidebar } from "@/components/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { WorkspaceTrustBanner } from "@/components/workspace-trust-banner";
@@ -61,6 +62,7 @@ function RootComponent() {
           </div>
         </div>
       </div>
+      <RefactorDialogs />
       <Toaster />
       {RouterDevtools && (
         <Suspense fallback={null}>

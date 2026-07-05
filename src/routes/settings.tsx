@@ -6,6 +6,7 @@ import { PrettierSettings } from "@/components/prettier-settings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { useRefactorSettings } from "@/lib/ts-refactor";
 import { cn } from "@/lib/utils";
 import {
   type HiddenScope,
@@ -78,7 +79,38 @@ export function SettingsPage() {
         description="Gilt in allen Workspaces"
       />
       <WorkspaceTrust />
+      <RefactorSettings />
       <PrettierSettings />
+    </div>
+  );
+}
+
+function RefactorSettings() {
+  const organizeImportsOnSave = useRefactorSettings(
+    (s) => s.organizeImportsOnSave,
+  );
+  const setOrganizeImportsOnSave = useRefactorSettings(
+    (s) => s.setOrganizeImportsOnSave,
+  );
+
+  return (
+    <div className="mt-8 max-w-sm">
+      <p className="text-sm font-medium">Refactoring</p>
+      <p className="text-xs text-muted-foreground">
+        Code-Aktionen für TypeScript/JavaScript (Cmd+.)
+      </p>
+      <div className="mt-2 flex items-center justify-between gap-4 py-1.5">
+        <div>
+          <p className="text-sm">Imports beim Speichern organisieren</p>
+          <p className="text-xs text-muted-foreground">
+            Ungenutzte entfernen und sortieren (Auto Fix on Save)
+          </p>
+        </div>
+        <Switch
+          checked={organizeImportsOnSave}
+          onCheckedChange={setOrganizeImportsOnSave}
+        />
+      </div>
     </div>
   );
 }

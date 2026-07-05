@@ -54,15 +54,17 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 - [ ] **Minimap**: Verkleinerte Code-Übersicht mit Highlight-Markern (aktuell deaktiviert)
 
 ### 1.4 Refactoring
-- [ ] **Rename Symbol** (F2): Projektweites Umbenennen mit Vorschau
-- [ ] **Quick Fixes / Code Actions** (Cmd+.): Kontextabhängige Korrekturen
-- [ ] **Extract Method / Extract Function**
-- [ ] **Extract Variable / Constant**
-- [ ] **Inline Variable/Function** (sprachabhängig)
-- [ ] **Move to New File**
-- [ ] **Organize Imports**: Sortieren + ungenutzte entfernen
-- [ ] **Auto Fix on Save**: Code Actions beim Speichern ausführen
-- [ ] **Refactor-Preview**: Änderungen vor Anwendung in Diff-Ansicht prüfen
+- [x] **Rename Symbol** (F2): Projektweites Umbenennen — Monaco-Inline-Rename (F2) plus „Umbenennen (Vorschau)" (Shift+F2) mit Diff-Prüfung
+- [x] **Quick Fixes / Code Actions** (Cmd+.): TS/JS-Refactors + Organize Imports über eigenen CodeActionProvider
+- [x] **Extract Method / Extract Function** — TS-Refactor, danach Inline-Rename des neuen Symbols
+- [x] **Extract Variable / Constant** — TS-Refactor mit Scope-Auswahl
+- [x] **Inline Variable/Function** (sprachabhängig) — TS-Refactor
+- [x] **Move to New File** — legt Zieldatei an, korrigiert Importe, öffnet sie
+- [x] **Organize Imports**: Sortieren + ungenutzte entfernen (Shift+Alt+O)
+- [x] **Auto Fix on Save**: Imports beim Speichern organisieren (in Einstellungen)
+- [x] **Refactor-Preview**: Mehrdatei-Änderungen vorab in Side-by-Side-Diff prüfen, pro Datei an-/abwählbar
+
+Umgesetzt via eigenem TypeScript-Worker (`ts.worker.ts`), der die TS-Language-Service-Refactorings (`getApplicableRefactors`, `getEditsForRefactor`, `organizeImports`) freilegt, die Monacos Stock-Worker nicht durchreicht.
 
 ### 1.5 Formatierung & Linting
 - [x] **Format Document / Format Selection** (Prettier, Shift+Alt+F)

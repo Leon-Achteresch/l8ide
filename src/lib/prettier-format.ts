@@ -1,6 +1,7 @@
 import { saveModel } from "@/lib/editor-actions";
 import { getMonacoInstance } from "@/lib/monaco-instance";
 import { monacoUriForPath } from "@/lib/monaco-uri";
+import { organizeImportsModel, useRefactorSettings } from "@/lib/ts-refactor";
 import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import type * as monaco from "monaco-editor";
 import { toast } from "sonner";
@@ -233,6 +234,8 @@ export async function formatModel(model: monaco.editor.ITextModel) {
 
 export async function formatAndSave(model: monaco.editor.ITextModel) {
   const { enabled, formatOnSave } = usePrettierSettings.getState();
+  const { organizeImportsOnSave } = useRefactorSettings.getState();
+  if (organizeImportsOnSave) await organizeImportsModel(model);
   if (enabled && formatOnSave) await formatModel(model);
   saveModel(model);
 }

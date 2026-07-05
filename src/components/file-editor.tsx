@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import { useEditorZoom } from "@/lib/editor-zoom";
 import { ideMonacoTheme } from "@/lib/ide-theme";
 import { formatAndSave } from "@/lib/prettier-format";
+import { registerEditorRefactors } from "@/lib/ts-refactor";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import {
   revealInEditor,
@@ -147,6 +148,7 @@ function TextEditor({ path }: { path: string }) {
       }}
       onMount={(editor) => {
         editorRef.current = editor;
+        registerEditorRefactors(editor, monaco);
         const target = takePendingReveal(path);
         if (target) revealInEditor(editor, target);
 
