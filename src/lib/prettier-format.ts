@@ -251,7 +251,7 @@ function rangeFromOffsets(
   };
 }
 
-function editsFor(model: monaco.editor.ITextModel, oldText: string, newText: string) {
+export function editsFor(model: monaco.editor.ITextModel, oldText: string, newText: string) {
   if (newText === oldText) return [];
   const { start, endA, text } = minimalEdit(oldText, newText);
   return [{ range: rangeFromOffsets(model, start, endA), text }];

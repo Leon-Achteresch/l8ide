@@ -15,6 +15,7 @@
     "test:editorconfig": "node scripts/test-editorconfig.mjs",
     "test:gitgutter": "node scripts/test-git-gutter.mjs",
     "test:trust": "node scripts/test-trust.mjs",
+    "test:mdsync": "node scripts/test-markdown-sync.mjs",
     "icons:generate": "node scripts/generate-icons.mjs",
     "preview": "vite preview",
     "tauri": "tauri"
@@ -31,6 +32,8 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@fontsource/ibm-plex-sans": "^5.2.8",
     "@fontsource/jetbrains-mono": "^5.2.8",
+    "@milkdown/crepe": "^7.21.2",
+    "@milkdown/kit": "^7.21.2",
     "@monaco-editor/react": "^4.7.0",
     "@shadcn/react": "^0.2.0",
     "@tailwindcss/vite": "^4.3.2",

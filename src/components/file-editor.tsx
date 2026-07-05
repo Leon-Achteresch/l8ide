@@ -18,7 +18,7 @@ import {
   takePendingReveal,
 } from "@/lib/monaco-navigation";
 import { monacoUriForPath } from "@/lib/monaco-uri";
-import { MarkdownPreview } from "@/components/markdown-preview";
+import { MarkdownRichEditor } from "@/components/markdown-rich-editor";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -57,6 +57,7 @@ export function FileEditor({ path }: { path: string }) {
 
 function MarkdownEditor({ path }: { path: string }) {
   const [preview, setPreview] = useState(true);
+  const [editor, setEditor] = useState<monaco.editor.ICodeEditor | null>(null);
   return (
     <div className="flex h-full w-full flex-col">
       <div className="flex h-8 shrink-0 items-center justify-end border-b px-2">
@@ -78,11 +79,11 @@ function MarkdownEditor({ path }: { path: string }) {
         {preview ? (
           <ResizablePanelGroup orientation="horizontal">
             <ResizablePanel defaultSize={50} minSize={20}>
-              <TextEditor path={path} />
+              <TextEditor path={path} onEditor={setEditor} />
             </ResizablePanel>
             <ResizableHandle />
             <ResizablePanel defaultSize={50} minSize={20}>
-              <MarkdownPreview path={path} />
+              <MarkdownRichEditor path={path} sourceEditor={editor} />
             </ResizablePanel>
           </ResizablePanelGroup>
         ) : (
@@ -93,7 +94,13 @@ function MarkdownEditor({ path }: { path: string }) {
   );
 }
 
-function TextEditor({ path }: { path: string }) {
+function TextEditor({
+  path,
+  onEditor,
+}: {
+  path: string;
+  onEditor?: (editor: monaco.editor.ICodeEditor | null) => void;
+}) {
   const [file, setFile] = useState<OpenFile | null>(null);
   const [error, setError] = useState<string | null>(null);
   const editorRef = useRef<monaco.editor.ICodeEditor | null>(null);
@@ -158,6 +165,8 @@ function TextEditor({ path }: { path: string }) {
       }}
       onMount={(editor) => {
         editorRef.current = editor;
+        onEditor?.(editor);
+        editor.onDidDispose(() => onEditor?.(null));
         registerEditorRefactors(editor, monaco);
         const model = editor.getModel();
         if (model && usePrettierSettings.getState().editorConfig) {
