@@ -59,7 +59,7 @@ type GitStore = {
   stageAll: () => Promise<void>;
   unstageAll: () => Promise<void>;
   commit: (amend?: boolean) => Promise<void>;
-  checkout: (name: string) => Promise<void>;
+  checkout: (name: string, fromRemote?: string) => Promise<void>;
   fetch: () => Promise<void>;
   pull: () => Promise<void>;
   push: () => Promise<void>;
@@ -179,15 +179,34 @@ export const useGitStore = create<GitStore>()((set, get) => ({
     await get().refresh();
   },
 
-  checkout: async (name) => {
+  checkout: async (name, fromRemote) => {
     const path = root();
     if (!path) return;
     try {
-      await invoke("git_checkout", { path, refName: name, create: false });
+      if (fromRemote) {
+        const slash = fromRemote.indexOf("/");
+        const localName = slash >= 0 ? fromRemote.slice(slash + 1) : name;
+        const hasLocal = get().branches.some(
+          (b) => !b.is_remote && b.name === localName,
+        );
+        if (hasLocal) {
+          await invoke("git_checkout", { path, refName: localName, create: false });
+        } else {
+          await invoke("git_checkout", {
+            path,
+            refName: localName,
+            create: false,
+            fromRemote,
+          });
+        }
+      } else {
+        await invoke("git_checkout", { path, refName: name, create: false });
+      }
     } catch (e) {
       toast.error(describeError(e));
     }
     await get().refresh();
+    await get().loadBranches();
   },
 
   loadBranches: async () => {

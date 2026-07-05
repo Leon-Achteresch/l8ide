@@ -332,10 +332,20 @@ export function runCommand(id: number, text: string) {
   session.term.focus();
 }
 
+function insideRoot(cwd: string | null, root: string | null) {
+  if (!root || !cwd) return true;
+  return cwd === root || cwd.startsWith(`${root}/`) || cwd.startsWith(`${root}\\`);
+}
+
 export async function runInTerminal(text: string) {
   const store = useTerminalStore.getState();
+  const root = useWorkspaceStore.getState().rootPath;
   store.setOpen(true);
-  if (store.activePane == null) store.addGroup();
+
+  const active = store.activePane;
+  const activeCwd = active != null ? (store.panes[active]?.cwd ?? null) : null;
+  if (active == null || !insideRoot(activeCwd, root)) store.addGroup();
+
   const paneId = useTerminalStore.getState().activePane;
   if (paneId == null) return;
   for (let i = 0; i < 100; i++) {
