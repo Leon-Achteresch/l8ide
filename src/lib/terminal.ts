@@ -14,7 +14,10 @@ type TermSession = {
   term: Terminal;
   fit: FitAddon;
   ptyId: number | null;
+  polling: boolean;
 };
+
+const SHELL_NAMES = new Set(["zsh", "bash", "fish", "sh", "nu", "pwsh", "powershell.exe"]);
 
 const DARK_THEME: ITheme = {
   background: "#181818",
@@ -101,7 +104,7 @@ function ensureSession(id: number): TermSession {
   const fit = new FitAddon();
   term.loadAddon(fit);
 
-  const session: TermSession = { container, term, fit, ptyId: null };
+  const session: TermSession = { container, term, fit, ptyId: null, polling: false };
   sessions.set(id, session);
   return session;
 }
@@ -155,13 +158,41 @@ async function spawn(id: number, session: TermSession, cwd: string | null) {
   }
 
   term.onData((data) => {
-    if (session.ptyId !== null) void invoke("pty_write", { id: session.ptyId, data });
+    if (session.ptyId === null) return;
+    void invoke("pty_write", { id: session.ptyId, data });
+    if (data.includes("\r")) void pollTitle(id, session);
   });
   term.onResize(({ cols, rows }) => {
     if (session.ptyId !== null) void invoke("pty_resize", { id: session.ptyId, cols, rows });
   });
   session.fit.fit();
   void invoke("pty_resize", { id: session.ptyId, cols: term.cols, rows: term.rows });
+  void pollTitle(id, session);
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function pollTitle(id: number, session: TermSession) {
+  if (session.polling) return;
+  session.polling = true;
+  let delay = 250;
+  try {
+    while (session.ptyId !== null) {
+      await sleep(delay);
+      if (session.ptyId === null) break;
+      const name = await invoke<string | null>("pty_process", {
+        id: session.ptyId,
+      }).catch(() => null);
+      if (!name) break;
+      useTerminalStore.getState().setTitle(id, name);
+      if (SHELL_NAMES.has(name)) break;
+      delay = 1000;
+    }
+  } finally {
+    session.polling = false;
+  }
 }
 
 export function disposeSession(id: number) {

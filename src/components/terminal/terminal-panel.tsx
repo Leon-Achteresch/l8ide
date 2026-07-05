@@ -39,6 +39,7 @@ export function TerminalPanel() {
   const open = useTerminalStore((s) => s.open);
   const height = useTerminalStore((s) => s.height);
   const tabs = useTerminalStore((s) => s.tabs);
+  const titles = useTerminalStore((s) => s.titles);
   const active = useTerminalStore((s) => s.active);
   const setHeight = useTerminalStore((s) => s.setHeight);
   const setOpen = useTerminalStore((s) => s.setOpen);
@@ -84,7 +85,7 @@ export function TerminalPanel() {
           Terminal
         </span>
         <div className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
-          {tabs.map((id, i) => (
+          {tabs.map((id) => (
             <button
               key={id}
               onClick={() => setActive(id)}
@@ -94,7 +95,7 @@ export function TerminalPanel() {
               )}
             >
               <TerminalIcon className="size-3.5" />
-              <span>zsh {i + 1}</span>
+              <span className="max-w-40 truncate">{titles[id] ?? "shell"}</span>
               <span
                 role="button"
                 onClick={(e) => {

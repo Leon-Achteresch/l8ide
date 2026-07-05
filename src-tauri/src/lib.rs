@@ -335,6 +335,7 @@ pub fn run() {
             terminal::pty_write,
             terminal::pty_resize,
             terminal::pty_ack,
+            terminal::pty_process,
             terminal::pty_kill
         ])
         .run(tauri::generate_context!())

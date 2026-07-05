@@ -181,6 +181,37 @@ pub fn pty_ack(state: State<PtyState>, id: u32, bytes: i64) {
 }
 
 #[tauri::command]
+pub fn pty_process(state: State<PtyState>, id: u32) -> Option<String> {
+    #[cfg(unix)]
+    {
+        let pid = {
+            let sessions = state.0.lock().unwrap();
+            sessions.get(&id)?.master.process_group_leader()?
+        };
+        let out = std::process::Command::new("ps")
+            .args(["-p", &pid.to_string(), "-o", "comm="])
+            .output()
+            .ok()?;
+        let name = String::from_utf8_lossy(&out.stdout)
+            .trim()
+            .trim_start_matches('-')
+            .rsplit('/')
+            .next()?
+            .to_string();
+        if name.is_empty() {
+            None
+        } else {
+            Some(name)
+        }
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = (state, id);
+        None
+    }
+}
+
+#[tauri::command]
 pub fn pty_kill(state: State<PtyState>, id: u32) {
     if let Some(mut session) = state.0.lock().unwrap().remove(&id) {
         let _ = session.killer.kill();

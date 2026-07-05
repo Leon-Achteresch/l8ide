@@ -5,8 +5,10 @@ type TerminalStore = {
   open: boolean;
   height: number;
   tabs: number[];
+  titles: Record<number, string>;
   active: number | null;
   nextId: number;
+  setTitle: (id: number, title: string) => void;
   toggle: () => void;
   setOpen: (open: boolean) => void;
   setHeight: (height: number) => void;
@@ -21,8 +23,13 @@ export const useTerminalStore = create<TerminalStore>()(
       open: false,
       height: 280,
       tabs: [],
+      titles: {},
       active: null,
       nextId: 1,
+      setTitle: (id, title) =>
+        set((s) =>
+          s.titles[id] === title ? s : { titles: { ...s.titles, [id]: title } },
+        ),
       toggle: () =>
         set((s) => {
           const open = !s.open;
@@ -45,8 +52,10 @@ export const useTerminalStore = create<TerminalStore>()(
         set((s) => {
           const i = s.tabs.indexOf(id);
           const tabs = s.tabs.filter((t) => t !== id);
+          const { [id]: _, ...titles } = s.titles;
           return {
             tabs,
+            titles,
             active:
               s.active === id ? (tabs[Math.min(i, tabs.length - 1)] ?? null) : s.active,
             open: tabs.length > 0 ? s.open : false,
