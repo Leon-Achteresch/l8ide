@@ -10,6 +10,7 @@ import {
 import { openUrl } from "@tauri-apps/plugin-opener";
 import {
   browserEval,
+  closeBrowser,
   openBrowser,
   setBrowserBounds,
   showBrowser,
@@ -27,6 +28,9 @@ const ICON_BUTTON =
 
 export function BrowserPanel() {
   const open = useBrowserStore((s) => s.open);
+  useEffect(() => {
+    if (!useBrowserStore.getState().open) void closeBrowser();
+  }, []);
   if (!open) return null;
   return <BrowserPanelInner />;
 }

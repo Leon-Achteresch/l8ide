@@ -34,7 +34,7 @@ export const useBrowserStore = create<BrowserStore>()(
     }),
     {
       name: "browser-store",
-      partialize: (s) => ({ width: s.width, url: s.url }),
+      partialize: (s) => ({ open: s.open, width: s.width, url: s.url }),
     },
   ),
 );

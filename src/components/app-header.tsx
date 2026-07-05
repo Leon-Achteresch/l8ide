@@ -48,6 +48,8 @@ const SIDEBAR_TABS: { mode: SidebarMode; label: string; icon: LucideIcon }[] = [
   { mode: "Search", label: "Search", icon: Search },
 ];
 
+const AUTOSAVE_DELAYS = [500, 1000, 2000];
+
 const IS_MAC =
   typeof navigator !== "undefined" &&
   /Mac|iPhone|iPad|iPod/i.test(navigator.platform);
@@ -63,6 +65,10 @@ export function AppHeader() {
   const toggleSidebar = useWorkspaceStore((s) => s.toggleSidebar);
   const sidebarMode = useWorkspaceStore((s) => s.sidebarMode);
   const setSidebarMode = useWorkspaceStore((s) => s.setSidebarMode);
+  const autoSave = useWorkspaceStore((s) => s.autoSave);
+  const setAutoSave = useWorkspaceStore((s) => s.setAutoSave);
+  const autoSaveDelay = useWorkspaceStore((s) => s.autoSaveDelay);
+  const setAutoSaveDelay = useWorkspaceStore((s) => s.setAutoSaveDelay);
   const openFileSearch = useFileSearchStore((s) => s.setOpen);
 
   const { resolvedTheme } = useTheme();
@@ -96,11 +102,70 @@ export function AppHeader() {
         className="flex items-center gap-1.5 px-1"
         style={{ WebkitAppRegion: "no-drag" } as CSSProperties}
       >
-        <img
-          src={resolvedTheme === "dark" ? "/logo_black.png" : "/logo_white.png"}
-          alt="Logo"
-          className="h-5 w-auto shrink-0 opacity-90"
-        />
+        <Popover>
+          <PopoverTrigger
+            render={
+              <button
+                type="button"
+                aria-label="Menü"
+                title="Menü"
+                className="inline-flex shrink-0 items-center rounded-md px-1 py-0.5 transition-colors hover:bg-foreground/8"
+              >
+                <img
+                  src={
+                    resolvedTheme === "dark"
+                      ? "/logo_black.png"
+                      : "/logo_white.png"
+                  }
+                  alt="Logo"
+                  className="h-5 w-auto opacity-90"
+                />
+              </button>
+            }
+          />
+          <PopoverContent align="start" className="w-64 gap-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium">AutoSave</p>
+                <p className="text-xs text-muted-foreground">
+                  Änderungen automatisch speichern
+                </p>
+              </div>
+              <Switch checked={autoSave} onCheckedChange={setAutoSave} />
+            </div>
+
+            {autoSave && (
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-muted-foreground">Verzögerung</p>
+                <div className="inline-flex rounded-md bg-foreground/[0.05] p-0.5 ring-1 ring-foreground/[0.06]">
+                  {AUTOSAVE_DELAYS.map((ms) => (
+                    <button
+                      key={ms}
+                      type="button"
+                      onClick={() => setAutoSaveDelay(ms)}
+                      className={cn(
+                        "rounded px-2 py-0.5 text-xs font-medium transition-colors",
+                        autoSaveDelay === ms
+                          ? "bg-background text-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      {ms < 1000 ? `${ms}ms` : `${ms / 1000}s`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="h-px bg-border/60" aria-hidden />
+
+            <div className="grid grid-cols-3 gap-1.5">
+              <MenuAction icon={Save} label="Speichern" onClick={saveActiveFile} />
+              <MenuAction icon={Undo2} label="Rückgängig" onClick={undoActive} />
+              <MenuAction icon={Redo2} label="Wiederholen" onClick={redoActive} />
+            </div>
+          </PopoverContent>
+        </Popover>
 
         <div className="mx-0.5 h-4 w-px shrink-0 bg-border/60" aria-hidden />
 
@@ -227,5 +292,27 @@ export function AppHeader() {
 
       {IS_WINDOWS && <WindowControls />}
     </header>
+  );
+}
+
+function MenuAction({
+  icon: Icon,
+  label,
+  onClick,
+}: {
+  icon: LucideIcon;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={label}
+      className="flex flex-col items-center gap-1 rounded-md py-2 text-muted-foreground transition-colors hover:bg-foreground/8 hover:text-foreground"
+    >
+      <Icon className="size-4" strokeWidth={2} />
+      <span className="text-[10px] font-medium">{label}</span>
+    </button>
   );
 }

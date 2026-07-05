@@ -9,6 +9,7 @@ function activeEditor(): monaco.editor.ICodeEditor | null {
 }
 
 export function saveModel(model: monaco.editor.ITextModel) {
+  if (model.isDisposed()) return;
   const path = pathFromMonacoUri(model.uri);
   if (isPageTab(path)) return;
   void writeTextFile(path, model.getValue());
