@@ -4,6 +4,7 @@ import { configureJsonSchemas } from "@/lib/json-schemas";
 import { setMonacoInstance } from "@/lib/monaco-instance";
 import { registerMonacoNavigation } from "@/lib/monaco-navigation";
 import { initPrettier } from "@/lib/prettier-format";
+import { emmetCSS, emmetHTML, emmetJSX } from "emmet-monaco-es";
 import * as monaco from "monaco-editor";
 import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
 import cssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker";
@@ -34,6 +35,9 @@ self.MonacoEnvironment = {
 };
 
 setMonacoInstance(monaco);
+emmetHTML(monaco);
+emmetCSS(monaco);
+emmetJSX(monaco, ["javascript", "typescript"]);
 initPrettier(monaco);
 registerMonacoNavigation();
 initIdeMonacoThemes();

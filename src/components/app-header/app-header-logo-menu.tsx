@@ -4,7 +4,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
-import { redoActive, saveActiveFile, undoActive } from "@/lib/editor-actions";
+import { redoActive, undoActive } from "@/lib/editor-actions";
+import { formatAndSaveActive } from "@/lib/prettier-format";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { open } from "@tauri-apps/plugin-dialog";
@@ -261,7 +262,7 @@ export function AppHeaderLogoMenu() {
               icon={Save}
               label="Speichern"
               shortcut="Mod+S"
-              onClick={saveActiveFile}
+              onClick={() => void formatAndSaveActive()}
             />
             <AppHeaderMenuAction
               icon={Undo2}

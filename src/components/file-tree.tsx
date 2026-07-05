@@ -11,6 +11,7 @@ import { fileIcon } from "@/lib/file-icons";
 import { useCommandHotkeys } from "@/lib/hotkeys";
 import { basename, canMove, dragRoots, parentDir } from "@/lib/fs-move";
 import { cn } from "@/lib/utils";
+import { addPathsToGitignore } from "@/lib/gitignore";
 import { refreshFileIndex } from "@/lib/file-index";
 import { useProjectLogoStore } from "@/lib/project-logo-store";
 import { useWorkspaceStore } from "@/lib/workspace-store";
@@ -53,6 +54,7 @@ import {
 	File,
 	FilePlus,
 	FolderPlus,
+	GitBranch,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -395,6 +397,14 @@ const TreeNode = memo(function TreeNode({
 		deletePaths(st.selected.includes(entry.path) ? st.selected : [entry.path]);
 	}
 
+	function handleAddToGitignore() {
+		const rootPath = useWorkspaceStore.getState().rootPath;
+		if (!rootPath) return;
+		const st = useTreeStore.getState();
+		const paths = st.selected.includes(entry.path) ? st.selected : [entry.path];
+		void addPathsToGitignore(rootPath, paths);
+	}
+
 	async function commitRename(newName: string) {
 		useTreeStore.getState().setRenaming(null);
 		const name = newName.trim();
@@ -563,6 +573,11 @@ const TreeNode = memo(function TreeNode({
 					</ContextMenuItem>
 					<ContextMenuItem variant="destructive" onClick={handleDelete}>
 						Löschen
+					</ContextMenuItem>
+					<ContextMenuSeparator />
+					<ContextMenuItem onClick={handleAddToGitignore}>
+						<GitBranch className="size-4" />
+						Zu .gitignore hinzufügen
 					</ContextMenuItem>
 					<ContextMenuSeparator />
 					<ContextMenuItem
