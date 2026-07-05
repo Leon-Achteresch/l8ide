@@ -1,6 +1,7 @@
 import { WindowControls } from "@/components/window-controls";
 import { cn } from "@/lib/utils";
 import { type CSSProperties } from "react";
+import { AppHeaderBranch } from "./app-header-branch";
 import { AppHeaderFolderButton } from "./app-header-folder-button";
 import { AppHeaderLogoMenu } from "./app-header-logo-menu";
 import { AppHeaderNav } from "./app-header-nav";
@@ -34,6 +35,8 @@ export function AppHeader() {
         <div className="mx-0.5 h-4 w-px shrink-0 bg-border/60" aria-hidden />
 
         <AppHeaderFolderButton />
+
+        <AppHeaderBranch />
       </div>
 
       <AppHeaderTitle />

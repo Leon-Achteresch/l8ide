@@ -52,6 +52,11 @@ export function AppHotkeys() {
         document.getElementById(SEARCH_INPUT_ID)?.focus();
       });
     },
+    "scm.focus": () => {
+      const s = useWorkspaceStore.getState();
+      s.setSidebarMode("Scm");
+      if (!s.sidebarOpen) s.toggleSidebar();
+    },
     "terminal.toggle": () => useTerminalStore.getState().toggle(),
     "browser.toggle": () => useBrowserStore.getState().toggle(),
     "theme.toggle": () =>

@@ -1,4 +1,4 @@
-import { pageIcons, parentDir, store, TAB_SPRING, tabClass, tabDragId, tabName } from "@/components/tab-bar/lib";
+import { pageIconFor, parentDir, store, TAB_SPRING, tabClass, tabDragId, tabName } from "@/components/tab-bar/lib";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -55,7 +55,7 @@ export function Tab({
     );
   }
 
-  const PageIcon = isPage ? pageIcons[pageRoute(path)] : null;
+  const PageIcon = isPage ? pageIconFor(pageRoute(path)) : null;
   const FileIcon = !isPage && tabIcons ? fileIcon(name) : null;
 
   return (

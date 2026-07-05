@@ -13,7 +13,7 @@ import { persist } from "zustand/middleware";
 
 const PAGE_PREFIX = "page:";
 
-export type SidebarMode = "FileTree" | "Search";
+export type SidebarMode = "FileTree" | "Search" | "Scm";
 
 export const PAGES: Record<string, string> = {
   "/settings": "Settings",

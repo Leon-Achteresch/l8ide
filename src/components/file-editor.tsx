@@ -5,6 +5,8 @@ import { Columns2 } from "lucide-react";
 import * as monaco from "monaco-editor";
 import { useTheme } from "next-themes";
 import { applyEditorConfig } from "@/lib/editorconfig";
+import { attachGitGutter } from "@/lib/git-gutter";
+import { useGitStore } from "@/lib/git-store";
 import { useEditorZoom } from "@/lib/editor-zoom";
 import { useEditorDisplayOptions } from "@/lib/editor-settings";
 import { ideMonacoTheme } from "@/lib/ide-theme";
@@ -164,9 +166,20 @@ function TextEditor({ path }: { path: string }) {
         const target = takePendingReveal(path);
         if (target) revealInEditor(editor, target);
 
+        const gutter = attachGitGutter(editor, monaco, path);
+        const unsubGutter = useGitStore.subscribe(() => void gutter.refresh());
+        let gutterTimer: ReturnType<typeof setTimeout> | undefined;
+        editor.onDidDispose(() => {
+          unsubGutter();
+          gutter.dispose();
+          clearTimeout(gutterTimer);
+        });
+
         let timer: ReturnType<typeof setTimeout> | undefined;
         editor.onDidChangeModelContent(() => {
           useWorkspaceStore.getState().promoteTab(path);
+          clearTimeout(gutterTimer);
+          gutterTimer = setTimeout(() => void gutter.refresh(), 400);
           const { autoSave, autoSaveDelay } = useWorkspaceStore.getState();
           if (!autoSave) return;
           const model = editor.getModel();

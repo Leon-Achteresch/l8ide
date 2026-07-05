@@ -154,6 +154,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Shift+F",
   },
   {
+    id: "scm.focus",
+    label: "Quellcodeverwaltung öffnen",
+    group: "Allgemein",
+    hotkey: "Mod+Shift+G",
+  },
+  {
     id: "view.zen",
     label: "Zen-Modus",
     group: "Ansicht",

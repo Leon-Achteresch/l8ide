@@ -1,3 +1,4 @@
+import { GitDiffPage } from "@/components/scm-panel/git-diff-page";
 import { store } from "@/components/tab-bar/lib";
 import { TabBar } from "@/components/tab-bar/tab-bar";
 import { collectLeaves } from "@/lib/editor-groups";
@@ -38,7 +39,15 @@ function GroupContent({ activeFile }: { activeFile: string | null }) {
     );
   }
   if (isPageTab(activeFile)) {
-    const Page = PAGE_COMPONENTS[pageRoute(activeFile)];
+    const route = pageRoute(activeFile);
+    if (route.startsWith("/diff/")) {
+      return (
+        <div className="h-full">
+          <GitDiffPage route={route} />
+        </div>
+      );
+    }
+    const Page = PAGE_COMPONENTS[route];
     return Page ? (
       <div className="h-full overflow-auto">
         <Page />

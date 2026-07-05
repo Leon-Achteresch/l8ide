@@ -1,5 +1,5 @@
 import type { SidebarMode } from "@/lib/workspace-store";
-import { FolderTree, Search, type LucideIcon } from "lucide-react";
+import { FolderTree, GitBranch, Search, type LucideIcon } from "lucide-react";
 
 export const SIDEBAR_TAB_SPRING = {
   type: "spring",
@@ -43,6 +43,7 @@ export const MENU_ITEM = {
 export const SIDEBAR_TABS: { mode: SidebarMode; label: string; icon: LucideIcon }[] = [
   { mode: "FileTree", label: "Explorer", icon: FolderTree },
   { mode: "Search", label: "Search", icon: Search },
+  { mode: "Scm", label: "Source Control", icon: GitBranch },
 ];
 
 export const AUTOSAVE_DELAYS = [500, 1000, 2000];

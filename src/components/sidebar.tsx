@@ -1,5 +1,6 @@
 import { FileTree } from "@/components/file-tree";
 import { FileTreeHeader } from "@/components/file-tree-header";
+import { ScmPanel } from "@/components/scm-panel/scm-panel";
 import { SearchPanel } from "@/components/search-panel/search-panel";
 import { SidebarActions } from "@/components/sidebar-actions";
 import { cn } from "@/lib/utils";
@@ -81,7 +82,7 @@ export function Sidebar() {
                       <FileTreeHeader rootPath={rootPath} />
                       <FileTree rootPath={rootPath} />
                     </motion.div>
-                  ) : (
+                  ) : sidebarMode === "Search" ? (
                     <motion.div
                       key="search"
                       variants={MODE_VARIANTS}
@@ -92,6 +93,18 @@ export function Sidebar() {
                       className="flex min-h-0 flex-1 flex-col"
                     >
                       <SearchPanel rootPath={rootPath} />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="scm"
+                      variants={MODE_VARIANTS}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                      className="flex min-h-0 flex-1 flex-col"
+                    >
+                      <ScmPanel rootPath={rootPath} />
                     </motion.div>
                   )}
                 </AnimatePresence>

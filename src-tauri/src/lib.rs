@@ -1,5 +1,7 @@
 mod browser;
 mod favicon;
+pub mod git;
+mod git_cmd;
 mod terminal;
 
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -296,6 +298,23 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
+#[tauri::command]
+fn open_in_l8git(repo: String) -> Result<(), String> {
+    #[cfg(target_os = "macos")]
+    let mut cmd = {
+        let mut c = std::process::Command::new("open");
+        c.args(["-a", "l8git", &repo]);
+        c
+    };
+    #[cfg(not(target_os = "macos"))]
+    let mut cmd = {
+        let mut c = std::process::Command::new("l8git");
+        c.arg(&repo);
+        c
+    };
+    cmd.spawn().map(|_| ()).map_err(|e| e.to_string())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -390,6 +409,24 @@ pub fn run() {
             search_in_files,
             replace_in_files,
             replace_match,
+            open_in_l8git,
+            git::repo_full_status,
+            git::repo_status,
+            git::repo_staged_diff,
+            git::repo_file_diff,
+            git::repo_file_content_at,
+            git::git_current_branch,
+            git::stage_files,
+            git::unstage_files,
+            git::commit_changes,
+            git::commit_amend,
+            git::git_checkout,
+            git::git_create_branch,
+            git::delete_branch,
+            git::git_fetch,
+            git::git_pull,
+            git::git_push,
+            git::open_repo,
             terminal::pty_spawn,
             terminal::pty_reconnect,
             terminal::pty_list,

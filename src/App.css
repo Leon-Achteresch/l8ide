@@ -243,3 +243,8 @@
 .markdown-preview td { border: 1px solid var(--border); padding: 0.4em 0.7em; }
 .markdown-preview img { max-width: 100%; }
 .markdown-preview hr { border: none; border-top: 1px solid var(--border); margin: 1.5em 0; }
+
+.git-gutter { width: 3px !important; margin-left: 3px; }
+.git-gutter-add { border-left: 3px solid #22c55e; }
+.git-gutter-modify { border-left: 3px solid #3b82f6; }
+.git-gutter-delete { border-left: 3px solid #ef4444; }
