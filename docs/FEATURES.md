@@ -10,30 +10,31 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 
 ### 1.1 Textbearbeitung
 - [x] **Multi-Cursor-Editing**: Mehrere Cursor gleichzeitig (Alt+Klick, Cmd+D für nächstes Vorkommen, Cmd+Shift+L für alle Vorkommen)
-- [ ] **Spaltenauswahl / Box-Selection**: Rechteckige Textauswahl (Shift+Alt+Drag)
-- [ ] **Zeilenoperationen**: Zeile verschieben (Alt+↑/↓), duplizieren (Shift+Alt+↑/↓), löschen (Cmd+Shift+K), Zeilen joinen
-- [ ] **Smart Selection**: Auswahl semantisch erweitern/verkleinern (Shift+Alt+→/←)
-- [ ] **Auto-Closing**: Automatisches Schließen von Klammern, Anführungszeichen, Tags
-- [ ] **Auto-Surround**: Auswahl automatisch mit Klammern/Quotes umschließen
-- [ ] **Auto-Indentation**: Automatische Einrückung basierend auf Sprache
-- [ ] **Kommentar-Toggle**: Zeilen- (Cmd+/) und Blockkommentare (Shift+Alt+A)
+- [x] **Spaltenauswahl / Box-Selection**: Rechteckige Textauswahl (Shift+Alt+Drag)
+- [x] **Zeilenoperationen**: Zeile verschieben (Alt+↑/↓), duplizieren (Shift+Alt+↑/↓), löschen (Cmd+Shift+K), Zeilen joinen
+- [x] **Smart Selection**: Auswahl semantisch erweitern/verkleinern (Shift+Alt+→/←)
+- [x] **Auto-Closing**: Automatisches Schließen von Klammern, Anführungszeichen, Tags
+- [x] **Auto-Surround**: Auswahl automatisch mit Klammern/Quotes umschließen
+- [x] **Auto-Indentation**: Automatische Einrückung basierend auf Sprache
+- [x] **Kommentar-Toggle**: Zeilen- (Cmd+/) und Blockkommentare (Shift+Alt+A)
 - [ ] **Groß-/Kleinschreibung transformieren**: Uppercase, Lowercase, Title Case, Snake Case, Camel Case
 - [ ] **Sortieren von Zeilen**: Aufsteigend/absteigend
 - [ ] **Whitespace-Handling**: Trailing Whitespace anzeigen/entfernen, Render Whitespace
-- [ ] **Emmet**: Integrierte Abkürzungs-Expansion für HTML/CSS (z.B. `ul>li*5`)
+- [x] **Emmet**: Integrierte Abkürzungs-Expansion für HTML/CSS (z.B. `ul>li*5`)
 - [ ] **Column Edit Mode**
-- [ ] **Undo/Redo mit Cursor-Historie**
+- [x] **Undo/Redo mit Cursor-Historie**
 
 ### 1.2 Code-Intelligenz (IntelliSense)
-- [ ] **Completions**: Kontextabhängige Vorschläge (Wörter, Symbole, Snippets)
-- [ ] **Parameter Hints / Signature Help**: Anzeige von Funktionssignaturen beim Tippen
-- [ ] **Quick Info / Hover**: Typinformationen, Dokumentation, JSDoc beim Hovern
-- [ ] **Semantic Highlighting**: Einfärbung basierend auf Symbol-Semantik (nicht nur Syntax)
-- [ ] **Inlay Hints**: Inline-Anzeige von Parameternamen und inferierten Typen
-- [ ] **Auto-Imports**: Automatisches Hinzufügen von Import-Statements bei Completion
-- [ ] **Snippet-Support**: Eingebaute + benutzerdefinierte Snippets mit Tabstops, Platzhaltern, Variablen, Choice-Elementen
-- [ ] **Word-Based Suggestions**: Fallback-Vorschläge aus Dokumentinhalt
-- [ ] **Suggestion-Ranking**: Sortierung nach Relevanz, zuletzt genutzt, Lokalität
+- [x] **Completions**: Kontextabhängige Vorschläge (Wörter, Symbole, Snippets)
+- [x] **Parameter Hints / Signature Help**: Anzeige von Funktionssignaturen beim Tippen
+- [x] **Quick Info / Hover**: Typinformationen, Dokumentation, JSDoc beim Hovern
+- [ ] **Semantic Highlighting**: Einfärbung basierend auf Symbol-Semantik (nicht nur Syntax) — Monaco TS-Worker liefert keine Semantic Tokens; braucht eigenen Provider
+- [x] **Inlay Hints**: Inline-Anzeige von Parameternamen und inferierten Typen
+- [ ] **Auto-Imports**: Automatisches Hinzufügen von Import-Statements bei Completion — Monaco-Stock-Worker reicht keine Modul-Export-Preferences durch; braucht Custom-Worker
+- [x] **Snippet-Support (eingebaut)**: Monaco-Snippets mit Tabstops und Platzhaltern
+- [ ] **Snippet-Support (benutzerdefiniert)**: Eigene Snippets verwalten und konfigurieren
+- [x] **Word-Based Suggestions**: Fallback-Vorschläge aus Dokumentinhalt
+- [x] **Suggestion-Ranking**: Sortierung nach Relevanz, zuletzt genutzt, Lokalität
 
 ### 1.3 Navigation
 - [x] **Go to Definition** (F12) und **Peek Definition** (Alt+F12, Inline-Vorschau)
@@ -45,12 +46,12 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 - [ ] **Go to Line/Column** (Ctrl+G)
 - [ ] **Breadcrumbs**: Pfad + Symbolhierarchie über dem Editor, navigierbar
 - [ ] **Outline-View**: Symbolbaum der aktuellen Datei in der Sidebar
-- [ ] **Bracket Matching + Jump to Bracket**
+- [x] **Bracket Matching + Jump to Bracket**
 - [ ] **Navigationshistorie**: Zurück/Vorwärts durch Cursor-Positionen (Ctrl+-/Ctrl+Shift+-)
 - [ ] **Call Hierarchy**: Eingehende/ausgehende Aufrufe eines Symbols
 - [ ] **Type Hierarchy**: Vererbungshierarchie
 - [ ] **Sticky Scroll**: Aktuelle Scope-Header (Funktion/Klasse) bleiben oben kleben
-- [ ] **Minimap**: Verkleinerte Code-Übersicht mit Highlight-Markern
+- [ ] **Minimap**: Verkleinerte Code-Übersicht mit Highlight-Markern (aktuell deaktiviert)
 
 ### 1.4 Refactoring
 - [ ] **Rename Symbol** (F2): Projektweites Umbenennen mit Vorschau
@@ -64,25 +65,29 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 - [ ] **Refactor-Preview**: Änderungen vor Anwendung in Diff-Ansicht prüfen
 
 ### 1.5 Formatierung & Linting
-- [ ] **Format Document / Format Selection**
-- [ ] **Format on Save / on Paste / on Type**
+- [x] **Format Document / Format Selection** (Prettier, Shift+Alt+F)
+- [x] **Format on Save**
+- [ ] **Format on Paste / on Type**
 - [ ] **Formatter-Auswahl pro Sprache** (Default-Formatter-Setting)
 - [ ] **EditorConfig-Support**
-- [ ] **Diagnostics-Anzeige**: Fehler/Warnungen als Squiggles, in Problems-Panel, in Minimap, im Explorer (Datei-Badges)
+- [x] **Diagnostics-Anzeige (Editor)**: Syntax-Fehler/Warnungen als Squiggles im Editor
+- [ ] **Diagnostics-Anzeige (Workbench)**: Problems-Panel, Minimap-Marker, Explorer-Badges
 - [ ] **Problems-Panel**: Filterbar, gruppierbar, mit Quick-Fix-Zugriff
 
 ### 1.6 Darstellung
-- [ ] **Syntax Highlighting** via TextMate-Grammatiken + Tree-Sitter-ähnliche semantische Token
-- [ ] **Bracket Pair Colorization**: Farbliche Klammernpaare + Guides
-- [ ] **Indent Guides** (aktive Einrückungsebene hervorgehoben)
-- [ ] **Code Folding**: Nach Einrückung oder Sprach-Regionen, Folding-Ranges, `#region`-Marker
+- [x] **Syntax Highlighting** via Monaco-Grammatiken
+- [ ] **Semantic Token Highlighting**: Tree-Sitter-ähnliche semantische Token
+- [x] **Bracket Pair Colorization**: Farbliche Klammernpaare + Guides
+- [x] **Indent Guides** (aktive Einrückungsebene hervorgehoben)
+- [x] **Code Folding**: Nach Einrückung oder Sprach-Regionen, Folding-Ranges, `#region`-Marker
 - [ ] **Word Wrap**: Konfigurierbar (Spaltenbreite, eingerückt)
-- [ ] **Zoom**: Editor- und UI-Zoom getrennt
+- [x] **Zoom (Editor)**: Schriftgröße per Mod+/−/0
+- [ ] **Zoom (UI)**: Gesamte Workbench-Skalierung
 - [ ] **Font-Ligaturen-Support**
 - [ ] **Rulers**: Vertikale Hilfslinien bei definierten Spalten
-- [ ] **Render Line Highlight**: Aktuelle Zeile hervorheben
-- [ ] **Cursor-Stile & Animationen**: Block, Line, Underline, Blinken, Smooth Caret Animation
-- [ ] **Smooth Scrolling**
+- [x] **Render Line Highlight**: Aktuelle Zeile hervorheben
+- [x] **Cursor-Stile & Animationen**: Block, Line, Underline, Blinken, Smooth Caret Animation
+- [x] **Smooth Scrolling**
 - [ ] **Color Decorators**: Inline-Farbvorschau + Color Picker in CSS/etc.
 - [ ] **Unicode Highlighting**: Warnung vor verwechselbaren/unsichtbaren Zeichen
 - [ ] **Whitespace/Control-Character-Rendering**
@@ -91,64 +96,87 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 
 ### 2.1 Layout
 - [ ] **Activity Bar**: Umschaltbare Haupt-Views (Explorer, Search, SCM, Debug, Extensions)
-- [ ] **Primary + Secondary Sidebar**: Zwei unabhängige Seitenleisten
-- [ ] **Panel**: Unterer Bereich (Terminal, Problems, Output, Debug Console), verschiebbar (unten/links/rechts)
-- [ ] **Editor-Gruppen**: Beliebige Splits (horizontal/vertikal), Grid-Layout
-- [ ] **Tabs**: Anordnung, Pinning, Preview-Tabs (kursiv, wiederverwendet), Tab-Größenmodi, Wheel-Navigation
+- [x] **Primary Sidebar**: Explorer und Suche, ein-/ausblendbar, resizable
+- [ ] **Secondary Sidebar**: Zwei unabhängige Seitenleisten
+- [x] **Panel (Terminal)**: Integriertes Terminal im unteren Bereich
+- [ ] **Panel (Problems/Output/Debug)**: Weitere Panel-Views
+- [x] **Editor-Gruppen**: Beliebige Splits (horizontal/vertikal), Grid-Layout
+- [x] **Tabs**: Öffnen, Schließen, Pinning, Drag&Drop, Umsortieren, Mod+1–9
+- [ ] **Preview-Tabs**: Kursiv, wiederverwendet beim Einzelklick
+- [ ] **Tab-Größenmodi & Wheel-Navigation**
 - [ ] **Zen Mode**: Ablenkungsfreier Vollbildmodus
 - [ ] **Centered Layout**
 - [ ] **Fullscreen-Modus**
+- [x] **Neues App-Fenster**: Zweites Fenster via Tauri WebviewWindow
 - [ ] **Floating/Detached Editor Windows**: Editoren in eigene OS-Fenster ziehen
-- [ ] **Panel-/Sidebar-Toggle** per Shortcut
+- [x] **Panel-/Sidebar-Toggle** per Shortcut (Mod+B, Mod+J)
 - [ ] **Custom Layout-Presets** (Customize-Layout-Kontrolle)
 
 ### 2.2 Kommando-Zugriff
 - [ ] **Command Palette** (Cmd+Shift+P): Alle Befehle durchsuchbar
-- [ ] **Quick Open** (Cmd+P): Fuzzy-Dateisuche mit Modifikatoren (`@` Symbole, `#` Workspace-Symbole, `:` Zeile, `?` Hilfe)
-- [ ] **Keyboard Shortcuts Editor**: GUI + JSON, Chord-Bindings (mehrstufig), when-Klauseln (Kontextbedingungen)
+- [x] **Quick Open (Dateien)** (Cmd+P): Fuzzy-Dateisuche
+- [ ] **Quick Open (Modifikatoren)**: `@` Symbole, `#` Workspace-Symbole, `:` Zeile, `?` Hilfe
+- [x] **Keyboard Shortcuts Editor**: GUI mit Overrides und Konflikterkennung
+- [ ] **Keyboard Shortcuts (JSON, Chords, when-Klauseln)**
 - [ ] **Keymap-Extensions**: Vim, Emacs, Sublime, IntelliJ-Emulation
 
 ### 2.3 Dateiverwaltung (Explorer)
-- [ ] **Dateibaum**: Erstellen, Umbenennen, Löschen, Drag&Drop, Multi-Select
+- [x] **Dateibaum**: Erstellen, Umbenennen, Löschen, Drag&Drop, Multi-Select
 - [ ] **Compact Folders**: Zusammenfassen einzelner verschachtelter Ordner
 - [ ] **File Nesting**: Zugehörige Dateien unterordnen (z.B. `.js` unter `.ts`)
-- [ ] **Datei-Dekorationen**: Git-Status, Fehler-Badges, Farben
+- [x] **Datei-Dekorationen (Icons)**: Datei- und Ordner-Icons nach Typ
+- [ ] **Datei-Dekorationen (Git/Fehler)**: Git-Status, Fehler-Badges, Farben
 - [ ] **Open Editors-Sektion**
 - [ ] **Timeline-View**: Lokale Historie + Git-Historie pro Datei
 - [ ] **Local History**: Automatische lokale Snapshots mit Wiederherstellung/Diff
-- [ ] **Hot Exit**: Ungespeicherte Änderungen überleben Neustart
-- [ ] **Auto Save**: afterDelay, onFocusChange, onWindowChange
-- [ ] **Große-Dateien-Handling**: Readonly-Modus, deaktivierte Features bei Riesen-Dateien
+- [x] **Layout-Persistenz**: Tabs, Gruppen und Sidebar-Zustand überleben Neustart
+- [ ] **Hot Exit (Inhalt)**: Ungespeicherte Editor-Inhalte überleben Neustart
+- [x] **Auto Save**: afterDelay, ein-/ausschaltbar im Logo-Menü
+- [x] **Große-Dateien-Handling**: TS/JS-Workspace-Sync begrenzt auf große Dateien
 - [ ] **Vergleich**: Zwei Dateien auswählen und diffen, Diff mit Zwischenablage
 - [ ] **Readonly-Modus pro Datei/Glob**
+- [x] **Zu .gitignore hinzufügen**: Kontextmenü schreibt Einträge in `.gitignore`
+- [x] **Dateien/Ordner ausblenden**: Manuell per Name (global/workspace)
+- [x] **`.git` standardmäßig ausblenden**
 
 ### 2.4 Suche
-- [ ] **Volltextsuche im Workspace** (ripgrep-basiert): Regex, Case, Whole Word
-- [ ] **Include/Exclude-Globs**, Respektierung von `.gitignore` (abschaltbar)
-- [ ] **Search & Replace projektweit** mit Vorschau, Regex-Capture-Groups, Case-Preserving Replace
+- [x] **Volltextsuche im Workspace** (ripgrep-basiert): Regex, Case, Whole Word
+- [x] **Include/Exclude-Globs**
+- [x] **Respektierung von `.gitignore`** in Workspace-Suche und Datei-Index
+- [ ] **`.gitignore`-Respektierung abschaltbar**
+- [ ] **`.gitignore`-Filter im Explorer** (aktuell nur manuelles Ausblenden)
+- [x] **Search & Replace projektweit**: Replace All, pro Datei, einzeln
+- [ ] **Search & Replace mit Vorschau**: Diff-Vorschau, Regex-Capture-Groups, Case-Preserving Replace
 - [ ] **Search Editor**: Suchergebnisse als editierbares Dokument
 - [ ] **Suche in geöffneten Editoren**
-- [ ] **Suchergebnis-Kontextzeilen**
-- [ ] **In-File-Suche** (Cmd+F) mit Selektion-Scope, Regex, Multiline
+- [x] **Suchergebnis-Kontextzeilen**
+- [x] **In-File-Suche** (Cmd+F) via Monaco
 
 ### 2.5 Personalisierung
-- [ ] **Color Themes**: Hunderte installierbar, eigene definierbar, Auto-Umschaltung nach OS-Dark-Mode
-- [ ] **File Icon Themes** und **Product Icon Themes**
-- [ ] **Settings**: GUI + `settings.json`, User-/Workspace-/Folder-Ebenen, sprach-spezifische Settings, Profile-Settings
+- [x] **Color Themes**: Hell/Dunkel mit OS-Sync via next-themes
+- [ ] **Color Themes (Marketplace)**: Installierbar, eigene definierbar
+- [x] **File Icon Themes (Basis)**: Datei-/Ordner-Icons ein-/ausschaltbar
+- [ ] **Product Icon Themes**
+- [x] **Settings (GUI)**: Dark Mode, Icons, Hidden Files, Trust, Prettier
+- [ ] **Settings (JSON & Ebenen)**: `settings.json`, User-/Workspace-/Folder-Ebenen, sprach-spezifische Settings
 - [ ] **Settings Sync**: Einstellungen, Keybindings, Extensions, Snippets, UI-State über Geräte synchronisieren
 - [ ] **Profiles**: Komplette Konfigurationsprofile (Settings + Extensions + Layout) pro Anwendungsfall, Import/Export, Templates
-- [ ] **Workspace Trust**: Restricted Mode für nicht vertrauenswürdige Ordner
-- [ ] **Custom Title Bar / Menu Bar-Modi**
+- [x] **Workspace Trust**: Restricted Mode für nicht vertrauenswürdige Ordner
+- [x] **Custom Title Bar**: Tauri Overlay Title Bar
 - [ ] **Lokalisierung**: UI in vielen Sprachen
 
 ## 3. Sprachen-Support
 
-- [ ] **Eingebaut**: JavaScript, TypeScript, JSON, HTML, CSS/SCSS/Less, Markdown, Python (Basic), C/C++ (Basic), u.v.m. — Syntax für ~40 Sprachen
+- [x] **Eingebaut (Basis)**: JavaScript, TypeScript, JSON, HTML, CSS via Monaco-Workers
+- [ ] **Eingebaut (vollständig)**: Syntax für ~40 Sprachen
 - [ ] **Language Server Protocol (LSP)**: Standardisierte Anbindung beliebiger Sprachserver
-- [ ] **TypeScript/JavaScript out of the box**: Vollständige IntelliSense, Refactorings, JSDoc, automatische Typakquise für npm-Pakete
-- [ ] **Markdown**: Vorschau (live, gescrollt-synchronisiert), Linkvalidierung, Pfad-Completions, Mermaid via Extension
-- [ ] **JSON**: Schema-Validierung (JSON Schema Store), Completions aus Schema
-- [ ] **HTML/CSS**: Tag-Completion, Color Picker, Specificity-Hover
+- [x] **TypeScript/JavaScript IntelliSense (Basis)**: Completions, Hover, Navigation, tsconfig-Sync
+- [ ] **TypeScript/JavaScript (vollständig)**: Refactorings, Auto-Imports, semantische Validation
+- [x] **Markdown-Vorschau**: Split-View mit Editor
+- [ ] **Markdown (erweitert)**: Live gescrollt-synchronisiert, Linkvalidierung, Pfad-Completions, Mermaid
+- [x] **JSON Schema-Validierung**: Schema Store mit Completions
+- [x] **HTML/CSS (Basis)**: Tag-Completion und CSS-Worker via Monaco
+- [ ] **HTML/CSS (erweitert)**: Color Picker, Specificity-Hover
 - [ ] **Notebooks**: Jupyter-Notebook-UI nativ (Zellen, Kernels, Outputs, Variablen-Explorer via Extension)
 
 ## 4. Versionskontrolle (Git & SCM)
@@ -166,6 +194,7 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 - [ ] **SCM-Provider-API**: Andere VCS via Extensions (SVN, Mercurial, Perforce)
 - [ ] **Incoming/Outgoing Changes-Ansicht**
 - [ ] **Git Graph / Source Control Graph**: Commit-Graph-Visualisierung
+- [x] **Zu .gitignore hinzufügen**: Dateien/Ordner per Kontextmenü ignorieren
 
 ## 5. Debugging
 
@@ -188,14 +217,15 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 
 ## 6. Terminal
 
-- [ ] **Integriertes Terminal**: Volles xterm.js-Terminal im Panel oder Editor-Bereich
-- [ ] **Multiple Terminals + Split-Terminals**, Terminal-Tabs mit Icons/Farben/Umbenennung
+- [x] **Integriertes Terminal**: xterm.js-Terminal im Panel
+- [x] **Multiple Terminals**: Terminal-Tabs mit Plus-Button
+- [ ] **Split-Terminals**
 - [ ] **Terminal-Profile**: bash, zsh, fish, PowerShell, cmd, WSL, benutzerdefiniert
 - [ ] **Shell Integration**: Command-Tracking (Erfolg/Fehler-Marker), Navigation zwischen Kommandos, Command-History (Rerun), Working-Directory-Erkennung
 - [ ] **Quick Fixes im Terminal**: z.B. Port-belegt-Vorschläge, Git-Push-Vorschläge
 - [ ] **Links im Terminal**: Datei-/URL-/Zeilen-Links klickbar
 - [ ] **Find im Terminal**
-- [ ] **GPU-beschleunigtes Rendering**
+- [x] **GPU-beschleunigtes Rendering**: WebGL-Addon mit Canvas-Fallback
 - [ ] **Terminal-Persistenz**: Sessions überleben Reload/Fensterwechsel
 - [ ] **Sticky Scroll im Terminal** (aktuelles Kommando bleibt sichtbar)
 - [ ] **Image-Support im Terminal** (Sixel/iTerm-Protokoll)
@@ -280,11 +310,12 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 ## 14. Sonstiges
 
 - [ ] **Statusbar**: Sprache, Encoding, EOL, Einrückung, Zeile/Spalte, Branch, Fehlerzähler, Ports, alles klickbar
+- [x] **Notifications**: Toast-Benachrichtigungen via Sonner
 - [ ] **Notifications-Center** mit Do-not-disturb
 - [ ] **Walkthroughs / Getting Started**: Interaktive Onboarding-Guides (auch von Extensions)
 - [ ] **Screencast Mode**: Tastenanzeige für Demos/Videos
 - [ ] **Process Explorer** und **Runtime Status** für Performance-Analyse
-- [ ] **Developer Tools**: Eingebaute Chromium-DevTools, Extension-Host-Profiling, Startup-Performance-Report
+- [x] **Developer Tools (Dev)**: TanStack Router Devtools im Entwicklungsmodus
 - [ ] **CLI**: `code` mit Diff (`-d`), Goto (`-g file:line`), Merge, Install-Extension, Tunnel, Serve-Web
 - [ ] **URL-Handling**: `vscode://`-Protokoll für Deep Links
 - [ ] **Encoding-Support**: Auto-Detection, Re-Open/Save with Encoding
@@ -294,7 +325,8 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 - [ ] **Update-Kanäle**: Stable + Insiders, Hintergrund-Updates
 - [ ] **Multi-Root-Workspaces**: Mehrere Ordner in einem Fenster mit Ordner-Settings
 - [ ] **Workspace-Datei** (`.code-workspace`)
-- [ ] **Hex-Editor, Bild-Vorschau, Audio/Video-Player** (eingebaute Viewer für Binärformate)
+- [x] **Bild-Vorschau**: PNG, JPEG, GIF, WebP, SVG etc. im Editor
+- [ ] **Hex-Editor, Audio/Video-Player** (eingebaute Viewer für Binärformate)
 - [ ] **Interactive Window / REPL** (Python u.a.)
 - [ ] **Snippets-Verwaltung**: Global, pro Sprache, pro Projekt
 
@@ -410,7 +442,8 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 ## K. Web-/Frontend-Spezifisch (relevant für l8ide)
 
-- [ ] **Eingebaute Browser-Preview mit DevTools-Brücke**: Element-Klick im Browser springt zur JSX/Component-Quelle
+- [x] **Eingebauter Browser (Basis)**: Webview-Panel mit Navigation im Dock
+- [ ] **Browser-Preview mit DevTools-Brücke**: Element-Klick im Browser springt zur JSX/Component-Quelle
 - [ ] **Komponenten-Explorer**: Alle UI-Komponenten des Projekts als Galerie mit Props-Playground (Storybook-nativ)
 - [ ] **Design-Token-Sync**: Farben/Spacing aus Figma/Tokens-Datei mit Inline-Vorschau und Abweichungs-Warnung
 - [ ] **Visuelles CSS-Editing**: Box-Model/Flex/Grid-Manipulation mit Live-Rückschreibung in die Quelle

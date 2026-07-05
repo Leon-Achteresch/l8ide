@@ -143,6 +143,7 @@ function TextEditor({ path }: { path: string }) {
         minimap: { enabled: false },
         automaticLayout: true,
         links: true,
+        inlayHints: { enabled: "on" },
       }}
       onMount={(editor) => {
         editorRef.current = editor;

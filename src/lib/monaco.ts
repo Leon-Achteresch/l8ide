@@ -6,6 +6,7 @@ import { registerMonacoNavigation } from "@/lib/monaco-navigation";
 import { initPrettier } from "@/lib/prettier-format";
 import { emmetCSS, emmetHTML, emmetJSX } from "emmet-monaco-es";
 import * as monaco from "monaco-editor";
+import { typescript as ts } from "monaco-editor";
 import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
 import cssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker";
 import htmlWorker from "monaco-editor/esm/vs/language/html/html.worker?worker";
@@ -35,6 +36,19 @@ self.MonacoEnvironment = {
 };
 
 setMonacoInstance(monaco);
+
+for (const d of [ts.typescriptDefaults, ts.javascriptDefaults]) {
+  d.setInlayHintsOptions({
+    includeInlayParameterNameHints: "all",
+    includeInlayParameterNameHintsWhenArgumentMatchesName: false,
+    includeInlayFunctionParameterTypeHints: true,
+    includeInlayVariableTypeHints: true,
+    includeInlayPropertyDeclarationTypeHints: true,
+    includeInlayFunctionLikeReturnTypeHints: true,
+    includeInlayEnumMemberValueHints: true,
+  });
+}
+
 emmetHTML(monaco);
 emmetCSS(monaco);
 emmetJSX(monaco, ["javascript", "typescript"]);
