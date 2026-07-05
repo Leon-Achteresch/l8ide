@@ -1,6 +1,7 @@
 import { saveModel } from "@/lib/editor-actions";
+import { resolveEditorConfig } from "@/lib/editorconfig";
 import { getMonacoInstance } from "@/lib/monaco-instance";
-import { monacoUriForPath } from "@/lib/monaco-uri";
+import { monacoUriForPath, pathFromMonacoUri } from "@/lib/monaco-uri";
 import { organizeImportsModel, useRefactorSettings } from "@/lib/ts-refactor";
 import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import type * as monaco from "monaco-editor";
@@ -48,12 +49,22 @@ export const DEFAULT_OPTIONS: PrettierOptions = {
   endOfLine: "lf",
 };
 
+export type LanguageFormatter = "prettier" | "none";
+
 type PrettierStore = {
   enabled: boolean;
   formatOnSave: boolean;
+  formatOnPaste: boolean;
+  formatOnType: boolean;
+  editorConfig: boolean;
+  formatterByLanguage: Record<string, LanguageFormatter>;
   options: PrettierOptions;
   setEnabled: (v: boolean) => void;
   setFormatOnSave: (v: boolean) => void;
+  setFormatOnPaste: (v: boolean) => void;
+  setFormatOnType: (v: boolean) => void;
+  setEditorConfig: (v: boolean) => void;
+  setLanguageFormatter: (lang: string, v: LanguageFormatter) => void;
   setOption: <K extends keyof PrettierOptions>(
     key: K,
     value: PrettierOptions[K],
@@ -66,22 +77,34 @@ export const usePrettierSettings = create<PrettierStore>()(
     (set) => ({
       enabled: true,
       formatOnSave: false,
+      formatOnPaste: false,
+      formatOnType: false,
+      editorConfig: true,
+      formatterByLanguage: {},
       options: DEFAULT_OPTIONS,
       setEnabled: (enabled) => set({ enabled }),
       setFormatOnSave: (formatOnSave) => set({ formatOnSave }),
+      setFormatOnPaste: (formatOnPaste) => set({ formatOnPaste }),
+      setFormatOnType: (formatOnType) => set({ formatOnType }),
+      setEditorConfig: (editorConfig) => set({ editorConfig }),
+      setLanguageFormatter: (lang, v) =>
+        set((s) => ({
+          formatterByLanguage: { ...s.formatterByLanguage, [lang]: v },
+        })),
       setOption: (key, value) =>
         set((s) => ({ options: { ...s.options, [key]: value } })),
       reset: () => set({ options: DEFAULT_OPTIONS }),
     }),
     {
       name: "prettier-settings",
-      version: 1,
+      version: 2,
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<PrettierStore>;
         return {
           ...current,
           ...p,
           options: { ...DEFAULT_OPTIONS, ...(p.options ?? {}) },
+          formatterByLanguage: p.formatterByLanguage ?? {},
         };
       },
     },
@@ -148,13 +171,35 @@ async function loadPlugin(name: PluginName) {
   return plugin;
 }
 
+export const FORMATTABLE_LANGUAGES = Object.keys(LANGS);
+
 export function isFormattable(languageId: string) {
-  return languageId in LANGS && usePrettierSettings.getState().enabled;
+  const s = usePrettierSettings.getState();
+  return (
+    languageId in LANGS &&
+    s.enabled &&
+    (s.formatterByLanguage[languageId] ?? "prettier") !== "none"
+  );
+}
+
+async function editorConfigOverrides(
+  filepath?: string,
+): Promise<Partial<PrettierOptions>> {
+  if (!filepath || !usePrettierSettings.getState().editorConfig) return {};
+  const ec = await resolveEditorConfig(filepath);
+  const o: Partial<PrettierOptions> = {};
+  if (ec.indentStyle) o.useTabs = ec.indentStyle === "tab";
+  const width = ec.indentSize ?? ec.tabWidth;
+  if (width) o.tabWidth = width;
+  if (ec.endOfLine) o.endOfLine = ec.endOfLine;
+  if (ec.maxLineLength) o.printWidth = ec.maxLineLength;
+  return o;
 }
 
 export async function formatCode(
   code: string,
   languageId: string,
+  filepath?: string,
   range?: { start: number; end: number },
 ) {
   const cfg = LANGS[languageId];
@@ -162,10 +207,12 @@ export async function formatCode(
   const prettier = await loadPrettier();
   const plugins = await Promise.all(cfg.plugins.map(loadPlugin));
   const { options } = usePrettierSettings.getState();
+  const overrides = await editorConfigOverrides(filepath);
   return prettier.format(code, {
     parser: cfg.parser,
     plugins,
     ...options,
+    ...overrides,
     ...(range ? { rangeStart: range.start, rangeEnd: range.end } : {}),
   });
 }
@@ -218,7 +265,7 @@ export async function formatModel(model: monaco.editor.ITextModel) {
   if (!isFormattable(languageId)) return false;
   const src = model.getValue();
   try {
-    const out = await formatCode(src, languageId);
+    const out = await formatCode(src, languageId, pathFromMonacoUri(model.uri));
     const edits = out == null ? [] : editsFor(model, src, out);
     if (edits.length) {
       model.pushStackElement();
@@ -299,7 +346,11 @@ export function initPrettier(m: typeof monaco) {
       if (!isFormattable(model.getLanguageId())) return [];
       const src = model.getValue();
       try {
-        const out = await formatCode(src, model.getLanguageId());
+        const out = await formatCode(
+          src,
+          model.getLanguageId(),
+          pathFromMonacoUri(model.uri),
+        );
         return out == null ? [] : editsFor(model, src, out);
       } catch (e) {
         toast.error(`Prettier: ${messageOf(e)}`);
@@ -320,7 +371,12 @@ export function initPrettier(m: typeof monaco) {
         column: range.endColumn,
       });
       try {
-        const out = await formatCode(src, model.getLanguageId(), { start, end });
+        const out = await formatCode(
+          src,
+          model.getLanguageId(),
+          pathFromMonacoUri(model.uri),
+          { start, end },
+        );
         return out == null ? [] : editsFor(model, src, out);
       } catch (e) {
         toast.error(`Prettier: ${messageOf(e)}`);

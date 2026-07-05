@@ -6,6 +6,7 @@ import { normalizeUrl } from "@/lib/url-normalize";
 export type Rect = { x: number; y: number; width: number; height: number };
 
 let wired = false;
+
 function wire() {
   if (wired) return;
   wired = true;

@@ -59,7 +59,7 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 - [x] **Extract Method / Extract Function** — TS-Refactor, danach Inline-Rename des neuen Symbols
 - [x] **Extract Variable / Constant** — TS-Refactor mit Scope-Auswahl
 - [x] **Inline Variable/Function** (sprachabhängig) — TS-Refactor
-- [x] **Move to New File** — legt Zieldatei an, korrigiert Importe, öffnet sie
+- [x] **Move to New File** — legt Zieldatei an, korrigiert Importe, öffnet sie; auch per Rechtsklick → „In neue Datei verschieben" (Funktionen/Komponenten)
 - [x] **Organize Imports**: Sortieren + ungenutzte entfernen (Shift+Alt+O)
 - [x] **Auto Fix on Save**: Imports beim Speichern organisieren (in Einstellungen)
 - [x] **Refactor-Preview**: Mehrdatei-Änderungen vorab in Side-by-Side-Diff prüfen, pro Datei an-/abwählbar
@@ -69,12 +69,14 @@ Umgesetzt via eigenem TypeScript-Worker (`ts.worker.ts`), der die TS-Language-Se
 ### 1.5 Formatierung & Linting
 - [x] **Format Document / Format Selection** (Prettier, Shift+Alt+F)
 - [x] **Format on Save**
-- [ ] **Format on Paste / on Type**
-- [ ] **Formatter-Auswahl pro Sprache** (Default-Formatter-Setting)
-- [ ] **EditorConfig-Support**
+- [x] **Format on Paste / on Type** — Monaco-Editor-Optionen `formatOnPaste`/`formatOnType`, in den Einstellungen umschaltbar
+- [x] **Formatter-Auswahl pro Sprache** (Default-Formatter-Setting) — pro Sprache Prettier oder „Kein" wählbar
+- [x] **EditorConfig-Support** — `.editorconfig` (bis `root = true` aufgelöst) setzt die Einrückung im Editor und überschreibt Prettier (`tabWidth`, `useTabs`, `endOfLine`, `printWidth`)
 - [x] **Diagnostics-Anzeige (Editor)**: Syntax-Fehler/Warnungen als Squiggles im Editor
-- [ ] **Diagnostics-Anzeige (Workbench)**: Problems-Panel, Minimap-Marker, Explorer-Badges
-- [ ] **Problems-Panel**: Filterbar, gruppierbar, mit Quick-Fix-Zugriff
+- [x] **Diagnostics-Anzeige (Workbench)**: Problems-Panel, Explorer-Badges (Fehler/Warnungen pro Datei + Ordner), Dock-Button mit Zähler; Marker erscheinen in der Overview-Ruler (Minimap ist deaktiviert)
+- [x] **Problems-Panel**: Filterbar (Text + Schweregrad), nach Datei gruppiert/einklappbar, Klick springt zur Stelle, Quick-Fix-Zugriff (Cmd+.)
+
+Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers-store.ts`. Aktuell nur Syntax- + JSON-Schema-Marker (semantische TS-Validierung ist in `monaco-workspace.ts` deaktiviert — `noSemanticValidation: true` umlegen für Typfehler).
 
 ### 1.6 Darstellung
 - [x] **Syntax Highlighting** via Monaco-Grammatiken
@@ -221,18 +223,18 @@ Umgesetzt via eigenem TypeScript-Worker (`ts.worker.ts`), der die TS-Language-Se
 
 - [x] **Integriertes Terminal**: xterm.js-Terminal im Panel
 - [x] **Multiple Terminals**: Terminal-Tabs mit Plus-Button
-- [ ] **Split-Terminals**
-- [ ] **Terminal-Profile**: bash, zsh, fish, PowerShell, cmd, WSL, benutzerdefiniert
-- [ ] **Shell Integration**: Command-Tracking (Erfolg/Fehler-Marker), Navigation zwischen Kommandos, Command-History (Rerun), Working-Directory-Erkennung
-- [ ] **Quick Fixes im Terminal**: z.B. Port-belegt-Vorschläge, Git-Push-Vorschläge
-- [ ] **Links im Terminal**: Datei-/URL-/Zeilen-Links klickbar
-- [ ] **Find im Terminal**
+- [x] **Split-Terminals**
+- [x] **Terminal-Profile**: bash, zsh, fish, PowerShell, cmd, WSL, benutzerdefiniert (Auto-Detection + Standard-Profil + eigene)
+- [x] **Shell Integration**: Command-Tracking (Erfolg/Fehler-Marker via OSC 633), Navigation zwischen Kommandos, Command-History (Rerun), Working-Directory-Erkennung (OSC 7/633 + `lsof`/`/proc`-Fallback)
+- [x] **Quick Fixes im Terminal**: Port-belegt-, Git-Upstream-, `git init`-Vorschläge
+- [x] **Links im Terminal**: Datei-/URL-/Zeilen-Links klickbar
+- [x] **Find im Terminal** (Ctrl+F, Case/Word/Regex, Treffer-Zähler)
 - [x] **GPU-beschleunigtes Rendering**: WebGL-Addon mit Canvas-Fallback
-- [ ] **Terminal-Persistenz**: Sessions überleben Reload/Fensterwechsel
-- [ ] **Sticky Scroll im Terminal** (aktuelles Kommando bleibt sichtbar)
-- [ ] **Image-Support im Terminal** (Sixel/iTerm-Protokoll)
-- [ ] **Environment-Variable-Injection durch Extensions**
-- [ ] **Automation-Terminal für Tasks**
+- [x] **Terminal-Persistenz**: Sessions überleben Reload/Fensterwechsel (Backend-Ringpuffer + Reconnect-Replay)
+- [x] **Sticky Scroll im Terminal** (aktuelles Kommando bleibt sichtbar)
+- [x] **Image-Support im Terminal** (Sixel/iTerm-Protokoll via addon-image)
+- [~] **Environment-Variable-Injection**: pro Profil (`env`) möglich; keine Extension-API vorhanden
+- [ ] **Automation-Terminal für Tasks**: benötigt Task-System (Abschnitt 7, noch offen)
 
 ## 7. Tasks & Build
 

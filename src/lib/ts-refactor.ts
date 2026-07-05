@@ -21,6 +21,10 @@ const APPLY_REFACTOR = "l8ide.applyRefactor";
 const ORGANIZE_IMPORTS = "l8ide.organizeImports";
 const REFACTOR_LANGS = ["typescript", "javascript"];
 
+const REFACTOR_PREFERENCES: ts.UserPreferences = {
+  allowTextChangesInNewFiles: true,
+};
+
 const FORMAT: ts.FormatCodeSettings = {
   baseIndentSize: 0,
   indentSize: 2,
@@ -260,6 +264,7 @@ async function applyRefactorAction(payload: RefactorPayload) {
     payload.positionOrRange,
     payload.refactorName,
     payload.actionName,
+    REFACTOR_PREFERENCES,
   );
   if (!info || info.edits.length === 0) {
     toast.error("Refactoring nicht möglich");
@@ -281,6 +286,39 @@ async function applyRefactorAction(payload: RefactorPayload) {
     await commitFileEdits(m, edits);
     if (rename) triggerRename(m, rename);
   }
+}
+
+export async function moveToNewFile(
+  model: monaco.editor.ITextModel,
+  range: monaco.IRange,
+) {
+  const worker = await getRefactorWorker(model);
+  if (!worker) return;
+  const uri = model.uri.toString();
+  const positionOrRange = tsRange(model, range);
+  const refactors = await worker.getApplicableRefactors(
+    uri,
+    positionOrRange,
+    REFACTOR_PREFERENCES,
+  );
+  for (const refactor of refactors) {
+    for (const action of refactor.actions) {
+      if (action.notApplicableReason) continue;
+      if (
+        action.kind === "refactor.move.newFile" ||
+        action.name === "Move to a new file"
+      ) {
+        await applyRefactorAction({
+          uri,
+          positionOrRange,
+          refactorName: refactor.name,
+          actionName: action.name,
+        });
+        return;
+      }
+    }
+  }
+  toast.error("Hier lässt sich nichts in eine neue Datei verschieben");
 }
 
 export async function organizeImportsModel(model: monaco.editor.ITextModel) {
@@ -369,7 +407,11 @@ export function registerRefactorProviders() {
         const uri = model.uri.toString();
         const positionOrRange = tsRange(model, range);
         const actions: monaco.languages.CodeAction[] = [];
-        const refactors = await worker.getApplicableRefactors(uri, positionOrRange);
+        const refactors = await worker.getApplicableRefactors(
+          uri,
+          positionOrRange,
+          REFACTOR_PREFERENCES,
+        );
         for (const refactor of refactors) {
           for (const action of refactor.actions) {
             if (action.notApplicableReason) continue;
@@ -436,6 +478,18 @@ export function registerEditorRefactors(
     run: (ed) => {
       const model = ed.getModel();
       if (model) void organizeImportsModel(model);
+    },
+  });
+  editor.addAction({
+    id: "l8ide.moveToNewFile",
+    label: "In neue Datei verschieben",
+    precondition,
+    contextMenuGroupId: "1_modification",
+    contextMenuOrder: 1.6,
+    run: (ed) => {
+      const model = ed.getModel();
+      const selection = ed.getSelection();
+      if (model && selection) void moveToNewFile(model, selection);
     },
   });
 }

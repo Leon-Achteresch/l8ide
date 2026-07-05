@@ -8,6 +8,7 @@ import { RefactorDialogs } from "@/components/refactor-preview-dialog";
 import { Sidebar } from "@/components/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { WorkspaceTrustBanner } from "@/components/workspace-trust-banner";
+import { useProblemsPanel } from "@/lib/markers-store";
 import { useTerminalStore } from "@/lib/terminal-store";
 import { lazy, Suspense } from "react";
 import "../App.css";
@@ -15,6 +16,12 @@ import "../App.css";
 const TerminalPanel = lazy(() =>
   import("@/components/terminal/terminal-panel").then((m) => ({
     default: m.TerminalPanel,
+  })),
+);
+
+const ProblemsPanel = lazy(() =>
+  import("@/components/problems-panel").then((m) => ({
+    default: m.ProblemsPanel,
   })),
 );
 
@@ -32,6 +39,16 @@ function TerminalSlot() {
   return (
     <Suspense fallback={null}>
       <TerminalPanel />
+    </Suspense>
+  );
+}
+
+function ProblemsSlot() {
+  const open = useProblemsPanel((s) => s.open);
+  if (!open) return null;
+  return (
+    <Suspense fallback={null}>
+      <ProblemsPanel />
     </Suspense>
   );
 }
@@ -58,6 +75,7 @@ function RootComponent() {
               </div>
               <BrowserPanel />
             </div>
+            <ProblemsSlot />
             <TerminalSlot />
           </div>
         </div>

@@ -1,3 +1,4 @@
+import { clearEditorConfigCache } from "@/lib/editorconfig";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import * as monaco from "monaco-editor";
 import { typescript as ts } from "monaco-editor";
@@ -93,6 +94,7 @@ export async function configureMonacoWorkspace(rootPath: string) {
     for (const model of monaco.editor.getModels()) {
       model.dispose();
     }
+    clearEditorConfigCache();
     configuredRoot = rootPath;
     syncGeneration++;
   }

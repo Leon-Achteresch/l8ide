@@ -1,10 +1,20 @@
 import { Channel, invoke } from "@tauri-apps/api/core";
+import { openUrl } from "@tauri-apps/plugin-opener";
+import { exists } from "@tauri-apps/plugin-fs";
 import { FitAddon } from "@xterm/addon-fit";
+import { ImageAddon } from "@xterm/addon-image";
+import { SearchAddon } from "@xterm/addon-search";
+import { Unicode11Addon } from "@xterm/addon-unicode11";
+import { WebLinksAddon } from "@xterm/addon-web-links";
 import { WebglAddon } from "@xterm/addon-webgl";
 import { Terminal, type ITheme } from "@xterm/xterm";
 import "@xterm/xterm/css/xterm.css";
 import { ideSurfaceColors } from "@/lib/ide-theme";
-import { useTerminalStore } from "@/lib/terminal-store";
+import { openFileAt } from "@/lib/monaco-navigation";
+import { ShellIntegration } from "@/lib/terminal-shell-integration";
+import { loadDetectedProfiles, resolveProfile } from "@/lib/terminal-profiles";
+import { type Profile, useTerminalStore } from "@/lib/terminal-store";
+import { useWorkspaceStore } from "@/lib/workspace-store";
 
 type PtyEvent =
   | { type: "data"; data: string; bytes: number }
@@ -14,11 +24,16 @@ type TermSession = {
   container: HTMLDivElement;
   term: Terminal;
   fit: FitAddon;
+  search: SearchAddon;
+  integration: ShellIntegration;
   ptyId: number | null;
+  opened: boolean;
   polling: boolean;
+  pendingInput: string;
 };
 
-const SHELL_NAMES = new Set(["zsh", "bash", "fish", "sh", "nu", "pwsh", "powershell.exe"]);
+const SHELL_NAMES = new Set(["zsh", "bash", "fish", "sh", "nu", "pwsh", "powershell.exe", "cmd.exe"]);
+const FILE_RE = /(~?[\w.@+-]*(?:\/[\w.@+-]+)+\.\w+)(?::(\d+))?(?::(\d+))?/g;
 
 const ANSI_DARK: Omit<ITheme, "background" | "foreground" | "cursor" | "selectionBackground"> = {
   black: "#1a1a1c",
@@ -60,9 +75,7 @@ const ANSI_LIGHT: Omit<ITheme, "background" | "foreground" | "cursor" | "selecti
 
 function currentTheme(): ITheme {
   const { background, foreground, selection } = ideSurfaceColors();
-  const ansi = document.documentElement.classList.contains("dark")
-    ? ANSI_DARK
-    : ANSI_LIGHT;
+  const ansi = document.documentElement.classList.contains("dark") ? ANSI_DARK : ANSI_LIGHT;
   return {
     ...ansi,
     background,
@@ -73,17 +86,81 @@ function currentTheme(): ITheme {
 }
 
 const sessions = new Map<number, TermSession>();
+const sessionListeners = new Set<() => void>();
+
+export function subscribeSessions(cb: () => void) {
+  sessionListeners.add(cb);
+  return () => {
+    sessionListeners.delete(cb);
+  };
+}
+
+function notifySessions() {
+  for (const cb of sessionListeners) cb();
+}
 
 new MutationObserver(() => {
   const theme = currentTheme();
   for (const s of sessions.values()) s.term.options.theme = theme;
-}).observe(document.documentElement, {
-  attributes: true,
-  attributeFilter: ["class"],
-});
+}).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 
 export function getSession(id: number) {
   return sessions.get(id);
+}
+
+function resolvePath(raw: string, cwd: string | null): string | null {
+  let p = raw;
+  if (p.startsWith("/")) return p;
+  if (p.startsWith("~")) return null;
+  const base = cwd ?? useWorkspaceStore.getState().rootPath;
+  if (!base) return null;
+  return `${base.replace(/\/$/, "")}/${p.replace(/^\.\//, "")}`;
+}
+
+function registerFileLinks(session: TermSession) {
+  session.term.registerLinkProvider({
+    provideLinks(y, callback) {
+      const buf = session.term.buffer.active;
+      const line = buf.getLine(y - 1);
+      if (!line) return callback(undefined);
+      const text = line.translateToString(true);
+      const cwd = session.integration.getState().cwd;
+      const candidates: {
+        start: number;
+        end: number;
+        path: string;
+        line: number;
+        column: number;
+      }[] = [];
+      for (const m of text.matchAll(FILE_RE)) {
+        const abs = resolvePath(m[1], cwd);
+        if (!abs) continue;
+        candidates.push({
+          start: m.index,
+          end: m.index + m[0].length,
+          path: abs,
+          line: m[2] ? Number(m[2]) : 1,
+          column: m[3] ? Number(m[3]) : 1,
+        });
+      }
+      if (candidates.length === 0) return callback(undefined);
+      void Promise.all(
+        candidates.map((c) => exists(c.path).then((ok) => (ok ? c : null)).catch(() => null)),
+      ).then((resolved) => {
+        const links = resolved
+          .filter((c): c is NonNullable<typeof c> => c != null)
+          .map((c) => ({
+            range: {
+              start: { x: c.start + 1, y },
+              end: { x: c.end + 1, y },
+            },
+            text: c.path,
+            activate: () => openFileAt(c.path, { line: c.line, column: c.column }),
+          }));
+        callback(links.length ? links : undefined);
+      });
+    },
+  });
 }
 
 function ensureSession(id: number): TermSession {
@@ -103,18 +180,50 @@ function ensureSession(id: number): TermSession {
     theme: currentTheme(),
   });
   const fit = new FitAddon();
+  const search = new SearchAddon();
+  const integration = new ShellIntegration(term);
   term.loadAddon(fit);
+  term.loadAddon(search);
 
-  const session: TermSession = { container, term, fit, ptyId: null, polling: false };
+  const session: TermSession = {
+    container,
+    term,
+    fit,
+    search,
+    integration,
+    ptyId: null,
+    opened: false,
+    polling: false,
+    pendingInput: "",
+  };
   sessions.set(id, session);
+  notifySessions();
+
+  term.onData((data) => {
+    if (session.ptyId === null) {
+      session.pendingInput += data;
+      return;
+    }
+    void invoke("pty_write", { id: session.ptyId, data });
+    if (data.includes("\r")) void pollTitle(id, session);
+  });
+  term.onResize(({ cols, rows }) => {
+    if (session.ptyId !== null) void invoke("pty_resize", { id: session.ptyId, cols, rows });
+  });
+
   return session;
 }
 
-export function attachSession(id: number, host: HTMLElement, cwd: string | null) {
+export function attachSession(
+  id: number,
+  host: HTMLElement,
+  opts: { profileId: string; cwd: string | null; ptyId: number | null },
+) {
   const session = ensureSession(id);
   host.appendChild(session.container);
 
-  if (!session.container.querySelector(".xterm")) {
+  if (!session.opened) {
+    session.opened = true;
     session.term.open(session.container);
     try {
       const webgl = new WebglAddon();
@@ -123,32 +232,84 @@ export function attachSession(id: number, host: HTMLElement, cwd: string | null)
     } catch {
       /* DOM renderer fallback */
     }
-    void spawn(id, session, cwd);
+    session.term.loadAddon(new Unicode11Addon());
+    session.term.unicode.activeVersion = "11";
+    session.term.loadAddon(new WebLinksAddon((_, uri) => void openUrl(uri)));
+    session.term.loadAddon(new ImageAddon());
+    registerFileLinks(session);
+    session.integration.subscribe(() => {
+      const cwd = session.integration.getState().cwd;
+      if (cwd) useTerminalStore.getState().setCwd(id, cwd);
+    });
+    void resolveAndStart(id, session, opts);
   }
 
   session.fit.fit();
   session.term.focus();
 }
 
-async function spawn(id: number, session: TermSession, cwd: string | null) {
+async function resolveAndStart(
+  id: number,
+  session: TermSession,
+  opts: { profileId: string; cwd: string | null; ptyId: number | null },
+) {
+  let profile: Profile | null = null;
+  if (opts.profileId && opts.profileId !== "default") {
+    const detected = await loadDetectedProfiles();
+    const custom = useTerminalStore.getState().customProfiles;
+    profile = resolveProfile(opts.profileId, detected, custom);
+  }
+  await start(id, session, profile, opts.cwd, opts.ptyId);
+}
+
+function flushInput(session: TermSession) {
+  if (session.ptyId !== null && session.pendingInput) {
+    void invoke("pty_write", { id: session.ptyId, data: session.pendingInput });
+    session.pendingInput = "";
+  }
+}
+
+async function start(
+  id: number,
+  session: TermSession,
+  profile: Profile | null,
+  cwd: string | null,
+  reconnectId: number | null,
+) {
   const { term } = session;
   const channel = new Channel<PtyEvent>();
   channel.onmessage = (event) => {
     if (event.type === "data") {
       term.write(event.data, () => {
-        if (session.ptyId !== null) {
-          void invoke("pty_ack", { id: session.ptyId, bytes: event.bytes });
-        }
+        if (session.ptyId !== null) void invoke("pty_ack", { id: session.ptyId, bytes: event.bytes });
       });
     } else {
-      useTerminalStore.getState().remove(id);
+      useTerminalStore.getState().closePane(id);
       disposeSession(id);
     }
   };
 
+  if (reconnectId !== null) {
+    const ok = await invoke<boolean>("pty_reconnect", { id: reconnectId, onEvent: channel }).catch(
+      () => false,
+    );
+    if (ok) {
+      session.ptyId = reconnectId;
+      flushInput(session);
+      session.fit.fit();
+      void invoke("pty_resize", { id: reconnectId, cols: term.cols, rows: term.rows });
+      void pollTitle(id, session);
+      return;
+    }
+  }
+
   try {
     session.ptyId = await invoke<number>("pty_spawn", {
+      shell: profile?.path ?? null,
+      args: profile?.args ?? null,
+      env: profile?.env ?? null,
       cwd,
+      integration: true,
       cols: term.cols,
       rows: term.rows,
       onEvent: channel,
@@ -157,18 +318,18 @@ async function spawn(id: number, session: TermSession, cwd: string | null) {
     term.write(`\r\nFailed to spawn shell: ${String(error)}\r\n`);
     return;
   }
-
-  term.onData((data) => {
-    if (session.ptyId === null) return;
-    void invoke("pty_write", { id: session.ptyId, data });
-    if (data.includes("\r")) void pollTitle(id, session);
-  });
-  term.onResize(({ cols, rows }) => {
-    if (session.ptyId !== null) void invoke("pty_resize", { id: session.ptyId, cols, rows });
-  });
+  useTerminalStore.getState().setPtyId(id, session.ptyId);
+  flushInput(session);
   session.fit.fit();
   void invoke("pty_resize", { id: session.ptyId, cols: term.cols, rows: term.rows });
   void pollTitle(id, session);
+}
+
+export function runCommand(id: number, text: string) {
+  const session = sessions.get(id);
+  if (!session || session.ptyId === null) return;
+  void invoke("pty_write", { id: session.ptyId, data: `${text}\r` });
+  session.term.focus();
 }
 
 function sleep(ms: number) {
@@ -183,12 +344,15 @@ async function pollTitle(id: number, session: TermSession) {
     while (session.ptyId !== null) {
       await sleep(delay);
       if (session.ptyId === null) break;
-      const name = await invoke<string | null>("pty_process", {
-        id: session.ptyId,
-      }).catch(() => null);
-      if (!name) break;
-      useTerminalStore.getState().setTitle(id, name);
-      if (SHELL_NAMES.has(name)) break;
+      const name = await invoke<string | null>("pty_process", { id: session.ptyId }).catch(
+        () => null,
+      );
+      if (name) useTerminalStore.getState().setTitle(id, name);
+      if (!session.integration.getState().cwd) {
+        const cwd = await invoke<string | null>("pty_cwd", { id: session.ptyId }).catch(() => null);
+        if (cwd) useTerminalStore.getState().setCwd(id, cwd);
+      }
+      if (name && SHELL_NAMES.has(name)) break;
       delay = 1000;
     }
   } finally {
@@ -200,7 +364,9 @@ export function disposeSession(id: number) {
   const session = sessions.get(id);
   if (!session) return;
   sessions.delete(id);
+  notifySessions();
   if (session.ptyId !== null) void invoke("pty_kill", { id: session.ptyId });
+  session.integration.dispose();
   session.term.dispose();
   session.container.remove();
 }

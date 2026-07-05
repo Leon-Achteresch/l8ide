@@ -13,6 +13,7 @@ import { basename, canMove, dragRoots, parentDir } from "@/lib/fs-move";
 import { cn } from "@/lib/utils";
 import { addPathsToGitignore } from "@/lib/gitignore";
 import { refreshFileIndex } from "@/lib/file-index";
+import { useMarkersStore } from "@/lib/markers-store";
 import { useProjectLogoStore } from "@/lib/project-logo-store";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { CollisionPriority } from "@dnd-kit/abstract";
@@ -289,6 +290,9 @@ const TreeNode = memo(function TreeNode({
 			: null,
 	);
 	const openFile = useWorkspaceStore((s) => s.openFile);
+	const counts = useMarkersStore((s) =>
+		(entry.isDirectory ? s.dirCounts : s.fileCounts)[entry.path],
+	);
 	const isSelected = useTreeStore((s) => s.selected.includes(entry.path));
 	const isDropTarget = useTreeStore((s) => s.dropTarget === entry.path);
 	const isDragSource = useTreeStore((s) => s.dragging.includes(entry.path));
@@ -525,7 +529,19 @@ const TreeNode = memo(function TreeNode({
 									className="relative z-10 min-w-0 flex-1 rounded-md border-0 bg-background/80 px-1.5 py-0.5 text-[13px] outline-none ring-1 ring-primary/30"
 								/>
 							) : (
-								<span className="relative z-10 min-w-0 truncate">{entry.name}</span>
+								<>
+									<span className="relative z-10 min-w-0 truncate">{entry.name}</span>
+									{counts && (counts.errors > 0 || counts.warnings > 0) && (
+										<span
+											className={cn(
+												"relative z-10 ml-auto shrink-0 rounded-full px-1.5 text-[10px] font-medium tabular-nums",
+												counts.errors > 0 ? "text-red-500" : "text-amber-500",
+											)}
+										>
+											{counts.errors + counts.warnings}
+										</span>
+									)}
+								</>
 							)}
 						</button>
 						{entry.isDirectory && !renaming && (

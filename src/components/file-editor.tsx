@@ -4,9 +4,10 @@ import { readTextFile } from "@tauri-apps/plugin-fs";
 import { Columns2 } from "lucide-react";
 import * as monaco from "monaco-editor";
 import { useTheme } from "next-themes";
+import { applyEditorConfig } from "@/lib/editorconfig";
 import { useEditorZoom } from "@/lib/editor-zoom";
 import { ideMonacoTheme } from "@/lib/ide-theme";
-import { formatAndSave } from "@/lib/prettier-format";
+import { formatAndSave, usePrettierSettings } from "@/lib/prettier-format";
 import { registerEditorRefactors } from "@/lib/ts-refactor";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import {
@@ -95,6 +96,8 @@ function TextEditor({ path }: { path: string }) {
   const editorRef = useRef<monaco.editor.ICodeEditor | null>(null);
   const { resolvedTheme } = useTheme();
   const fontSize = useEditorZoom((s) => s.fontSize);
+  const formatOnPaste = usePrettierSettings((s) => s.formatOnPaste);
+  const formatOnType = usePrettierSettings((s) => s.formatOnType);
 
   useEffect(() => {
     const editor = editorRef.current;
@@ -145,10 +148,16 @@ function TextEditor({ path }: { path: string }) {
         automaticLayout: true,
         links: true,
         inlayHints: { enabled: "on" },
+        formatOnPaste,
+        formatOnType,
       }}
       onMount={(editor) => {
         editorRef.current = editor;
         registerEditorRefactors(editor, monaco);
+        const model = editor.getModel();
+        if (model && usePrettierSettings.getState().editorConfig) {
+          void applyEditorConfig(model);
+        }
         const target = takePendingReveal(path);
         if (target) revealInEditor(editor, target);
 

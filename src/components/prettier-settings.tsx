@@ -6,6 +6,8 @@ import {
 } from "@/components/ui/native-select";
 import { Switch } from "@/components/ui/switch";
 import {
+  FORMATTABLE_LANGUAGES,
+  type LanguageFormatter,
   type PrettierOptions,
   usePrettierSettings,
 } from "@/lib/prettier-format";
@@ -58,9 +60,17 @@ function Row({
 export function PrettierSettings() {
   const enabled = usePrettierSettings((s) => s.enabled);
   const formatOnSave = usePrettierSettings((s) => s.formatOnSave);
+  const formatOnPaste = usePrettierSettings((s) => s.formatOnPaste);
+  const formatOnType = usePrettierSettings((s) => s.formatOnType);
+  const editorConfig = usePrettierSettings((s) => s.editorConfig);
+  const formatterByLanguage = usePrettierSettings((s) => s.formatterByLanguage);
   const options = usePrettierSettings((s) => s.options);
   const setEnabled = usePrettierSettings((s) => s.setEnabled);
   const setFormatOnSave = usePrettierSettings((s) => s.setFormatOnSave);
+  const setFormatOnPaste = usePrettierSettings((s) => s.setFormatOnPaste);
+  const setFormatOnType = usePrettierSettings((s) => s.setFormatOnType);
+  const setEditorConfig = usePrettierSettings((s) => s.setEditorConfig);
+  const setLanguageFormatter = usePrettierSettings((s) => s.setLanguageFormatter);
   const setOption = usePrettierSettings((s) => s.setOption);
   const reset = usePrettierSettings((s) => s.reset);
 
@@ -81,6 +91,18 @@ export function PrettierSettings() {
       >
         <Row label="Beim Speichern formatieren (formatOnSave)">
           <Switch checked={formatOnSave} onCheckedChange={setFormatOnSave} />
+        </Row>
+
+        <Row label="Beim Einfügen formatieren (formatOnPaste)">
+          <Switch checked={formatOnPaste} onCheckedChange={setFormatOnPaste} />
+        </Row>
+
+        <Row label="Beim Tippen formatieren (formatOnType)">
+          <Switch checked={formatOnType} onCheckedChange={setFormatOnType} />
+        </Row>
+
+        <Row label=".editorconfig berücksichtigen">
+          <Switch checked={editorConfig} onCheckedChange={setEditorConfig} />
         </Row>
 
         {NUMBER_FIELDS.map((f) => (
@@ -125,6 +147,32 @@ export function PrettierSettings() {
             />
           </Row>
         ))}
+
+        <div className="pt-3">
+          <p className="text-sm font-medium">Formatter pro Sprache</p>
+          <p className="text-xs text-muted-foreground">
+            Standard-Formatter je Sprache
+          </p>
+          <div className="mt-1 space-y-1">
+            {FORMATTABLE_LANGUAGES.map((lang) => (
+              <Row key={lang} label={lang}>
+                <NativeSelect
+                  size="sm"
+                  value={formatterByLanguage[lang] ?? "prettier"}
+                  onChange={(e) =>
+                    setLanguageFormatter(
+                      lang,
+                      e.target.value as LanguageFormatter,
+                    )
+                  }
+                >
+                  <NativeSelectOption value="prettier">Prettier</NativeSelectOption>
+                  <NativeSelectOption value="none">Kein</NativeSelectOption>
+                </NativeSelect>
+              </Row>
+            ))}
+          </div>
+        </div>
 
         <div className="pt-2">
           <Button type="button" size="sm" variant="secondary" onClick={reset}>
