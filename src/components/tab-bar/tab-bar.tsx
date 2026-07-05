@@ -21,16 +21,15 @@ import {
 } from "@dnd-kit/sortable";
 import { useRouter } from "@tanstack/react-router";
 import { Pin } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 export function TabBar() {
   const tabs = useWorkspaceStore((s) => s.tabs);
+  const pinned = useWorkspaceStore((s) => s.pinned);
   const activeFile = useWorkspaceStore((s) => s.activeFile);
   const router = useRouter();
   const [dragged, setDragged] = useState<string | null>(null);
-  const draggedPinned = useWorkspaceStore(
-    (s) => dragged !== null && s.pinned.includes(dragged),
-  );
+  const draggedPinned = dragged !== null && pinned.includes(dragged);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(KeyboardSensor, {
@@ -84,11 +83,24 @@ export function TabBar() {
       onDragEnd={handleDragEnd}
       onDragCancel={() => setDragged(null)}
     >
-      <div className="flex h-9 shrink-0 items-stretch gap-1 overflow-x-auto overflow-y-hidden bg-sidebar px-2 pt-1">
+      <div className="flex h-9 shrink-0 items-center gap-0.5 overflow-x-auto overflow-y-hidden border-b border-border/60 bg-sidebar px-2">
         <SortableContext items={tabs} strategy={horizontalListSortingStrategy}>
-          {tabs.map((path) => (
-            <Tab key={path} path={path} showDir={showDir(path)} />
-          ))}
+          {tabs.map((path, i) => {
+            const prevPinned = i > 0 && pinned.includes(tabs[i - 1]);
+            const showSep =
+              pinned.length > 0 && prevPinned && !pinned.includes(path);
+            return (
+              <Fragment key={path}>
+                {showSep && (
+                  <div
+                    className="mx-0.5 h-4 w-px shrink-0 bg-border/60"
+                    aria-hidden
+                  />
+                )}
+                <Tab path={path} showDir={showDir(path)} />
+              </Fragment>
+            );
+          })}
         </SortableContext>
       </div>
       <DragOverlay dropAnimation={{ duration: 150, easing: "ease-out" }}>
@@ -96,13 +108,13 @@ export function TabBar() {
           <div
             className={cn(
               tabClass,
-              "h-9 cursor-grabbing rounded-md bg-background text-foreground shadow-lg ring-1 ring-border",
+              "max-w-none cursor-grabbing bg-background text-foreground shadow-md ring-1 ring-foreground/10",
             )}
           >
-            {draggedPinned && <Pin className="size-3" />}
+            {draggedPinned && <Pin className="size-3" strokeWidth={2} />}
             <span className="whitespace-nowrap">{tabName(dragged)}</span>
             {showDir(dragged) && (
-              <span className="whitespace-nowrap text-xs text-muted-foreground">
+              <span className="whitespace-nowrap text-[10px] text-muted-foreground/70">
                 {parentDir(dragged)}
               </span>
             )}

@@ -7,8 +7,15 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { Keyboard, Settings } from "lucide-react";
 
+export const TAB_SPRING = {
+  type: "spring",
+  stiffness: 520,
+  damping: 38,
+  mass: 0.55,
+} as const;
+
 export const tabClass =
-  "relative isolate flex h-full shrink-0 cursor-pointer items-center gap-1.5 px-3 text-sm";
+  "relative isolate flex h-7 max-w-[200px] shrink-0 cursor-pointer items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-colors duration-150";
 
 export function store() {
   return useWorkspaceStore.getState();

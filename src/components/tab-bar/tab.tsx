@@ -1,4 +1,4 @@
-import { pageIcons, parentDir, store, tabClass, tabName } from "@/components/tab-bar/lib";
+import { pageIcons, parentDir, store, TAB_SPRING, tabClass, tabName } from "@/components/tab-bar/lib";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -13,46 +13,6 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Pin, X } from "lucide-react";
 import { motion } from "motion/react";
-
-const INDICATOR_SPRING = {
-  type: "spring",
-  stiffness: 520,
-  damping: 38,
-  mass: 0.55,
-} as const;
-
-function TabCornerLeft() {
-  return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 15 15"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="absolute -left-3 bottom-0 [filter:drop-shadow(-1.2px_-0.5px_1px_rgba(0,0,0,0.10))]"
-    >
-      <path d="M15 15H0C8.28427 15 15 8.28427 15 0V15Z" fill="var(--background)" />
-    </svg>
-  );
-}
-
-function TabCornerRight() {
-  return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 15 15"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="absolute -right-3 bottom-0 [filter:drop-shadow(1.2px_-0.5px_1px_rgba(0,0,0,0.10))]"
-    >
-      <path
-        d="M0 15L6.5568e-07 0C2.93563e-07 8.28427 6.71573 15 15 15L0 15Z"
-        fill="var(--background)"
-      />
-    </svg>
-  );
-}
 
 export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
   const isPage = isPageTab(path);
@@ -78,6 +38,9 @@ export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
     );
   }
 
+  const PageIcon = isPage ? pageIcons[pageRoute(path)] : null;
+  const FileIcon = !isPage && tabIcons ? fileIcon(name) : null;
+
   return (
     <ContextMenu>
       <ContextMenuTrigger
@@ -92,23 +55,23 @@ export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
         className={cn(
           "group",
           tabClass,
-          isActive
-            ? "text-foreground"
-            : "rounded-md text-muted-foreground hover:bg-accent/50",
+          isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
           isDragging && "opacity-30",
         )}
       >
         {isActive && (
           <motion.span
             layoutId="tab-bar-indicator"
-            transition={INDICATOR_SPRING}
-            className="absolute inset-0 -z-10"
+            transition={TAB_SPRING}
+            className="absolute inset-0 -z-10 rounded-md bg-background shadow-sm ring-1 ring-foreground/8"
             aria-hidden
-          >
-            <span className="absolute inset-0 rounded-t-xl bg-background [box-shadow:-1px_-1px_1px_0.1px_rgba(0,0,0,0.08),1px_-1px_1px_0.1px_rgba(0,0,0,0.08)]" />
-            <TabCornerLeft />
-            <TabCornerRight />
-          </motion.span>
+          />
+        )}
+        {!isActive && (
+          <span
+            className="absolute inset-0 -z-10 rounded-md opacity-0 transition-opacity duration-150 group-hover:bg-foreground/[0.05] group-hover:opacity-100"
+            aria-hidden
+          />
         )}
         {isPinned && (
           <button
@@ -118,27 +81,16 @@ export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
               e.stopPropagation();
               store().togglePin(path);
             }}
-            className="rounded p-0.5 hover:bg-accent"
+            className="shrink-0 rounded p-0.5 text-muted-foreground transition-colors hover:bg-foreground/8 hover:text-foreground"
           >
-            <Pin className="size-3" />
+            <Pin className="size-3" strokeWidth={2} />
           </button>
         )}
-        {isPage &&
-          (() => {
-            const PageIcon = pageIcons[pageRoute(path)];
-            return PageIcon ? <PageIcon className="size-3.5" /> : null;
-          })()}
-        {!isPage &&
-          tabIcons &&
-          (() => {
-            const Icon = fileIcon(name);
-            return Icon ? <Icon className="size-3.5 shrink-0" /> : null;
-          })()}
-        <span className="whitespace-nowrap">{name}</span>
+        {PageIcon && <PageIcon className="size-3.5 shrink-0" strokeWidth={2} />}
+        {FileIcon && <FileIcon className="size-3.5 shrink-0" />}
+        <span className="min-w-0 truncate">{name}</span>
         {showDir && dir && (
-          <span className="whitespace-nowrap text-xs text-muted-foreground">
-            {dir}
-          </span>
+          <span className="shrink-0 text-[10px] text-muted-foreground/70">{dir}</span>
         )}
         {!isPinned && (
           <button
@@ -149,11 +101,11 @@ export function Tab({ path, showDir }: { path: string; showDir: boolean }) {
               store().closeTab(path);
             }}
             className={cn(
-              "rounded p-0.5 opacity-0 hover:bg-accent group-hover:opacity-100",
-              isActive && "opacity-100",
+              "ml-0.5 shrink-0 rounded p-0.5 text-muted-foreground transition-all duration-150 hover:bg-foreground/8 hover:text-foreground",
+              isActive ? "opacity-70 hover:opacity-100" : "opacity-0 group-hover:opacity-70 group-hover:hover:opacity-100",
             )}
           >
-            <X className="size-3.5" />
+            <X className="size-3" strokeWidth={2} />
           </button>
         )}
       </ContextMenuTrigger>
