@@ -230,7 +230,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Datei-Dekorationen (Git/Fehler)**: Git-Status färbt Datei-/Ordnernamen + Buchstaben-Badge (M/A/D/R/U/!), Fehler-Badges bestehen; Quelle `git-store` (`git-decorations.ts`, `git-status-letter.ts`)
 
-* [x] **Open Editors-Sektion**: einklappbare Liste offener Editoren über dem Dateibaum, aktiver Eintrag hervorgehoben, Klick fokussiert, X schließt; gruppiert bei Splits (`open-editors.tsx`)
+* [ ] **Open Editors-Sektion**
 
 * [ ] **Timeline-View**: Lokale Historie + Git-Historie pro Datei
 
@@ -244,7 +244,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Große-Dateien-Handling**: TS/JS-Workspace-Sync begrenzt auf große Dateien
 
-* [ ] **Vergleich**: Zwei Dateien auswählen und diffen, Diff mit Zwischenablage
+* [x] **Vergleich**: Explorer-Kontextmenü „Zum Vergleich auswählen“ + „Mit Ausgewähltem vergleichen“ und „Mit Zwischenablage vergleichen“; öffnet Monaco-DiffEditor (Inline/Nebeneinander) als `/compare/`-Tab (`file-compare.ts`, `file-compare-page.tsx`)
 
 * [ ] **Readonly-Modus pro Datei/Glob**
 

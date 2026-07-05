@@ -1,43 +1,34 @@
 import { DiffEditor } from "@monaco-editor/react";
-import { invoke } from "@tauri-apps/api/core";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { useGitDiffStore } from "@/lib/git-diff-store";
+import { type CompareSide, useFileCompare } from "@/lib/file-compare";
 import { ideMonacoTheme } from "@/lib/ide-theme";
-import { languageOf } from "@/lib/language-of";
 
-export function GitDiffPage({ route }: { route: string }) {
-  const descriptor = useGitDiffStore((s) => s.diffs[route]);
+function loadSide(side: CompareSide): Promise<string> {
+  if (side.text != null) return Promise.resolve(side.text);
+  if (side.path) return readTextFile(side.path).catch(() => "");
+  return Promise.resolve("");
+}
+
+export function FileComparePage({ route }: { route: string }) {
+  const descriptor = useFileCompare((s) => s.compares[route]);
   const { resolvedTheme } = useTheme();
   const [sideBySide, setSideBySide] = useState(true);
-  const [original, setOriginal] = useState<string | null>(null);
-  const [modified, setModified] = useState<string | null>(null);
+  const [left, setLeft] = useState<string | null>(null);
+  const [right, setRight] = useState<string | null>(null);
 
   useEffect(() => {
     if (!descriptor) return;
     let cancelled = false;
-    const { repoPath, file, kind } = descriptor;
-    async function load() {
-      const orig = await invoke<string>("repo_file_content_at", {
-        path: repoPath,
-        file,
-        treeish: "HEAD",
-      }).catch(() => "");
-      const mod =
-        kind === "staged"
-          ? await invoke<string>("repo_file_content_at", {
-              path: repoPath,
-              file,
-              treeish: "",
-            }).catch(() => "")
-          : await readTextFile(`${repoPath}/${file}`).catch(() => "");
-      if (!cancelled) {
-        setOriginal(orig);
-        setModified(mod);
-      }
-    }
-    void load();
+    void Promise.all([loadSide(descriptor.left), loadSide(descriptor.right)]).then(
+      ([l, r]) => {
+        if (!cancelled) {
+          setLeft(l);
+          setRight(r);
+        }
+      },
+    );
     return () => {
       cancelled = true;
     };
@@ -45,10 +36,12 @@ export function GitDiffPage({ route }: { route: string }) {
 
   if (!descriptor) {
     return (
-      <div className="p-4 text-sm text-muted-foreground">Kein Diff ausgewählt.</div>
+      <div className="p-4 text-sm text-muted-foreground">
+        Kein Vergleich ausgewählt.
+      </div>
     );
   }
-  if (original === null || modified === null) {
+  if (left === null || right === null) {
     return <div className="p-4 text-sm text-muted-foreground">Lädt…</div>;
   }
 
@@ -56,7 +49,7 @@ export function GitDiffPage({ route }: { route: string }) {
     <div className="flex h-full flex-col">
       <div className="flex h-8 shrink-0 items-center justify-between border-b px-3">
         <span className="truncate font-mono text-xs text-muted-foreground">
-          {descriptor.file}
+          {descriptor.left.label} ↔ {descriptor.right.label}
         </span>
         <button
           type="button"
@@ -70,9 +63,9 @@ export function GitDiffPage({ route }: { route: string }) {
         <DiffEditor
           key={`${route}:${sideBySide}`}
           height="100%"
-          language={languageOf(descriptor.file)}
-          original={original}
-          modified={modified}
+          language={descriptor.language}
+          original={left}
+          modified={right}
           theme={ideMonacoTheme(resolvedTheme === "dark")}
           options={{
             readOnly: true,

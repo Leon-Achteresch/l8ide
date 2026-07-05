@@ -13,6 +13,11 @@ import { basename, canMove, dragRoots, parentDir } from "@/lib/fs-move";
 import { cn } from "@/lib/utils";
 import { addPathsToGitignore } from "@/lib/gitignore";
 import { useGitDeco } from "@/lib/git-decorations";
+import {
+  compareFiles,
+  compareWithClipboard,
+  useFileCompare,
+} from "@/lib/file-compare";
 import { refreshFileIndex } from "@/lib/file-index";
 import { useMarkersStore } from "@/lib/markers-store";
 import { useProjectLogoStore } from "@/lib/project-logo-store";
@@ -617,6 +622,31 @@ const TreeNode = memo(function TreeNode({
 						<GitBranch className="size-4" />
 						Zu .gitignore hinzufügen
 					</ContextMenuItem>
+					{!entry.isDirectory && (
+						<>
+							<ContextMenuSeparator />
+							<ContextMenuItem
+								onClick={() =>
+									useFileCompare.getState().setSelected(entry.path)
+								}
+							>
+								Zum Vergleich auswählen
+							</ContextMenuItem>
+							<ContextMenuItem
+								onClick={() => {
+									const sel = useFileCompare.getState().selected;
+									if (sel && sel !== entry.path) compareFiles(sel, entry.path);
+								}}
+							>
+								Mit Ausgewähltem vergleichen
+							</ContextMenuItem>
+							<ContextMenuItem
+								onClick={() => void compareWithClipboard(entry.path)}
+							>
+								Mit Zwischenablage vergleichen
+							</ContextMenuItem>
+						</>
+					)}
 					<ContextMenuSeparator />
 					<ContextMenuItem
 						onClick={() =>
