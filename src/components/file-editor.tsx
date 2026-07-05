@@ -1,6 +1,7 @@
 import Editor from "@monaco-editor/react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { readTextFile } from "@tauri-apps/plugin-fs";
+import { Columns2 } from "lucide-react";
 import * as monaco from "monaco-editor";
 import { useTheme } from "next-themes";
 import { useEditorZoom } from "@/lib/editor-zoom";
@@ -12,12 +13,20 @@ import {
   takePendingReveal,
 } from "@/lib/monaco-navigation";
 import { monacoUriForPath } from "@/lib/monaco-uri";
+import { MarkdownPreview } from "@/components/markdown-preview";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import "@/lib/monaco";
 
 type OpenFile = { path: string; content: string };
 
 const IMAGE_EXTENSIONS = /\.(png|jpe?g|gif|webp|svg|bmp|ico|avif)$/i;
+const MARKDOWN_EXTENSIONS = /\.(md|markdown|mdx)$/i;
 
 function ImageViewer({ path }: { path: string }) {
   return (
@@ -35,7 +44,48 @@ export function FileEditor({ path }: { path: string }) {
   if (IMAGE_EXTENSIONS.test(path)) {
     return <ImageViewer path={path} />;
   }
+  if (MARKDOWN_EXTENSIONS.test(path)) {
+    return <MarkdownEditor path={path} />;
+  }
   return <TextEditor path={path} />;
+}
+
+function MarkdownEditor({ path }: { path: string }) {
+  const [preview, setPreview] = useState(true);
+  return (
+    <div className="flex h-full w-full flex-col">
+      <div className="flex h-8 shrink-0 items-center justify-end border-b px-2">
+        <button
+          type="button"
+          title="Toggle preview"
+          aria-label="Toggle preview"
+          aria-pressed={preview}
+          onClick={() => setPreview((p) => !p)}
+          className={cn(
+            "inline-flex size-6 items-center justify-center rounded-md transition-colors hover:bg-foreground/8",
+            preview ? "text-foreground" : "text-muted-foreground",
+          )}
+        >
+          <Columns2 className="size-3.5" strokeWidth={2} />
+        </button>
+      </div>
+      <div className="min-h-0 flex-1">
+        {preview ? (
+          <ResizablePanelGroup orientation="horizontal">
+            <ResizablePanel defaultSize={50} minSize={20}>
+              <TextEditor path={path} />
+            </ResizablePanel>
+            <ResizableHandle />
+            <ResizablePanel defaultSize={50} minSize={20}>
+              <MarkdownPreview path={path} />
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        ) : (
+          <TextEditor path={path} />
+        )}
+      </div>
+    </div>
+  );
 }
 
 function TextEditor({ path }: { path: string }) {

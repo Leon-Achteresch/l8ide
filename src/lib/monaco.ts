@@ -1,5 +1,6 @@
 import { loader } from "@monaco-editor/react";
 import { initIdeMonacoThemes } from "@/lib/ide-theme";
+import { configureJsonSchemas } from "@/lib/json-schemas";
 import { setMonacoInstance } from "@/lib/monaco-instance";
 import { registerMonacoNavigation } from "@/lib/monaco-navigation";
 import * as monaco from "monaco-editor";
@@ -34,5 +35,6 @@ self.MonacoEnvironment = {
 setMonacoInstance(monaco);
 registerMonacoNavigation();
 initIdeMonacoThemes();
+void configureJsonSchemas();
 
 loader.config({ monaco });
