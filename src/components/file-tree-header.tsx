@@ -6,7 +6,7 @@ import { ChevronsDownUp, RefreshCw } from "lucide-react";
 
 export function FileTreeHeader({ rootPath }: { rootPath: string }) {
   return (
-    <div className="flex shrink-0 items-center gap-2 border-b bg-muted/20 px-2 py-1.5">
+    <div className="flex h-9 shrink-0 items-center gap-2 border-b bg-muted/20 px-2">
       <ProjectLogo rootPath={rootPath} />
       <span
         className="min-w-0 flex-1 truncate text-sm font-medium"

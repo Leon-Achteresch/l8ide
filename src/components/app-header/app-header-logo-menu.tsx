@@ -4,11 +4,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
-import {
-  redoActive,
-  saveActiveFile,
-  undoActive,
-} from "@/lib/editor-actions";
+import { redoActive, saveActiveFile, undoActive } from "@/lib/editor-actions";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { Redo2, Save, Undo2 } from "lucide-react";
@@ -40,20 +36,15 @@ export function AppHeaderLogoMenu() {
               "data-popup-open:bg-foreground/10 data-popup-open:text-foreground",
             )}
           >
-            <img src={logoSrc} alt="Logo" className="h-4 w-auto opacity-90" />
+            <img src={logoSrc} alt="Logo" className="h-8 w-auto opacity-90" />
           </button>
         }
       />
       <PopoverContent
         align="start"
         sideOffset={6}
-        className="w-56 gap-0 overflow-hidden p-0"
+        className="w-56 gap-0 overflow-hidden p-0 border-t-none"
       >
-        <div className="flex items-center gap-2 border-b border-border/60 px-3 py-2">
-          <img src={logoSrc} alt="" className="h-4 w-auto opacity-90" />
-          <span className="text-xs font-semibold tracking-tight">l8ide</span>
-        </div>
-
         <div className="flex flex-col gap-3 p-3">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
