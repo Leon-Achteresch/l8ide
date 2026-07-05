@@ -9,7 +9,7 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 ## 1. Editor-Kern
 
 ### 1.1 Textbearbeitung
-- [ ] **Multi-Cursor-Editing**: Mehrere Cursor gleichzeitig (Alt+Klick, Cmd+D für nächstes Vorkommen, Cmd+Shift+L für alle Vorkommen)
+- [x] **Multi-Cursor-Editing**: Mehrere Cursor gleichzeitig (Alt+Klick, Cmd+D für nächstes Vorkommen, Cmd+Shift+L für alle Vorkommen)
 - [ ] **Spaltenauswahl / Box-Selection**: Rechteckige Textauswahl (Shift+Alt+Drag)
 - [ ] **Zeilenoperationen**: Zeile verschieben (Alt+↑/↓), duplizieren (Shift+Alt+↑/↓), löschen (Cmd+Shift+K), Zeilen joinen
 - [ ] **Smart Selection**: Auswahl semantisch erweitern/verkleinern (Shift+Alt+→/←)
@@ -36,8 +36,8 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 - [ ] **Suggestion-Ranking**: Sortierung nach Relevanz, zuletzt genutzt, Lokalität
 
 ### 1.3 Navigation
-- [ ] **Go to Definition** (F12) und **Peek Definition** (Alt+F12, Inline-Vorschau)
-- [ ] **Go to Type Definition**
+- [x] **Go to Definition** (F12) und **Peek Definition** (Alt+F12, Inline-Vorschau)
+- [x] **Go to Type Definition**
 - [ ] **Go to Implementation**
 - [ ] **Go to References / Find All References** mit References-View
 - [ ] **Go to Symbol in File** (Cmd+Shift+O) mit Gruppierung nach Kategorie

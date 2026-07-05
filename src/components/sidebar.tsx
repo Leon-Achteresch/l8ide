@@ -5,7 +5,16 @@ import { SidebarActions } from "@/components/sidebar-actions";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { AnimatePresence, motion } from "motion/react";
+import { FolderOpen } from "lucide-react";
 import { useState } from "react";
+
+const PANEL_SPRING = { type: "spring", stiffness: 420, damping: 38, mass: 0.7 } as const;
+
+const MODE_VARIANTS = {
+  enter: { opacity: 0, x: -12, filter: "blur(4px)" },
+  center: { opacity: 1, x: 0, filter: "blur(0px)" },
+  exit: { opacity: 0, x: 12, filter: "blur(4px)" },
+} as const;
 
 export function Sidebar() {
   const rootPath = useWorkspaceStore((s) => s.rootPath);
@@ -14,6 +23,7 @@ export function Sidebar() {
   const sidebarMode = useWorkspaceStore((s) => s.sidebarMode);
   const setSidebarWidth = useWorkspaceStore((s) => s.setSidebarWidth);
   const [resizing, setResizing] = useState(false);
+  const [resizeHover, setResizeHover] = useState(false);
 
   function startResize(e: React.PointerEvent) {
     e.preventDefault();
@@ -51,41 +61,81 @@ export function Sidebar() {
           initial={{ width: 0, opacity: 0 }}
           animate={{ width: sidebarWidth, opacity: 1 }}
           exit={{ width: 0, opacity: 0 }}
-          transition={
-            resizing
-              ? { duration: 0 }
-              : { type: "spring", stiffness: 400, damping: 40 }
-          }
-          className="relative flex h-full shrink-0 flex-col overflow-hidden border-r bg-sidebar"
+          transition={resizing ? { duration: 0 } : PANEL_SPRING}
+          className="relative flex h-full shrink-0 flex-col overflow-hidden bg-sidebar/90 shadow-[inset_-1px_0_0_0_var(--sidebar-border)] backdrop-blur-2xl"
         >
           <div style={{ width: sidebarWidth }} className="flex h-full flex-col">
-            {rootPath ? (
-              <>
-                <div
-                  className={cn(
-                    "flex min-h-0 flex-1 flex-col",
-                    sidebarMode !== "FileTree" && "hidden",
+            <div className="flex min-h-0 flex-1 flex-col">
+              {rootPath ? (
+                <AnimatePresence mode="wait" initial={false}>
+                  {sidebarMode === "FileTree" ? (
+                    <motion.div
+                      key="explorer"
+                      variants={MODE_VARIANTS}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                      className="flex min-h-0 flex-1 flex-col"
+                    >
+                      <FileTreeHeader rootPath={rootPath} />
+                      <FileTree rootPath={rootPath} />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="search"
+                      variants={MODE_VARIANTS}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                      className="flex min-h-0 flex-1 flex-col"
+                    >
+                      <SearchPanel rootPath={rootPath} />
+                    </motion.div>
                   )}
+                </AnimatePresence>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={PANEL_SPRING}
+                  className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center"
                 >
-                  <FileTreeHeader rootPath={rootPath} />
-                  <FileTree rootPath={rootPath} />
-                </div>
-                {sidebarMode === "Search" && (
-                  <SearchPanel rootPath={rootPath} />
-                )}
-              </>
-            ) : (
-              <div className="flex min-h-0 flex-1 items-start p-2 text-sm text-muted-foreground">
-                Open a folder to get started.
-              </div>
-            )}
+                  <div className="flex size-12 items-center justify-center rounded-2xl bg-foreground/[0.04] ring-1 ring-foreground/[0.06]">
+                    <FolderOpen className="size-5 text-muted-foreground" strokeWidth={1.5} />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-foreground">Kein Projekt geöffnet</p>
+                    <p className="text-xs leading-relaxed text-muted-foreground">
+                      Öffne einen Ordner, um den Explorer zu nutzen.
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+
             <SidebarActions />
           </div>
 
-          <div
+          <motion.div
             onPointerDown={startResize}
-            className="absolute inset-y-0 -right-1 z-20 w-2 cursor-col-resize"
-          />
+            onHoverStart={() => setResizeHover(true)}
+            onHoverEnd={() => setResizeHover(false)}
+            className="absolute inset-y-0 -right-1 z-20 flex w-2.5 cursor-col-resize items-center justify-center"
+          >
+            <motion.div
+              animate={{
+                height: resizeHover || resizing ? "40%" : "0%",
+                opacity: resizeHover || resizing ? 1 : 0,
+              }}
+              transition={{ type: "spring", stiffness: 500, damping: 35 }}
+              className={cn(
+                "w-0.5 rounded-full",
+                resizing ? "bg-primary" : "bg-foreground/25",
+              )}
+            />
+          </motion.div>
         </motion.aside>
       )}
     </AnimatePresence>

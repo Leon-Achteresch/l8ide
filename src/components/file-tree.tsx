@@ -54,6 +54,7 @@ import {
 	FilePlus,
 	FolderPlus,
 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import {
 	createContext,
 	memo,
@@ -417,11 +418,13 @@ const TreeNode = memo(function TreeNode({
 		}
 	}
 
+	const highlighted = isActive || isSelected;
+
 	return (
 		<div>
 			<ContextMenu>
 				<ContextMenuTrigger>
-					<div className="group/row relative">
+					<div className="group/row relative px-1.5">
 						<button
 							ref={(el) => {
 								buttonRef.current = el;
@@ -436,21 +439,48 @@ const TreeNode = memo(function TreeNode({
 								if (!e.metaKey && !e.ctrlKey && !e.shiftKey) toggle();
 							}}
 							className={cn(
-								"flex w-full select-none items-center gap-1 rounded px-1 py-0.5 text-left text-sm hover:bg-accent",
-								(isActive || isSelected) && "bg-accent",
-								isDragSource && "opacity-50",
-								isDropTarget && "bg-accent/50 ring-1 ring-ring",
+								"relative flex w-full select-none items-center gap-1.5 rounded-lg px-2 py-1 text-left text-[13px] transition-colors duration-100",
+								highlighted
+									? "text-foreground"
+									: "text-foreground/85 hover:bg-foreground/[0.04]",
+								isDragSource && "opacity-40",
+								isDropTarget && "bg-primary/8 ring-1 ring-primary/25",
 							)}
-							style={{ paddingLeft: depth * 12 + 4 }}
+							style={{ paddingLeft: depth * 14 + 8 }}
 						>
-							{entry.isDirectory ? (
-								<ChevronRight
-									className={`size-3.5 shrink-0 transition-transform ${open ? "rotate-90" : ""}`}
+							{(isActive || isSelected) && (
+								<span
+									className={cn(
+										"absolute inset-0 rounded-lg ring-1",
+										isActive
+											? "bg-foreground/[0.06] ring-foreground/[0.05]"
+											: "bg-foreground/[0.04] ring-foreground/[0.03]",
+									)}
+									aria-hidden
 								/>
-							) : (
-								<span className="w-3.5 shrink-0" />
 							)}
-							<EntryIcon entry={entry} open={open} />
+							{isActive && (
+								<motion.span
+									layoutId="tree-active-bar"
+									className="absolute bottom-1 left-0 top-1 w-0.5 rounded-full bg-primary"
+									transition={{ type: "spring", stiffness: 520, damping: 38, mass: 0.55 }}
+									aria-hidden
+								/>
+							)}
+							{entry.isDirectory ? (
+								<motion.span
+									animate={{ rotate: open ? 90 : 0 }}
+									transition={{ type: "spring", stiffness: 500, damping: 32 }}
+									className="relative z-10 shrink-0"
+								>
+									<ChevronRight className="size-3.5 text-muted-foreground" strokeWidth={2} />
+								</motion.span>
+							) : (
+								<span className="relative z-10 w-3.5 shrink-0" />
+							)}
+							<span className="relative z-10 shrink-0">
+								<EntryIcon entry={entry} open={open} />
+							</span>
 							{renaming ? (
 								<input
 									autoFocus
@@ -482,14 +512,14 @@ const TreeNode = memo(function TreeNode({
 										}
 										commitRename(e.currentTarget.value);
 									}}
-									className="min-w-0 flex-1 rounded border bg-background px-1 text-sm outline-none ring-1 ring-ring"
+									className="relative z-10 min-w-0 flex-1 rounded-md border-0 bg-background/80 px-1.5 py-0.5 text-[13px] outline-none ring-1 ring-primary/30"
 								/>
 							) : (
-								<span className="truncate">{entry.name}</span>
+								<span className="relative z-10 min-w-0 truncate">{entry.name}</span>
 							)}
 						</button>
 						{entry.isDirectory && !renaming && (
-							<div className="absolute inset-y-0 right-1 flex items-center gap-0.5 rounded bg-accent opacity-0 transition-opacity group-hover/row:opacity-100 focus-within:opacity-100">
+							<div className="pointer-events-none absolute inset-y-0 right-2.5 z-20 flex items-center gap-0.5 opacity-0 transition-opacity duration-100 group-hover/row:pointer-events-auto group-hover/row:opacity-100 focus-within:pointer-events-auto focus-within:opacity-100">
 								<button
 									type="button"
 									title="Neue Datei"
@@ -498,7 +528,7 @@ const TreeNode = memo(function TreeNode({
 										e.stopPropagation();
 										createEntry("file", entry.path);
 									}}
-									className="flex size-5 items-center justify-center rounded text-muted-foreground hover:bg-background hover:text-foreground"
+									className="flex size-6 items-center justify-center rounded-md bg-background/90 text-muted-foreground shadow-sm ring-1 ring-foreground/8 hover:text-foreground"
 								>
 									<FilePlus className="size-3.5" />
 								</button>
@@ -510,7 +540,7 @@ const TreeNode = memo(function TreeNode({
 										e.stopPropagation();
 										createEntry("folder", entry.path);
 									}}
-									className="flex size-5 items-center justify-center rounded text-muted-foreground hover:bg-background hover:text-foreground"
+									className="flex size-6 items-center justify-center rounded-md bg-background/90 text-muted-foreground shadow-sm ring-1 ring-foreground/8 hover:text-foreground"
 								>
 									<FolderPlus className="size-3.5" />
 								</button>
@@ -556,15 +586,23 @@ const TreeNode = memo(function TreeNode({
 					</ContextMenuItem>
 				</ContextMenuContent>
 			</ContextMenu>
-			{open && children !== null && (
-				<div>
-					{children
-						.filter((c) => !ctx.hidden.has(c.name))
-						.map((child) => (
-							<TreeNode key={child.path} entry={child} depth={depth + 1} />
-						))}
-				</div>
-			)}
+			<AnimatePresence initial={false}>
+				{open && children !== null && (
+					<motion.div
+						initial={{ height: 0, opacity: 0 }}
+						animate={{ height: "auto", opacity: 1 }}
+						exit={{ height: 0, opacity: 0 }}
+						transition={{ type: "spring", stiffness: 500, damping: 38, mass: 0.6 }}
+						className="overflow-hidden"
+					>
+						{children
+							.filter((c) => !ctx.hidden.has(c.name))
+							.map((child) => (
+								<TreeNode key={child.path} entry={child} depth={depth + 1} />
+							))}
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</div>
 	);
 });
@@ -603,8 +641,8 @@ function TreeContainer({
 							}
 						}}
 						className={cn(
-							"min-h-0 flex-1 overflow-auto p-1",
-							isRootDropTarget && "bg-accent/50 ring-1 ring-ring ring-inset",
+							"min-h-0 flex-1 overflow-auto px-1 pb-3 pt-0.5",
+							isRootDropTarget && "bg-primary/6 ring-1 ring-primary/20 ring-inset",
 						)}
 					/>
 				}
@@ -909,7 +947,7 @@ export function FileTree({ rootPath }: { rootPath: string }) {
 						return (
 							<div
 								className={cn(
-									"flex w-fit items-center gap-1.5 rounded-md border bg-background px-2 py-1 text-sm text-foreground shadow-lg",
+									"flex w-fit items-center gap-1.5 rounded-xl border border-foreground/10 bg-background/95 px-2.5 py-1.5 text-sm text-foreground shadow-xl backdrop-blur-sm",
 									overValid === false && "opacity-50",
 								)}
 							>

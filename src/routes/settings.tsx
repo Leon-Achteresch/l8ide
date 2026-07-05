@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import { PrettierSettings } from "@/components/prettier-settings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -77,6 +78,7 @@ export function SettingsPage() {
         description="Gilt in allen Workspaces"
       />
       <WorkspaceTrust />
+      <PrettierSettings />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { saveActiveFile } from "@/lib/editor-actions";
+import { formatActiveEditor, formatAndSaveActive } from "@/lib/prettier-format";
 import { useEditorZoom, useModZoomInHotkey } from "@/lib/editor-zoom";
 import { useCommandHotkeys } from "@/lib/hotkeys";
 import { useBrowserStore } from "@/lib/browser-store";
@@ -55,7 +55,10 @@ export function AppHotkeys() {
     "browser.toggle": () => useBrowserStore.getState().toggle(),
     "theme.toggle": () =>
       setTheme(resolvedTheme === "dark" ? "light" : "dark"),
-    "editor.save": saveActiveFile,
+    "editor.save": () => void formatAndSaveActive(),
+    "editor.format": () => {
+      if (textEditorActive) formatActiveEditor();
+    },
     "tab.close": () => {
       const s = useWorkspaceStore.getState();
       if (s.activeFile) s.closeTab(s.activeFile);

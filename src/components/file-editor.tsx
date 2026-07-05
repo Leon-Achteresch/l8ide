@@ -6,7 +6,7 @@ import * as monaco from "monaco-editor";
 import { useTheme } from "next-themes";
 import { useEditorZoom } from "@/lib/editor-zoom";
 import { ideMonacoTheme } from "@/lib/ide-theme";
-import { saveModel } from "@/lib/editor-actions";
+import { formatAndSave } from "@/lib/prettier-format";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import {
   revealInEditor,
@@ -156,7 +156,7 @@ function TextEditor({ path }: { path: string }) {
           const model = editor.getModel();
           if (!model) return;
           clearTimeout(timer);
-          timer = setTimeout(() => saveModel(model), autoSaveDelay);
+          timer = setTimeout(() => void formatAndSave(model), autoSaveDelay);
         });
       }}
     />

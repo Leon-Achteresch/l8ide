@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { useBrowserStore } from "@/lib/browser-store";
 import { useTerminalStore } from "@/lib/terminal-store";
 import { cn } from "@/lib/utils";
+import { motion } from "motion/react";
 import { Globe, Terminal } from "lucide-react";
 
 export function SidebarActions() {
@@ -11,41 +11,62 @@ export function SidebarActions() {
   const toggleBrowser = useBrowserStore((s) => s.toggle);
 
   return (
-    <div className="flex shrink-0 border-t bg-muted/20 px-2 py-1.5">
+    <div className="flex shrink-0 justify-center px-3 pb-3 pt-1">
       <div
         role="toolbar"
-        aria-label="Sidebar-Aktionen"
-        className="flex items-center gap-1"
+        aria-label="Panel-Aktionen"
+        className="inline-flex items-center gap-0.5 rounded-2xl bg-foreground/[0.04] p-1 ring-1 ring-foreground/[0.06] backdrop-blur-sm"
       >
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          className={cn(
-            "text-muted-foreground hover:text-foreground",
-            terminalOpen && "bg-accent text-foreground shadow-xs",
-          )}
+        <DockButton
+          icon={Terminal}
+          label="Terminal"
+          active={terminalOpen}
           onClick={toggleTerminal}
-          aria-pressed={terminalOpen}
-          title="Terminal"
-        >
-          <Terminal />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          className={cn(
-            "text-muted-foreground hover:text-foreground",
-            browserOpen && "bg-accent text-foreground shadow-xs",
-          )}
+        />
+        <DockButton
+          icon={Globe}
+          label="Browser"
+          active={browserOpen}
           onClick={toggleBrowser}
-          aria-pressed={browserOpen}
-          title="Browser"
-        >
-          <Globe />
-        </Button>
+        />
       </div>
     </div>
+  );
+}
+
+function DockButton({
+  icon: Icon,
+  label,
+  active,
+  onClick,
+}: {
+  icon: typeof Terminal;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <motion.button
+      type="button"
+      whileTap={{ scale: 0.92 }}
+      transition={{ type: "spring", stiffness: 600, damping: 30 }}
+      onClick={onClick}
+      aria-pressed={active}
+      title={label}
+      className={cn(
+        "relative flex size-8 items-center justify-center rounded-xl text-muted-foreground transition-colors duration-150",
+        active ? "text-foreground" : "hover:text-foreground",
+      )}
+    >
+      {active && (
+        <motion.span
+          layoutId="sidebar-dock-indicator"
+          transition={{ type: "spring", stiffness: 520, damping: 38, mass: 0.55 }}
+          className="absolute inset-0 rounded-xl bg-background shadow-sm ring-1 ring-foreground/8"
+          aria-hidden
+        />
+      )}
+      <Icon className="relative z-10 size-4" strokeWidth={active ? 2.25 : 2} />
+    </motion.button>
   );
 }

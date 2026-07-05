@@ -5,6 +5,7 @@ import { BrowserPanel } from "@/components/browser/browser-panel";
 import { FileSearch } from "@/components/file-search";
 import { MonacoWorkspace } from "@/components/monaco-workspace";
 import { Sidebar } from "@/components/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 import { WorkspaceTrustBanner } from "@/components/workspace-trust-banner";
 import { useTerminalStore } from "@/lib/terminal-store";
 import { lazy, Suspense } from "react";
@@ -60,6 +61,7 @@ function RootComponent() {
           </div>
         </div>
       </div>
+      <Toaster />
       {RouterDevtools && (
         <Suspense fallback={null}>
           <RouterDevtools position="bottom-right" />

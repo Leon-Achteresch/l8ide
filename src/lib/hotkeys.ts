@@ -66,6 +66,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+S",
   },
   {
+    id: "editor.format",
+    label: "Dokument formatieren",
+    group: "Editor",
+    hotkey: "Shift+Alt+F" as Hotkey,
+  },
+  {
     id: "editor.zoomIn",
     label: "Schrift vergrößern",
     group: "Editor",

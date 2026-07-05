@@ -3,6 +3,7 @@ import { initIdeMonacoThemes } from "@/lib/ide-theme";
 import { configureJsonSchemas } from "@/lib/json-schemas";
 import { setMonacoInstance } from "@/lib/monaco-instance";
 import { registerMonacoNavigation } from "@/lib/monaco-navigation";
+import { initPrettier } from "@/lib/prettier-format";
 import * as monaco from "monaco-editor";
 import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
 import cssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker";
@@ -33,6 +34,7 @@ self.MonacoEnvironment = {
 };
 
 setMonacoInstance(monaco);
+initPrettier(monaco);
 registerMonacoNavigation();
 initIdeMonacoThemes();
 void configureJsonSchemas();
