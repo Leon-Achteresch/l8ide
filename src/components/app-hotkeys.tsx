@@ -3,6 +3,7 @@ import { useEditorZoom, useModZoomInHotkey } from "@/lib/editor-zoom";
 import { useCommandHotkeys } from "@/lib/hotkeys";
 import { isPageTab, pageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { useFileSearchStore } from "@/components/file-search";
+import { SEARCH_INPUT_ID } from "@/components/search-panel";
 import { open } from "@tauri-apps/plugin-dialog";
 import { writeTextFile } from "@tauri-apps/plugin-fs";
 import * as monaco from "monaco-editor";
@@ -42,6 +43,14 @@ export function AppHotkeys() {
     "shortcuts.open": () =>
       useWorkspaceStore.getState().openFile(pageTab("/shortcuts")),
     "file.search": () => useFileSearchStore.getState().setOpen(true),
+    "search.workspace": () => {
+      const s = useWorkspaceStore.getState();
+      s.setSidebarMode("Search");
+      if (!s.sidebarOpen) s.toggleSidebar();
+      requestAnimationFrame(() => {
+        document.getElementById(SEARCH_INPUT_ID)?.focus();
+      });
+    },
     "theme.toggle": () =>
       setTheme(resolvedTheme === "dark" ? "light" : "dark"),
     "editor.save": () => {

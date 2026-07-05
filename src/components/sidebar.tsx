@@ -1,4 +1,6 @@
 import { FileTree } from "@/components/file-tree";
+import { SearchPanel } from "@/components/search-panel";
+import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { AnimatePresence, motion } from "motion/react";
 
@@ -6,6 +8,7 @@ export function Sidebar() {
   const rootPath = useWorkspaceStore((s) => s.rootPath);
   const sidebarWidth = useWorkspaceStore((s) => s.sidebarWidth);
   const sidebarOpen = useWorkspaceStore((s) => s.sidebarOpen);
+  const sidebarMode = useWorkspaceStore((s) => s.sidebarMode);
   const setSidebarWidth = useWorkspaceStore((s) => s.setSidebarWidth);
 
   function startResize(e: React.PointerEvent) {
@@ -37,7 +40,17 @@ export function Sidebar() {
         >
           <div style={{ width: sidebarWidth }} className="flex h-full flex-col">
             {rootPath ? (
-              <FileTree rootPath={rootPath} />
+              <>
+                <div
+                  className={cn(
+                    "flex min-h-0 flex-1 flex-col",
+                    sidebarMode !== "FileTree" && "hidden",
+                  )}
+                >
+                  <FileTree rootPath={rootPath} />
+                </div>
+                {sidebarMode === "Search" && <SearchPanel rootPath={rootPath} />}
+              </>
             ) : (
               <div className="p-2 text-sm text-muted-foreground">
                 Open a folder to get started.

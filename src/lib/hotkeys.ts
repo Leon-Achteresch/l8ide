@@ -111,6 +111,12 @@ export const COMMANDS: Command[] = [
     group: "Allgemein",
     hotkey: "Mod+P",
   },
+  {
+    id: "search.workspace",
+    label: "Im Workspace suchen",
+    group: "Allgemein",
+    hotkey: "Mod+Shift+F",
+  },
   { id: "file.rename", label: "Umbenennen", group: "Dateien", hotkey: "F2" },
   {
     id: "file.delete",

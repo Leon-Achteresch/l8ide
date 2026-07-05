@@ -1,8 +1,12 @@
 import * as monaco from "monaco-editor";
-import { pathFromMonacoUri, pathsEqual } from "@/lib/monaco-uri";
+import {
+  monacoUriForPath,
+  pathFromMonacoUri,
+  pathsEqual,
+} from "@/lib/monaco-uri";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
-type RevealTarget = { line: number; column: number };
+type RevealTarget = { line: number; column: number; endColumn?: number };
 
 let pendingReveal: { path: string; target: RevealTarget } | null = null;
 let openerRegistered = false;
@@ -35,10 +39,37 @@ export function revealInEditor(
   editor: monaco.editor.ICodeEditor,
   target: RevealTarget,
 ) {
-  const position = { lineNumber: target.line, column: target.column };
-  editor.setPosition(position);
-  editor.revealPositionInCenter(position);
+  if (target.endColumn != null) {
+    const range = {
+      startLineNumber: target.line,
+      startColumn: target.column,
+      endLineNumber: target.line,
+      endColumn: target.endColumn,
+    };
+    editor.setSelection(range);
+    editor.revealRangeInCenter(range);
+  } else {
+    const position = { lineNumber: target.line, column: target.column };
+    editor.setPosition(position);
+    editor.revealPositionInCenter(position);
+  }
   editor.focus();
+}
+
+export function openFileAt(path: string, target: RevealTarget) {
+  const activeFile = useWorkspaceStore.getState().activeFile;
+  if (activeFile && pathsEqual(activeFile, path)) {
+    const uri = monacoUriForPath(path).toString();
+    const editor = monaco.editor
+      .getEditors()
+      .find((e) => e.getModel()?.uri.toString() === uri);
+    if (editor) {
+      revealInEditor(editor, target);
+      return;
+    }
+  }
+  pendingReveal = { path, target };
+  useWorkspaceStore.getState().openFile(path);
 }
 
 export function registerMonacoNavigation() {
