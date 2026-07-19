@@ -544,7 +544,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 ## 14. Sonstiges
 
-* [ ] **Statusbar**: Sprache, Encoding, EOL, Einrückung, Zeile/Spalte, Branch, Fehlerzähler, Ports, alles klickbar
+* [x] **Statusbar**: Branch (öffnet SCM), Fehler-/Warnungszähler (öffnet Problems), Zeile/Spalte + Selektion (Go to Line), Einrückung (Tabs/Spaces-Toggle), EOL (LF/CRLF-Toggle), Sprache (`status-bar.tsx`, `status-store.ts`); Encoding/Ports fehlen noch
 
 * [x] **Notifications**: Toast-Benachrichtigungen via Sonner
 
@@ -564,7 +564,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Encoding-Support**: Auto-Detection, Re-Open/Save with Encoding
 
-* [ ] **EOL-Handling**: LF/CRLF-Konvertierung
+* [x] **EOL-Handling**: LF/CRLF-Konvertierung per Klick in der Statusbar (Auto-Detection via Monaco)
 
 * [ ] **Simple File Dialog / native Dialoge konfigurierbar**
 

@@ -11,6 +11,7 @@ import { useEditorZoom } from "@/lib/editor-zoom";
 import { useEditorDisplayOptions } from "@/lib/editor-settings";
 import { ideMonacoTheme } from "@/lib/ide-theme";
 import { formatAndSave, usePrettierSettings } from "@/lib/prettier-format";
+import { trackEditorStatus } from "@/lib/status-store";
 import { registerEditorRefactors } from "@/lib/ts-refactor";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { revealInEditor, takePendingReveal } from "@/lib/monaco-navigation";
@@ -182,6 +183,7 @@ function TextEditor({
             const target = takePendingReveal(path);
             if (target) revealInEditor(editor, target);
 
+            trackEditorStatus(editor);
             const gutter = attachGitGutter(editor, monaco, path);
             const unsubGutter = useGitStore.subscribe(
               () => void gutter.refresh(),

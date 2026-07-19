@@ -8,6 +8,7 @@ import { CommandPalette } from "@/components/command-palette";
 import { MonacoWorkspace } from "@/components/monaco-workspace";
 import { RefactorDialogs } from "@/components/refactor-preview-dialog";
 import { Sidebar } from "@/components/sidebar";
+import { StatusBar } from "@/components/status-bar";
 import { Toaster } from "@/components/ui/sonner";
 import { WorkspaceTrustBanner } from "@/components/workspace-trust-banner";
 import { useProblemsPanel } from "@/lib/markers-store";
@@ -114,6 +115,7 @@ function RootComponent() {
             {!zenMode && <TerminalSlot />}
           </div>
         </div>
+        {!zenMode && <StatusBar />}
       </div>
       {zenMode && <ZenExit />}
       <RefactorDialogs />
