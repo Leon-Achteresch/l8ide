@@ -56,6 +56,7 @@ type GitStore = {
   createBranch: (name: string) => Promise<void>;
   stage: (files: string[]) => Promise<void>;
   unstage: (files: string[]) => Promise<void>;
+  discard: (targets: { path: string; untracked: boolean }[]) => Promise<void>;
   stageAll: () => Promise<void>;
   unstageAll: () => Promise<void>;
   commit: (amend?: boolean) => Promise<void>;
@@ -143,6 +144,26 @@ export const useGitStore = create<GitStore>()((set, get) => ({
     if (!path || files.length === 0) return;
     try {
       await invoke("unstage_files", { path, files });
+    } catch (e) {
+      toast.error(describeError(e));
+    }
+    await get().refresh();
+  },
+
+  discard: async (targets) => {
+    const path = root();
+    if (!path || targets.length === 0) return;
+    try {
+      await invoke("git_discard_files", {
+        path,
+        files: targets.map((t) => t.path),
+        untracked: targets.map((t) => t.untracked),
+      });
+      toast.success(
+        targets.length === 1
+          ? "Änderungen verworfen"
+          : `Änderungen in ${targets.length} Dateien verworfen`,
+      );
     } catch (e) {
       toast.error(describeError(e));
     }

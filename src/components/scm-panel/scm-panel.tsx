@@ -8,8 +8,9 @@ import {
   Plus,
   RefreshCw,
   SquareArrowOutUpRight,
+  Undo2,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { fileIcon } from "@/lib/file-icons";
@@ -25,6 +26,21 @@ function baseName(p: string) {
 function dirName(p: string) {
   const i = p.lastIndexOf("/");
   return i > 0 ? p.slice(0, i) : "";
+}
+
+function confirmDiscard(entry: StatusEntry) {
+  toast.warning(`„${baseName(entry.path)}" verwerfen?`, {
+    description: entry.untracked
+      ? "Die Datei wird gelöscht."
+      : "Alle Änderungen gehen verloren.",
+    action: {
+      label: "Verwerfen",
+      onClick: () =>
+        void useGitStore
+          .getState()
+          .discard([{ path: entry.path, untracked: entry.untracked }]),
+    },
+  });
 }
 
 function statusLetter(e: StatusEntry, staged: boolean): string {
@@ -71,6 +87,16 @@ function ChangeRow({
           </span>
         )}
       </button>
+      {!staged && (
+        <button
+          type="button"
+          title="Änderungen verwerfen"
+          onClick={() => confirmDiscard(entry)}
+          className="flex size-5 shrink-0 items-center justify-center rounded text-muted-foreground opacity-0 transition-opacity hover:bg-foreground/8 hover:text-red-500 group-hover:opacity-100"
+        >
+          <Undo2 className="size-3.5" />
+        </button>
+      )}
       <button
         type="button"
         title={staged ? "Unstage" : "Stage"}
@@ -135,9 +161,16 @@ export function ScmPanel({ rootPath }: { rootPath: string }) {
     void refresh();
   }, [rootPath, refresh]);
 
+  const [amend, setAmend] = useState(false);
   const staged = entries.filter((e) => e.staged);
   const changes = entries.filter((e) => e.unstaged || e.untracked);
-  const canCommit = staged.length > 0 && commitMessage.trim().length > 0 && !busy;
+  const canCommit =
+    (staged.length > 0 || amend) && commitMessage.trim().length > 0 && !busy;
+
+  const doCommit = async () => {
+    await commit(amend);
+    setAmend(false);
+  };
 
   const openInL8git = () => {
     void invoke("open_in_l8git", { repo: rootPath }).catch((e) =>
@@ -165,7 +198,7 @@ export function ScmPanel({ rootPath }: { rootPath: string }) {
           onKeyDown={(e) => {
             if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
               e.preventDefault();
-              if (canCommit) void commit();
+              if (canCommit) void doCommit();
             }
           }}
           placeholder="Commit-Nachricht (⌘⏎ zum Committen)"
@@ -179,11 +212,25 @@ export function ScmPanel({ rootPath }: { rootPath: string }) {
             size="sm"
             className="h-7 flex-1 text-xs"
             disabled={!canCommit}
-            onClick={() => void commit()}
+            onClick={() => void doCommit()}
           >
             <Check className="size-3.5" />
-            Commit
+            {amend ? "Amend" : "Commit"}
           </Button>
+          <button
+            type="button"
+            title="Letzten Commit ändern (--amend)"
+            aria-pressed={amend}
+            onClick={() => setAmend((v) => !v)}
+            className={cn(
+              "inline-flex h-7 items-center rounded-md px-2 text-[10px] font-medium transition-colors",
+              amend
+                ? "bg-foreground/10 text-foreground"
+                : "text-muted-foreground hover:bg-foreground/8 hover:text-foreground",
+            )}
+          >
+            Amend
+          </button>
           <ToolbarButton icon={RefreshCw} label="Fetch" onClick={() => void fetch()} disabled={busy} />
         </div>
       </div>

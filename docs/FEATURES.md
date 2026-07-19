@@ -328,17 +328,17 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 ## 4. Versionskontrolle (Git & SCM)
 
-* [ ] **Git-Integration nativ**: Stage, Unstage, Commit, Amend, Push, Pull, Fetch, Sync
+* [x] **Git-Integration nativ**: Stage, Unstage, Commit, Amend (Toggle im SCM-Panel), Push, Pull, Fetch, Discard mit Toast-Bestätigung (`scm-panel.tsx`, `git-store.ts`, `src-tauri/git.rs`)
 
-* [ ] **Branch-Management**: Erstellen, Wechseln, Mergen, Publish, Branch-Anzeige in Statusbar
+* [x] **Branch-Management**: Erstellen, Wechseln (auch von Remote), Branch-Anzeige in Statusbar; Merge/Cherry-Pick/Revert im Backend vorhanden, UI fehlt
 
-* [ ] **Diff-Ansichten**: Side-by-Side und Inline, gestagte vs. Working-Tree-Änderungen
+* [x] **Diff-Ansichten**: Working/Staged-Diff als Tab (`git-diff-page.tsx`), Datei-Vergleich Side-by-Side/Inline
 
-* [ ] **Gutter-Indikatoren**: Hinzugefügte/geänderte/gelöschte Zeilen am Rand, Inline-Peek mit Revert
+* [~] **Gutter-Indikatoren**: Add/Change/Delete-Marker am Rand (`git-gutter.ts`); Inline-Peek mit Revert fehlt
 
-* [ ] **Merge-Konflikt-Editor**: 3-Wege-Merge-Editor mit Incoming/Current/Result
+* [ ] **Merge-Konflikt-Editor**: Backend komplett (Konflikt-Versionen, Resolve, Merge-Commit/Abort), UI fehlt
 
-* [ ] **Commit-Eingabe** mit Message-Vervollständigung, Commit-Hooks-Unterstützung
+* [x] **Commit-Eingabe**: Textarea mit ⌘⏎; Message-Vervollständigung und Hooks-Feedback fehlen
 
 * [ ] **Git Blame** (via Extension/Timeline), **File History** in Timeline
 
