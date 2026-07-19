@@ -205,7 +205,7 @@
   margin: 0 auto;
 }
 
-.git-gutter { width: 3px !important; margin-left: 3px; }
+.git-gutter { width: 3px !important; margin-left: 3px; cursor: pointer; }
 .git-gutter-add { border-left: 3px solid #22c55e; }
 .git-gutter-modify { border-left: 3px solid #3b82f6; }
 .git-gutter-delete { border-left: 3px solid #ef4444; }

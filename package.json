@@ -9,6 +9,7 @@
     "test:move": "node scripts/test-move-logic.mjs",
     "test:preview": "node scripts/test-preview-tabs.mjs",
     "test:refactor": "node scripts/test-text-edits.mjs",
+    "test:diffparse": "node scripts/test-diff-parse.mjs",
     "test:semantic": "node scripts/test-semantic-tokens.mjs",
     "test:tw": "node scripts/test-tailwind.mjs",
     "test:url": "node scripts/test-url-normalize.mjs",

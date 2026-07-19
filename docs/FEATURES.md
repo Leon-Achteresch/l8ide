@@ -334,7 +334,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Diff-Ansichten**: Working/Staged-Diff als Tab (`git-diff-page.tsx`), Datei-Vergleich Side-by-Side/Inline
 
-* [~] **Gutter-Indikatoren**: Add/Change/Delete-Marker am Rand (`git-gutter.ts`); Inline-Peek mit Revert fehlt
+* [x] **Gutter-Indikatoren**: Add/Change/Delete-Marker am Rand; Klick öffnet Peek-Widget mit altem Inhalt + „Zurücksetzen" pro Hunk (`git-gutter.ts`, `git-diff-parse.ts`, Test `test:diffparse`)
 
 * [x] **Merge-Konflikt-Editor**: Konflikt-Sektion im SCM-Panel, Editor-Tab mit Current/Incoming-Diff + editierbarem Ergebnis, „Als gelöst speichern", Merge abschließen/abbrechen (`merge-conflict-page.tsx`, `merge-conflict-store.ts`); kein 3-Spalten-Layout mit Base
 
