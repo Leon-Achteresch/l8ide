@@ -1,0 +1,59 @@
+use serde::Serialize;
+use std::collections::BTreeMap;
+use std::process::Command;
+
+#[derive(Serialize)]
+pub struct ListeningPort {
+    pub port: u16,
+    pub process: String,
+}
+
+const DEV_PROCESSES: [&str; 8] = [
+    "node", "bun", "deno", "vite", "next", "python", "php", "ruby",
+];
+
+#[tauri::command]
+pub async fn list_dev_ports() -> Result<Vec<ListeningPort>, String> {
+    tauri::async_runtime::spawn_blocking(|| {
+        let out = Command::new("lsof")
+            .args(["-nP", "-iTCP", "-sTCP:LISTEN"])
+            .output()
+            .map_err(|e| format!("lsof fehlgeschlagen: {e}"))?;
+        let text = String::from_utf8_lossy(&out.stdout);
+        let mut by_port: BTreeMap<u16, String> = BTreeMap::new();
+        for line in text.lines().skip(1) {
+            let fields: Vec<&str> = line.split_whitespace().collect();
+            let name_index = if fields.last() == Some(&"(LISTEN)") {
+                fields.len().checked_sub(2)
+            } else {
+                fields.len().checked_sub(1)
+            };
+            let (Some(command), Some(name)) =
+                (fields.first(), name_index.and_then(|i| fields.get(i)))
+            else {
+                continue;
+            };
+            let lower = command.to_lowercase();
+            if !DEV_PROCESSES.iter().any(|p| lower.starts_with(p)) {
+                continue;
+            }
+            let Some(port) = name
+                .rsplit(':')
+                .next()
+                .and_then(|p| p.parse::<u16>().ok())
+            else {
+                continue;
+            };
+            if port < 1024 {
+                continue;
+            }
+            by_port.entry(port).or_insert_with(|| lower.clone());
+        }
+        Ok(by_port
+            .into_iter()
+            .map(|(port, process)| ListeningPort { port, process })
+            .collect())
+    })
+    .await
+    .map_err(|e| format!("Task fehlgeschlagen: {e}"))?
+}

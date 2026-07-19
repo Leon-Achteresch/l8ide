@@ -11,6 +11,11 @@ import {
   useNotifications,
   type NotificationKind,
 } from "@/lib/notifications";
+import {
+  initPortsPolling,
+  openPortInBrowser,
+  usePortsStore,
+} from "@/lib/ports-store";
 import { useEditorStatus } from "@/lib/status-store";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { cn } from "@/lib/utils";
@@ -22,6 +27,7 @@ import {
   CircleX,
   GitBranch,
   Info,
+  Radio,
   TriangleAlert,
 } from "lucide-react";
 import { useEffect } from "react";
@@ -35,6 +41,30 @@ const KIND_META: Record<
   warning: { icon: TriangleAlert, className: "text-amber-500" },
   info: { icon: Info, className: "text-sky-500" },
 };
+
+function DevPorts() {
+  const ports = usePortsStore((s) => s.ports);
+
+  useEffect(() => {
+    initPortsPolling();
+  }, []);
+
+  if (ports.length === 0) return null;
+  return (
+    <>
+      {ports.slice(0, 4).map((p) => (
+        <Item
+          key={p.port}
+          onClick={() => openPortInBrowser(p.port)}
+          title={`${p.process} auf Port ${p.port} — im Browser öffnen`}
+        >
+          <Radio className="size-3 text-emerald-500" strokeWidth={2} />
+          {p.port}
+        </Item>
+      ))}
+    </>
+  );
+}
 
 function NotificationsBell() {
   const items = useNotifications((s) => s.items);
@@ -214,6 +244,7 @@ export function StatusBar() {
           />
           {total.warnings}
         </Item>
+        <DevPorts />
       </div>
       {showEditor && (
         <div className="flex items-stretch gap-1">
