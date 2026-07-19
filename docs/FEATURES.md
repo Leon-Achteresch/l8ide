@@ -222,7 +222,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Dateibaum**: Erstellen, Umbenennen, Löschen, Drag\&Drop, Multi-Select
 
-* [ ] **Compact Folders**: Zusammenfassen einzelner verschachtelter Ordner
+* [x] **Compact Folders**: Einzelne verschachtelte Ordner werden als `a/b/c` zusammengefasst (max. 12 Ebenen, respektiert ausgeblendete Namen; Aktionen wirken auf den tiefsten Ordner der Kette)
 
 * [ ] **File Nesting**: Zugehörige Dateien unterordnen (z.B. `.js` unter `.ts`)
 

@@ -176,9 +176,36 @@ async function deletePaths(paths: string[]) {
 	refreshFileIndex();
 }
 
+function hiddenNamesNow(): Set<string> {
+	const s = useWorkspaceStore.getState();
+	const ws = s.rootPath ? (s.workspaceHidden[s.rootPath] ?? []) : [];
+	return new Set([...s.hiddenNames, ...ws]);
+}
+
+async function compactChain(entry: Entry): Promise<Entry> {
+	if (!entry.isDirectory) return entry;
+	const hidden = hiddenNamesNow();
+	if (hidden.has(entry.name)) return entry;
+	let name = entry.name;
+	let path = entry.path;
+	for (let i = 0; i < 12; i++) {
+		let kids;
+		try {
+			kids = await readDir(path);
+		} catch {
+			break;
+		}
+		const only = kids.length === 1 ? kids[0] : null;
+		if (!only?.isDirectory || !only.name || hidden.has(only.name)) break;
+		name = `${name}/${only.name}`;
+		path = `${path}/${only.name}`;
+	}
+	return name === entry.name ? entry : { ...entry, name, path };
+}
+
 async function listDir(path: string): Promise<Entry[]> {
 	const entries = await readDir(path);
-	return entries
+	const mapped = entries
 		.map((e) => ({
 			name: e.name ?? "",
 			path: `${path}/${e.name}`,
@@ -191,6 +218,7 @@ async function listDir(path: string): Promise<Entry[]> {
 					? -1
 					: 1,
 		);
+	return Promise.all(mapped.map(compactChain));
 }
 
 async function copyEntry(src: string, dest: string) {
