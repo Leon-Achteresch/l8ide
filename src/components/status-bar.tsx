@@ -20,6 +20,7 @@ import { useEditorStatus } from "@/lib/status-store";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { cn } from "@/lib/utils";
 import {
+  Activity,
   Ban,
   Bell,
   BellOff,
@@ -30,7 +31,9 @@ import {
   Radio,
   TriangleAlert,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { scanTodos, type TodoCounts } from "@/lib/project-health";
+import { useSearchStore } from "@/lib/search-store";
 
 const KIND_META: Record<
   NotificationKind,
@@ -63,6 +66,124 @@ function DevPorts() {
         </Item>
       ))}
     </>
+  );
+}
+
+function HealthRow({
+  label,
+  value,
+  onClick,
+  accent,
+}: {
+  label: string;
+  value: React.ReactNode;
+  onClick?: () => void;
+  accent?: string;
+}) {
+  const Tag = onClick ? "button" : "div";
+  return (
+    <Tag
+      type={onClick ? "button" : undefined}
+      onClick={onClick}
+      className={cn(
+        "flex h-7 w-full items-center rounded-md px-2 text-[11px] text-foreground",
+        onClick && "transition-colors hover:bg-foreground/[0.05]",
+      )}
+    >
+      <span className="text-muted-foreground">{label}</span>
+      <span className={cn("ml-auto font-medium tabular-nums", accent)}>
+        {value}
+      </span>
+    </Tag>
+  );
+}
+
+function ProjectHealth() {
+  const total = useMarkersStore((s) => s.total);
+  const gitEntries = useGitStore((s) => s.entries.length);
+  const ahead = useGitStore((s) => s.ahead);
+  const behind = useGitStore((s) => s.behind);
+  const ports = usePortsStore((s) => s.ports);
+  const rootPath = useWorkspaceStore((s) => s.rootPath);
+  const [todos, setTodos] = useState<TodoCounts | null>(null);
+
+  const load = () => {
+    if (!rootPath) return;
+    setTodos(null);
+    void scanTodos(rootPath)
+      .then(setTodos)
+      .catch(() => setTodos({ todo: 0, fixme: 0, hack: 0 }));
+  };
+
+  const openTodoSearch = (query: string) => {
+    if (!rootPath) return;
+    const ws = useWorkspaceStore.getState();
+    ws.setSidebarMode("Search");
+    if (!ws.sidebarOpen) ws.toggleSidebar();
+    const search = useSearchStore.getState();
+    search.setQuery(query);
+    void search.search(rootPath);
+  };
+
+  if (!rootPath) return null;
+
+  return (
+    <Popover onOpenChange={(open) => open && load()}>
+      <PopoverTrigger
+        title="Projekt-Gesundheit"
+        className="inline-flex h-full items-center gap-1 rounded-md px-1.5 text-muted-foreground transition-colors hover:bg-foreground/8 hover:text-foreground"
+      >
+        <Activity className="size-3" strokeWidth={2} />
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        side="top"
+        className="w-64 rounded-xl p-1.5 shadow-lg"
+      >
+        <p className="px-2 pb-1 pt-0.5 text-[11px] font-semibold text-foreground">
+          Projekt-Gesundheit
+        </p>
+        <HealthRow
+          label="Fehler / Warnungen"
+          value={`${total.errors} / ${total.warnings}`}
+          accent={total.errors > 0 ? "text-red-500" : "text-emerald-500"}
+          onClick={() => useProblemsPanel.getState().setOpen(true)}
+        />
+        <HealthRow
+          label="TODO · FIXME · HACK"
+          value={
+            todos === null
+              ? "…"
+              : `${todos.todo} · ${todos.fixme} · ${todos.hack}`
+          }
+          accent={
+            todos && todos.fixme > 0 ? "text-amber-500" : undefined
+          }
+          onClick={() => openTodoSearch("\\b(TODO|FIXME|HACK)\\b")}
+        />
+        <HealthRow
+          label="Geänderte Dateien"
+          value={gitEntries}
+          onClick={() => {
+            const ws = useWorkspaceStore.getState();
+            ws.setSidebarMode("Scm");
+            if (!ws.sidebarOpen) ws.toggleSidebar();
+          }}
+        />
+        {(ahead > 0 || behind > 0) && (
+          <HealthRow label="Ahead / Behind" value={`↑${ahead} ↓${behind}`} />
+        )}
+        <HealthRow
+          label="Dev-Server"
+          value={
+            ports.length === 0
+              ? "—"
+              : ports.map((p) => p.port).join(", ")
+          }
+          accent={ports.length > 0 ? "text-emerald-500" : undefined}
+        />
+      </PopoverContent>
+    </Popover>
   );
 }
 
@@ -245,6 +366,7 @@ export function StatusBar() {
           {total.warnings}
         </Item>
         <DevPorts />
+        <ProjectHealth />
       </div>
       {showEditor && (
         <div className="flex items-stretch gap-1">

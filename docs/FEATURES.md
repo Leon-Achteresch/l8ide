@@ -696,7 +696,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Monorepo-Bewusstsein**: Paket-Grenzen, betroffene Pakete bei Änderung, gefilterte Task-Ausführung (turbo/nx-Integration nativ)
 
-* [ ] **Projekt-Gesundheits-Panel**: Build-Status, Test-Status, Lint-Schulden, TODO-Zähler, Bundle-Size auf einen Blick
+* [x] **Projekt-Gesundheits-Panel**: Activity-Popover in der Statusbar — Fehler/Warnungen (öffnet Problems), TODO·FIXME·HACK-Zähler (Klick startet Suche, Scan lazy beim Öffnen), geänderte Dateien (öffnet SCM), Ahead/Behind, laufende Dev-Server (`project-health.ts`); Build-/Test-Status und Bundle-Size fehlen
 
 * [ ] **Onboarding-Automat**: Neues Teammitglied klont Repo → IDE erkennt und installiert alles, prüft Systemvoraussetzungen, führt Setup-Tour
 
