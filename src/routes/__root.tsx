@@ -15,7 +15,9 @@ import { useProblemsPanel } from "@/lib/markers-store";
 import { useTerminalStore } from "@/lib/terminal-store";
 import { useUiZoom } from "@/lib/ui-zoom";
 import { useViewStore } from "@/lib/view-store";
+import { SPRING_PANEL } from "@/lib/ease";
 import { Minimize2 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { lazy, Suspense, useEffect } from "react";
 import "../App.css";
 
@@ -39,23 +41,45 @@ const RouterDevtools = import.meta.env.DEV
     )
   : null;
 
+function BottomSlot({
+  open,
+  children,
+}: {
+  open: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <AnimatePresence initial={false}>
+      {open && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={SPRING_PANEL}
+          className="shrink-0 overflow-hidden"
+        >
+          <Suspense fallback={null}>{children}</Suspense>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 function TerminalSlot() {
   const open = useTerminalStore((s) => s.open);
-  if (!open) return null;
   return (
-    <Suspense fallback={null}>
+    <BottomSlot open={open}>
       <TerminalPanel />
-    </Suspense>
+    </BottomSlot>
   );
 }
 
 function ProblemsSlot() {
   const open = useProblemsPanel((s) => s.open);
-  if (!open) return null;
   return (
-    <Suspense fallback={null}>
+    <BottomSlot open={open}>
       <ProblemsPanel />
-    </Suspense>
+    </BottomSlot>
   );
 }
 

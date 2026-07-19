@@ -4,13 +4,12 @@ import { OutlinePanel } from "@/components/outline-panel";
 import { ScmPanel } from "@/components/scm-panel/scm-panel";
 import { SearchPanel } from "@/components/search-panel/search-panel";
 import { SidebarActions } from "@/components/sidebar-actions";
+import { SPRING_PANEL } from "@/lib/ease";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { AnimatePresence, motion } from "motion/react";
 import { FolderOpen } from "lucide-react";
 import { useState } from "react";
-
-const PANEL_SPRING = { type: "spring", stiffness: 420, damping: 38, mass: 0.7 } as const;
 
 const MODE_VARIANTS = {
   enter: { opacity: 0, x: -12, filter: "blur(4px)" },
@@ -63,7 +62,7 @@ export function Sidebar() {
           initial={{ width: 0, opacity: 0 }}
           animate={{ width: sidebarWidth, opacity: 1 }}
           exit={{ width: 0, opacity: 0 }}
-          transition={resizing ? { duration: 0 } : PANEL_SPRING}
+          transition={resizing ? { duration: 0 } : SPRING_PANEL}
           className="relative flex h-full shrink-0 flex-col overflow-hidden bg-sidebar/90 shadow-[inset_-1px_0_0_0_var(--sidebar-border)] backdrop-blur-2xl"
         >
           <div style={{ width: sidebarWidth }} className="flex h-full flex-col">
@@ -125,7 +124,7 @@ export function Sidebar() {
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={PANEL_SPRING}
+                  transition={SPRING_PANEL}
                   className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center"
                 >
                   <div className="flex size-12 items-center justify-center rounded-2xl bg-foreground/[0.04] ring-1 ring-foreground/[0.06]">
