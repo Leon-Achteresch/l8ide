@@ -234,7 +234,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Timeline-View**: Lokale Historie + Git-Historie pro Datei
 
-* [ ] **Local History**: Automatische lokale Snapshots mit Wiederherstellung/Diff
+* [x] **Local History**: Snapshot des alten Stands bei jedem Speichern (max. 20/Datei, ≤1MB, Dedupe), Dialog via ⌘⌥H mit Diff + Wiederherstellen — Restore sichert vorher den aktuellen Stand (`local-history.ts`, `local-history-dialog.tsx`)
 
 * [x] **Layout-Persistenz**: Tabs, Gruppen und Sidebar-Zustand überleben Neustart
 

@@ -9,6 +9,7 @@ import { isPageTab, pageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { useFileSearchStore } from "@/components/file-search";
 import { useCommandPalette } from "@/components/command-palette";
 import { setCommandRegistry } from "@/lib/command-registry";
+import { useLocalHistoryDialog } from "@/lib/local-history";
 import { runBuildTask, runTestTask } from "@/lib/tasks";
 import { useNavHistory } from "@/lib/nav-history";
 import { open } from "@tauri-apps/plugin-dialog";
@@ -40,6 +41,10 @@ export function AppHotkeys() {
     "command.palette": () => useCommandPalette.getState().setOpen(true),
     "task.build": () => void runBuildTask(),
     "task.test": () => void runTestTask(),
+    "history.local": () => {
+      const path = useWorkspaceStore.getState().activeFile;
+      if (path && !isPageTab(path)) useLocalHistoryDialog.getState().openFor(path);
+    },
     "sidebar.toggle": () => useWorkspaceStore.getState().toggleSidebar(),
     "folder.open": async () => {
       const selected = await open({ directory: true, multiple: false });

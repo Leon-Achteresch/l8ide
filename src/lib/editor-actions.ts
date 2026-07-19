@@ -1,3 +1,4 @@
+import { snapshotBeforeSave } from "@/lib/local-history";
 import { getMonacoInstance } from "@/lib/monaco-instance";
 import { monacoUriForPath, pathFromMonacoUri } from "@/lib/monaco-uri";
 import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
@@ -13,7 +14,8 @@ export function saveModel(model: monaco.editor.ITextModel) {
   if (model.isDisposed()) return;
   const path = pathFromMonacoUri(model.uri);
   if (isPageTab(path)) return;
-  void writeTextFile(path, model.getValue());
+  const content = model.getValue();
+  void snapshotBeforeSave(path).finally(() => void writeTextFile(path, content));
 }
 
 export function saveActiveFile() {

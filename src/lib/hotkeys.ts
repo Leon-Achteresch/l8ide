@@ -66,6 +66,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+L",
   },
   {
+    id: "history.local",
+    label: "Lokale Historie der aktuellen Datei",
+    group: "Dateien",
+    hotkey: "Mod+Alt+H",
+  },
+  {
     id: "task.build",
     label: "Build-Task ausführen (npm run build)",
     group: "Tasks",

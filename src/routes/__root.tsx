@@ -6,6 +6,7 @@ import { ChatPanel } from "@/components/chat/chat-panel";
 import { FileSearch } from "@/components/file-search";
 import { CommandPalette } from "@/components/command-palette";
 import { MonacoWorkspace } from "@/components/monaco-workspace";
+import { LocalHistoryDialog } from "@/components/local-history-dialog";
 import { RefactorDialogs } from "@/components/refactor-preview-dialog";
 import { Sidebar } from "@/components/sidebar";
 import { StatusBar } from "@/components/status-bar";
@@ -143,6 +144,7 @@ function RootComponent() {
       </div>
       {zenMode && <ZenExit />}
       <RefactorDialogs />
+      <LocalHistoryDialog />
       <Toaster />
       {RouterDevtools && (
         <Suspense fallback={null}>
