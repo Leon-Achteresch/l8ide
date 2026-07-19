@@ -76,6 +76,8 @@ function rebuild(m: typeof monaco) {
     bump(total, marker.severity);
   }
 
+  appendTaskMarkers(byPath, fileCounts, total);
+
   for (const [path, c] of Object.entries(fileCounts)) {
     for (const dir of ancestors(path)) {
       const dc = (dirCounts[dir] ??= { ...EMPTY });
@@ -97,11 +99,57 @@ function rebuild(m: typeof monaco) {
   useMarkersStore.setState({ byPath, fileCounts, dirCounts, total });
 }
 
+export type TaskMarker = {
+  path: string;
+  line: number;
+  column: number;
+  severity: "error" | "warning";
+  message: string;
+};
+
+const taskMarkersBySource = new Map<number, TaskMarker[]>();
+let monacoRef: typeof monaco | null = null;
+
+export function setTaskMarkers(source: number, markers: TaskMarker[]) {
+  taskMarkersBySource.set(source, markers);
+  if (monacoRef) rebuild(monacoRef);
+}
+
+export function clearTaskMarkers(source: number) {
+  if (taskMarkersBySource.delete(source) && monacoRef) rebuild(monacoRef);
+}
+
+function appendTaskMarkers(
+  byPath: Record<string, monaco.editor.IMarker[]>,
+  fileCounts: Record<string, Counts>,
+  total: Counts,
+) {
+  for (const markers of taskMarkersBySource.values()) {
+    for (const tm of markers) {
+      const severity = tm.severity === "error" ? 8 : 4;
+      const marker = {
+        owner: "task",
+        severity,
+        message: tm.message,
+        startLineNumber: tm.line,
+        startColumn: tm.column,
+        endLineNumber: tm.line,
+        endColumn: tm.column + 1,
+      } as unknown as monaco.editor.IMarker;
+      (byPath[tm.path] ??= []).push(marker);
+      const fc = (fileCounts[tm.path] ??= { ...EMPTY });
+      bump(fc, severity);
+      bump(total, severity);
+    }
+  }
+}
+
 let started = false;
 
 export function initMarkers(m: typeof monaco) {
   if (started) return;
   started = true;
+  monacoRef = m;
   m.editor.onDidChangeMarkers(() => rebuild(m));
   rebuild(m);
 }

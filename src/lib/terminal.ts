@@ -1,4 +1,5 @@
 import { Channel, invoke } from "@tauri-apps/api/core";
+import { disposeTaskProblems, feedTaskProblems } from "@/lib/task-problems";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { exists } from "@tauri-apps/plugin-fs";
 import { FitAddon } from "@xterm/addon-fit";
@@ -280,6 +281,7 @@ async function start(
   const channel = new Channel<PtyEvent>();
   channel.onmessage = (event) => {
     if (event.type === "data") {
+      feedTaskProblems(id, event.data, session.integration.getState().cwd);
       term.write(event.data, () => {
         if (session.ptyId !== null) void invoke("pty_ack", { id: session.ptyId, bytes: event.bytes });
       });
@@ -389,6 +391,7 @@ export function disposeSession(id: number) {
   const session = sessions.get(id);
   if (!session) return;
   sessions.delete(id);
+  disposeTaskProblems(id);
   notifySessions();
   if (session.ptyId !== null) void invoke("pty_kill", { id: session.ptyId });
   session.integration.dispose();

@@ -12,6 +12,7 @@
     "test:diffparse": "node scripts/test-diff-parse.mjs",
     "test:aiprune": "node scripts/test-ai-prune.mjs",
     "test:nesting": "node scripts/test-file-nesting.mjs",
+    "test:problems": "node scripts/test-problem-matcher.mjs",
     "test:semantic": "node scripts/test-semantic-tokens.mjs",
     "test:tw": "node scripts/test-tailwind.mjs",
     "test:url": "node scripts/test-url-normalize.mjs",

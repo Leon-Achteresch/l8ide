@@ -426,7 +426,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Task-Auto-Detection (npm)**: package.json-Scripts mit Paketmanager-Erkennung (bun/pnpm/yarn/npm, `run-scripts.ts`); TypeScript/Gulp/Grunt fehlen
 
-* [ ] **Problem Matchers**: Compiler-Output in Problems-Panel parsen (eingebaut + eigene Regex)
+* [x] **Problem Matchers (tsc)**: tsc-Fehler/-Warnungen aus jedem Terminal landen im Problems-Panel (beide tsc-Formate, ANSI-Strip, cwd-Pfadauflösung, Watch-Mode-Reset bei Recompile/„Found 0 errors", 300ms-Debounce — `problem-matcher.ts`, `task-problems.ts`, Test `test:problems`); eigene Regex-Matcher fehlen
 
 * [ ] **Background/Watch-Tasks** mit Begin/End-Patterns
 
