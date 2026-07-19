@@ -85,14 +85,17 @@ export async function openSnapshotDiff(filePath: string, snap: Snapshot) {
     );
 }
 
-export async function restoreSnapshot(filePath: string, snap: Snapshot) {
+export async function restoreContent(filePath: string, content: string) {
   await snapshotBeforeSave(filePath);
-  const content = await readTextFile(snap.file);
   await writeTextFile(filePath, content);
   const model = getMonacoInstance()?.editor.getModel(monacoUriForPath(filePath));
   if (model && !model.isDisposed() && model.getValue() !== content) {
     model.setValue(content);
   }
+}
+
+export async function restoreSnapshot(filePath: string, snap: Snapshot) {
+  await restoreContent(filePath, await readTextFile(snap.file));
 }
 
 type LocalHistoryDialogStore = {

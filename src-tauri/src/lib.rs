@@ -436,6 +436,7 @@ pub fn run() {
             git::git_push,
             git::open_repo,
             git::git_discard_files,
+            git::git_file_log,
             git::git_get_conflict_versions,
             git::git_save_resolved_file,
             git::git_merge_commit,

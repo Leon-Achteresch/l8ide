@@ -67,7 +67,7 @@ export const COMMANDS: Command[] = [
   },
   {
     id: "history.local",
-    label: "Lokale Historie der aktuellen Datei",
+    label: "Timeline: Historie der aktuellen Datei",
     group: "Dateien",
     hotkey: "Mod+Alt+H",
   },

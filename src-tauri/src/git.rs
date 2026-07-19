@@ -1083,6 +1083,46 @@ pub async fn git_merge_commit(path: String) -> Result<String, String> {
     }).await
 }
 
+#[derive(Serialize)]
+pub struct FileLogEntry {
+    pub hash: String,
+    pub short: String,
+    pub time: i64,
+    pub author: String,
+    pub subject: String,
+}
+
+#[tauri::command]
+pub async fn git_file_log(
+    path: String,
+    file: String,
+    limit: Option<usize>,
+) -> Result<Vec<FileLogEntry>, String> {
+    spawn_git(move || {
+        let repo = PathBuf::from(path.trim());
+        let n = format!("-{}", limit.unwrap_or(20).clamp(1, 100));
+        let out = run_git(
+            &repo,
+            &["log", "--follow", &n, "--format=%H|%h|%at|%an|%s", "--", file.trim()],
+        )?;
+        Ok(out
+            .lines()
+            .filter(|l| !l.trim().is_empty())
+            .filter_map(|line| {
+                let parts: Vec<&str> = line.splitn(5, '|').collect();
+                Some(FileLogEntry {
+                    hash: parts.first()?.to_string(),
+                    short: parts.get(1)?.to_string(),
+                    time: parts.get(2)?.parse().ok()?,
+                    author: parts.get(3)?.to_string(),
+                    subject: parts.get(4).unwrap_or(&"").to_string(),
+                })
+            })
+            .collect())
+    })
+    .await
+}
+
 #[tauri::command]
 pub async fn git_tag_commit(path: String, name: String, commit: String) -> Result<(), String> {
     spawn_git(move || {
