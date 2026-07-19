@@ -548,7 +548,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Notifications**: Toast-Benachrichtigungen via Sonner
 
-* [ ] **Notifications-Center** mit Do-not-disturb
+* [x] **Notifications-Center**: Glocke in der Statusbar sammelt alle Toasts (zentraler Capture, max. 100), Ungelesen-Punkt, Popover mit Verlauf/Zeit, „Alle löschen"; Do-not-disturb unterdrückt Toasts außer Fehlern, Center sammelt weiter (`notifications.ts`)
 
 * [ ] **Walkthroughs / Getting Started**: Interaktive Onboarding-Guides (auch von Extensions)
 
