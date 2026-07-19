@@ -113,12 +113,20 @@ export async function executeTool(
         const path = String(args.path ?? "");
         if (!path) return "FEHLER: 'path' fehlt.";
         if (!(await fs.exists(path))) return `FEHLER: Datei nicht gefunden: ${path}`;
-        return await fs.read(path);
+        const content = await fs.read(path);
+        if (content.length > 48000) {
+          return `${content.slice(0, 48000)}\n… [gekürzt: ${content.length} Zeichen gesamt. Nutze search für gezielte Stellen.]`;
+        }
+        return content;
       }
       case "search": {
         const query = String(args.query ?? "");
         if (!query) return "FEHLER: 'query' fehlt.";
-        return await fs.search(query);
+        const result = await fs.search(query);
+        if (result.length > 8000) {
+          return `${result.slice(0, 8000)}\n… [gekürzt: zu viele Treffer. Query verfeinern.]`;
+        }
+        return result;
       }
       case "edit_file": {
         const path = String(args.path ?? "");

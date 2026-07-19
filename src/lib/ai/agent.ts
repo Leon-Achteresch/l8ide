@@ -46,6 +46,36 @@ function parseArgs(raw: string): Record<string, unknown> {
   }
 }
 
+const MAX_TOOL_CHARS = 8000;
+const KEEP_FULL_TOOL_RESULTS = 6;
+
+export function pruneForLlm(history: ChatMessage[]): ChatMessage[] {
+  const toolIndices = history.reduce<number[]>((acc, m, i) => {
+    if (m.role === "tool") acc.push(i);
+    return acc;
+  }, []);
+  const keepFrom =
+    toolIndices.length > KEEP_FULL_TOOL_RESULTS
+      ? toolIndices[toolIndices.length - KEEP_FULL_TOOL_RESULTS]
+      : 0;
+  return history.map((m, i) => {
+    if (m.role !== "tool") return m;
+    if (i < keepFrom) {
+      return {
+        ...m,
+        content: `[Alte Tool-Ausgabe entfernt (${m.content.length} Zeichen). Tool bei Bedarf erneut aufrufen.]`,
+      };
+    }
+    if (m.content.length > MAX_TOOL_CHARS) {
+      return {
+        ...m,
+        content: `${m.content.slice(0, MAX_TOOL_CHARS)}\n… [gekürzt, ${m.content.length} Zeichen gesamt]`,
+      };
+    }
+    return m;
+  });
+}
+
 /**
  * Agent-Schleife: LLM aufrufen, Tool-Calls ausführen, Ergebnisse zurückspeisen,
  * bis das Modell ohne Tool-Call antwortet oder maxRounds erreicht ist.
@@ -70,7 +100,7 @@ export async function runAgent({
 
     let result: AssistantResult;
     try {
-      result = await llm(history, tools);
+      result = await llm(pruneForLlm(history), tools);
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
       onEvent?.({ type: "error", message });

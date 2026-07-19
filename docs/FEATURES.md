@@ -492,7 +492,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Next Edit Suggestions**: Vorhersage der nächsten Änderung an anderer Stelle
 
-* [ ] **Copilot Chat**: Chat-Panel mit Codebase-Kontext, Slash-Commands, Teilnehmer (@workspace, @terminal, @vscode)
+* [x] **AI-Chat (Basis)**: Chat-Panel mit Agent-Loop und Workspace-Tools (list/read/search/edit/create), OpenRouter-Streaming, tokeneffiziente History (alte Tool-Ausgaben werden gestubbt, Outputs gekappt — `pruneForLlm`, Test `test:aiprune`); Slash-Commands/Teilnehmer fehlen
 
 * [ ] **Inline Chat**: Chat direkt im Editor an der Cursor-Position (Cmd+I)
 
@@ -510,7 +510,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **AI-gestützte Rename-Vorschläge**
 
-* [ ] **Sprachmodell-Auswahl** (verschiedene Modelle)
+* [x] **Sprachmodell-Auswahl**: OpenRouter-Modelle wählbar (`ai-settings.ts`), Modell-Benchmarks unter `scripts/ai-bench*`
 
 * [ ] **Language Model API** für Extensions
 
