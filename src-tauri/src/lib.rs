@@ -1,5 +1,6 @@
 mod browser;
 mod console_sink;
+mod exec;
 mod favicon;
 pub mod git;
 mod git_cmd;
@@ -453,6 +454,7 @@ pub fn run() {
             browser::browser_set_bounds,
             browser::browser_show,
             browser::browser_navigate,
+            exec::run_shell,
             browser::browser_eval,
             browser::browser_devtools,
             browser::browser_close,

@@ -6,6 +6,7 @@ export interface WorkspaceFs {
   write(path: string, content: string): Promise<void>;
   exists(path: string): Promise<boolean>;
   search(query: string): Promise<string>;
+  exec?(command: string): Promise<string>;
 }
 
 export type ToolDef = {
@@ -89,6 +90,21 @@ export const TOOLS: ToolDef[] = [
       },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "run_command",
+      description:
+        "Führt ein Shell-Kommando im Projekt-Root aus (Timeout 60s) und liefert Exit-Code, " +
+        "stdout und stderr. Für Tests, Builds, Typechecks nach Änderungen. Keine " +
+        "interaktiven oder dauerhaft laufenden Prozesse (dev-Server, watch).",
+      parameters: {
+        type: "object",
+        properties: { command: str("Shell-Kommando, z.B. 'npm test'") },
+        required: ["command"],
+      },
+    },
+  },
 ];
 
 export type ToolArgs = Record<string, unknown>;
@@ -150,6 +166,12 @@ export async function executeTool(
         if (!path) return "FEHLER: 'path' fehlt.";
         await fs.write(path, content);
         return `OK: ${path} erstellt.`;
+      }
+      case "run_command": {
+        const command = String(args.command ?? "");
+        if (!command) return "FEHLER: 'command' fehlt.";
+        if (!fs.exec) return "FEHLER: run_command ist hier nicht verfügbar.";
+        return await fs.exec(command);
       }
       default:
         return `FEHLER: unbekanntes Tool '${name}'.`;

@@ -272,6 +272,7 @@ function summarizeArgs(name: string, args: unknown): string {
   if (name === "read_file" || name === "edit_file" || name === "create_file")
     return String(a.path ?? "");
   if (name === "search") return String(a.query ?? "");
+  if (name === "run_command") return String(a.command ?? "");
   return "";
 }
 

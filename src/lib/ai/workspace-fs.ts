@@ -2,6 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { exists, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
 import type { WorkspaceFs } from "./tools.ts";
 import { useAgentEdits } from "@/lib/agent-edits";
+import { isPathTrusted } from "@/lib/workspace-trust";
 import { getMonacoInstance } from "@/lib/monaco-instance";
 import { monacoUriForPath } from "@/lib/monaco-uri";
 import { useWorkspaceStore } from "@/lib/workspace-store";
@@ -49,6 +50,27 @@ export const workspaceFs: WorkspaceFs = {
   },
   async exists(path) {
     return exists(toAbs(requireRoot(), path));
+  },
+  async exec(command) {
+    const root = requireRoot();
+    const { trustedFolders } = useWorkspaceStore.getState();
+    if (!isPathTrusted(trustedFolders, root)) {
+      return "FEHLER: Workspace ist nicht vertrauenswürdig (Restricted Mode). Kommandos sind deaktiviert.";
+    }
+    const res = await invoke<{
+      code: number | null;
+      stdout: string;
+      stderr: string;
+      timed_out: boolean;
+    }>("run_shell", { cwd: root, command, timeoutMs: 60000 });
+    const parts = [
+      res.timed_out
+        ? "TIMEOUT nach 60s (Prozess beendet)."
+        : `Exit-Code: ${res.code ?? "unbekannt"}`,
+    ];
+    if (res.stdout.trim()) parts.push(`stdout:\n${res.stdout.trim()}`);
+    if (res.stderr.trim()) parts.push(`stderr:\n${res.stderr.trim()}`);
+    return parts.join("\n\n");
   },
   async search(query) {
     const root = requireRoot();
