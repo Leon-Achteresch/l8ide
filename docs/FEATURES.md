@@ -424,17 +424,17 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Task-System** (`tasks.json`): Shell-/Prozess-Tasks, Compound Tasks (dependsOn, Reihenfolge)
 
-* [ ] **Task-Auto-Detection**: npm-Scripts, TypeScript, Gulp, Grunt, Jake
+* [x] **Task-Auto-Detection (npm)**: package.json-Scripts mit Paketmanager-Erkennung (bun/pnpm/yarn/npm, `run-scripts.ts`); TypeScript/Gulp/Grunt fehlen
 
 * [ ] **Problem Matchers**: Compiler-Output in Problems-Panel parsen (eingebaut + eigene Regex)
 
 * [ ] **Background/Watch-Tasks** mit Begin/End-Patterns
 
-* [ ] **Default Build/Test Task** (Cmd+Shift+B)
+* [x] **Default Build/Test Task**: ⌘⇧R baut (`npm run build`), ⌘⇧T testet (`npm test`), auch über die Befehlspalette; Trust-Gate, Ausführung im integrierten Terminal (`tasks.ts`)
 
 * [ ] **Task-Presentation-Optionen**: Panel-Verhalten, Fokus, Clear
 
-* [ ] **NPM-Scripts-View** im Explorer
+* [x] **NPM-Scripts-View**: Play-Menü in der Titelleiste listet alle Scripts mit Kommando, Klick führt im Terminal aus (`app-header-run.tsx`)
 
 ## 8. Testing
 

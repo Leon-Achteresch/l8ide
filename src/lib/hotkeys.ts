@@ -66,6 +66,18 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+L",
   },
   {
+    id: "task.build",
+    label: "Build-Task ausführen (npm run build)",
+    group: "Tasks",
+    hotkey: "Mod+Shift+R",
+  },
+  {
+    id: "task.test",
+    label: "Test-Task ausführen (npm test)",
+    group: "Tasks",
+    hotkey: "Mod+Shift+T",
+  },
+  {
     id: "theme.toggle",
     label: "Dark Mode umschalten",
     group: "Allgemein",
