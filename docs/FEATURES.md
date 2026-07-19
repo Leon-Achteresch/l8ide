@@ -496,7 +496,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Inline Chat**: Chat direkt im Editor an der Cursor-Position (Cmd+I)
 
-* [ ] **Edits/Agent Mode**: Multi-File-Änderungen autonom mit Diff-Review, Terminal-Ausführung, Selbstkorrektur
+* [x] **Edits/Agent Mode (Basis)**: Multi-File-Änderungen autonom; jede Agent-Änderung als Karte im Chat mit Diff-Ansicht (Vorher↔Agent) und Ein-Klick-Rückgängig, neu erstellte Dateien werden beim Rückgängig gelöscht (`agent-edits.ts`); Terminal-Ausführung fehlt
 
 * [ ] **Commit-Message-Generierung**
 

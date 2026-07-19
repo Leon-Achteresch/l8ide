@@ -4,11 +4,13 @@ import {
   ChevronRight,
   CircleCheck,
   CircleX,
+  FileDiff,
   Loader2,
   Send,
   Sparkles,
   Square,
   Trash2,
+  Undo2,
   Wrench,
   X,
 } from "lucide-react";
@@ -17,6 +19,7 @@ import { Message, MessageContent } from "@/components/ui/message";
 import { Textarea } from "@/components/ui/textarea";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { Markdown } from "@/components/chat/markdown";
+import { openAgentEditDiff, useAgentEdits } from "@/lib/agent-edits";
 import { type ChatEntry, useChatStore } from "@/lib/chat-store";
 import { AI_MODELS, useAiSettings } from "@/lib/ai-settings";
 
@@ -232,6 +235,38 @@ function EntryView({ entry }: { entry: ChatEntry }) {
   return <ToolEntry entry={entry} />;
 }
 
+function EditActions({ editId }: { editId: string }) {
+  const edit = useAgentEdits((s) => s.edits[editId]);
+  const revert = useAgentEdits((s) => s.revert);
+  if (!edit) return null;
+  return (
+    <div className="flex items-center gap-1 border-t px-2 py-1">
+      <button
+        type="button"
+        onClick={() => openAgentEditDiff(editId)}
+        className="inline-flex h-5 items-center gap-1 rounded px-1.5 text-[11px] text-muted-foreground transition-colors hover:bg-foreground/8 hover:text-foreground"
+      >
+        <FileDiff className="size-3" />
+        Diff
+      </button>
+      {edit.reverted ? (
+        <span className="ml-auto text-[10px] text-muted-foreground">
+          Rückgängig gemacht
+        </span>
+      ) : (
+        <button
+          type="button"
+          onClick={() => void revert(editId)}
+          className="ml-auto inline-flex h-5 items-center gap-1 rounded px-1.5 text-[11px] text-muted-foreground transition-colors hover:bg-foreground/8 hover:text-red-500"
+        >
+          <Undo2 className="size-3" />
+          Rückgängig
+        </button>
+      )}
+    </div>
+  );
+}
+
 function summarizeArgs(name: string, args: unknown): string {
   const a = (args ?? {}) as Record<string, unknown>;
   if (name === "read_file" || name === "edit_file" || name === "create_file")
@@ -271,6 +306,7 @@ function ToolEntry({ entry }: { entry: Extract<ChatEntry, { role: "tool" }> }) {
             <ChevronRight className="ml-auto size-3.5 shrink-0 text-muted-foreground" />
           ))}
       </button>
+      {entry.editId && <EditActions editId={entry.editId} />}
       {expanded && entry.result !== undefined && (
         <pre className="max-h-52 overflow-auto border-t px-2 py-1.5 font-mono text-[11px] text-muted-foreground">
           {entry.result}

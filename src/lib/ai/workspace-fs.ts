@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { exists, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
 import type { WorkspaceFs } from "./tools.ts";
+import { useAgentEdits } from "@/lib/agent-edits";
 import { getMonacoInstance } from "@/lib/monaco-instance";
 import { monacoUriForPath } from "@/lib/monaco-uri";
 import { useWorkspaceStore } from "@/lib/workspace-store";
@@ -41,8 +42,10 @@ export const workspaceFs: WorkspaceFs = {
   },
   async write(path, content) {
     const abs = toAbs(requireRoot(), path);
+    const before = (await exists(abs)) ? await readTextFile(abs) : null;
     await writeTextFile(abs, content);
     syncModel(abs, content);
+    useAgentEdits.getState().record(path, before, content);
   },
   async exists(path) {
     return exists(toAbs(requireRoot(), path));

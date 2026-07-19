@@ -5,13 +5,21 @@ import { createOpenRouterLlm } from "@/lib/ai/openrouter";
 import { buildSystemPrompt } from "@/lib/ai/system-prompt";
 import { TOOLS } from "@/lib/ai/tools";
 import { workspaceFs } from "@/lib/ai/workspace-fs";
+import { useAgentEdits } from "@/lib/agent-edits";
 import { useAiSettings } from "@/lib/ai-settings";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
 export type ChatEntry =
   | { id: string; role: "user"; text: string }
   | { id: string; role: "assistant"; text: string }
-  | { id: string; role: "tool"; name: string; args: unknown; result?: string }
+  | {
+      id: string;
+      role: "tool";
+      name: string;
+      args: unknown;
+      result?: string;
+      editId?: string;
+    }
   | { id: string; role: "error"; text: string };
 
 type ChatStore = {
@@ -144,10 +152,16 @@ export const useChatStore = create<ChatStore>()(
                   ],
                 }));
               } else if (ev.type === "tool_result") {
+                const isEdit =
+                  (ev.name === "edit_file" || ev.name === "create_file") &&
+                  ev.result.startsWith("OK");
+                const editId = isEdit
+                  ? (useAgentEdits.getState().lastId ?? undefined)
+                  : undefined;
                 set((s) => ({
                   entries: s.entries.map((e) =>
                     e.id === ev.id && e.role === "tool"
-                      ? { ...e, result: ev.result }
+                      ? { ...e, result: ev.result, editId }
                       : e,
                   ),
                 }));
