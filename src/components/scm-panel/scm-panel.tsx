@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { fileIcon } from "@/lib/file-icons";
 import { useGitDiffStore } from "@/lib/git-diff-store";
 import { useGitStore, type StatusEntry } from "@/lib/git-store";
+import { isConflictEntry, useMergeConflictStore } from "@/lib/merge-conflict-store";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
@@ -162,8 +163,11 @@ export function ScmPanel({ rootPath }: { rootPath: string }) {
   }, [rootPath, refresh]);
 
   const [amend, setAmend] = useState(false);
-  const staged = entries.filter((e) => e.staged);
-  const changes = entries.filter((e) => e.unstaged || e.untracked);
+  const conflicts = entries.filter(isConflictEntry);
+  const staged = entries.filter((e) => e.staged && !isConflictEntry(e));
+  const changes = entries.filter(
+    (e) => (e.unstaged || e.untracked) && !isConflictEntry(e),
+  );
   const canCommit =
     (staged.length > 0 || amend) && commitMessage.trim().length > 0 && !busy;
 
@@ -246,6 +250,75 @@ export function ScmPanel({ rootPath }: { rootPath: string }) {
           </p>
         ) : (
           <>
+            {conflicts.length > 0 && (
+              <Section
+                title="Merge-Konflikte"
+                count={conflicts.length}
+                action={
+                  <div className="flex gap-0.5">
+                    <button
+                      type="button"
+                      title="Merge abschließen"
+                      onClick={() =>
+                        void invoke("git_merge_commit", { path: rootPath })
+                          .then(() => {
+                            toast.success("Merge abgeschlossen");
+                            void useGitStore.getState().refresh();
+                          })
+                          .catch((e) => toast.error(String(e)))
+                      }
+                      className="inline-flex h-6 items-center rounded-md px-1.5 text-[10px] font-medium text-emerald-600 transition-colors hover:bg-emerald-500/10 dark:text-emerald-400"
+                    >
+                      Abschließen
+                    </button>
+                    <button
+                      type="button"
+                      title="Merge abbrechen"
+                      onClick={() =>
+                        toast.warning("Merge abbrechen?", {
+                          description: "Der Merge wird zurückgesetzt.",
+                          action: {
+                            label: "Abbrechen",
+                            onClick: () =>
+                              void invoke("git_merge_abort", { path: rootPath })
+                                .then(() => void useGitStore.getState().refresh())
+                                .catch((e) => toast.error(String(e))),
+                          },
+                        })
+                      }
+                      className="inline-flex h-6 items-center rounded-md px-1.5 text-[10px] font-medium text-muted-foreground transition-colors hover:bg-foreground/8 hover:text-red-500"
+                    >
+                      Verwerfen
+                    </button>
+                  </div>
+                }
+              >
+                {conflicts.map((e) => (
+                  <button
+                    key={`x:${e.path}`}
+                    type="button"
+                    onClick={() =>
+                      useMergeConflictStore
+                        .getState()
+                        .openConflict(rootPath, e.path)
+                    }
+                    className="group flex h-7 w-full items-center gap-1.5 rounded-md pl-2 pr-1 text-left text-xs hover:bg-amber-500/10"
+                  >
+                    <span className="truncate text-foreground">
+                      {baseName(e.path)}
+                    </span>
+                    {dirName(e.path) && (
+                      <span className="truncate text-[10px] text-muted-foreground">
+                        {dirName(e.path)}
+                      </span>
+                    )}
+                    <span className="ml-auto w-3 shrink-0 text-center font-mono text-[10px] text-amber-500">
+                      !
+                    </span>
+                  </button>
+                ))}
+              </Section>
+            )}
             {staged.length > 0 && (
               <Section
                 title="Staged Changes"

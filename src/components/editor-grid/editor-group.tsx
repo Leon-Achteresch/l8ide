@@ -1,5 +1,6 @@
 import { GitDiffPage } from "@/components/scm-panel/git-diff-page";
 import { FileComparePage } from "@/components/file-compare-page";
+import { MergeConflictPage } from "@/components/scm-panel/merge-conflict-page";
 import { store } from "@/components/tab-bar/lib";
 import { TabBar } from "@/components/tab-bar/tab-bar";
 import { collectLeaves } from "@/lib/editor-groups";
@@ -45,6 +46,13 @@ function GroupContent({ activeFile }: { activeFile: string | null }) {
       return (
         <div className="h-full">
           <GitDiffPage route={route} />
+        </div>
+      );
+    }
+    if (route.startsWith("/conflict/")) {
+      return (
+        <div className="h-full">
+          <MergeConflictPage route={route} />
         </div>
       );
     }

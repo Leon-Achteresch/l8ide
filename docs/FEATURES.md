@@ -336,7 +336,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [~] **Gutter-Indikatoren**: Add/Change/Delete-Marker am Rand (`git-gutter.ts`); Inline-Peek mit Revert fehlt
 
-* [ ] **Merge-Konflikt-Editor**: Backend komplett (Konflikt-Versionen, Resolve, Merge-Commit/Abort), UI fehlt
+* [x] **Merge-Konflikt-Editor**: Konflikt-Sektion im SCM-Panel, Editor-Tab mit Current/Incoming-Diff + editierbarem Ergebnis, „Als gelöst speichern", Merge abschließen/abbrechen (`merge-conflict-page.tsx`, `merge-conflict-store.ts`); kein 3-Spalten-Layout mit Base
 
 * [x] **Commit-Eingabe**: Textarea mit ⌘⏎; Message-Vervollständigung und Hooks-Feedback fehlen
 
