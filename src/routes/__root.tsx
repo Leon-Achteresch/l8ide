@@ -9,6 +9,7 @@ import { CommandPalette } from "@/components/command-palette";
 import { MonacoWorkspace } from "@/components/monaco-workspace";
 import { LocalHistoryDialog } from "@/components/local-history-dialog";
 import { RefactorDialogs } from "@/components/refactor-preview-dialog";
+import { ClipboardHistoryDialog } from "@/components/clipboard-history-dialog";
 import { ScreencastOverlay } from "@/components/screencast-overlay";
 import { Sidebar } from "@/components/sidebar";
 import { StatusBar } from "@/components/status-bar";
@@ -182,6 +183,7 @@ function RootComponent() {
       {zenMode && <ZenExit />}
       <RefactorDialogs />
       <LocalHistoryDialog />
+      <ClipboardHistoryDialog />
       <ScreencastOverlay />
       <Toaster />
       {RouterDevtools && (

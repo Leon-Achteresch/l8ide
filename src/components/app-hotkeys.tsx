@@ -9,6 +9,7 @@ import { isPageTab, pageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { useFileSearchStore } from "@/components/file-search";
 import { useCommandPalette } from "@/components/command-palette";
 import { setCommandRegistry } from "@/lib/command-registry";
+import { useClipboardHistory } from "@/lib/clipboard-history";
 import { useLocalHistoryDialog } from "@/lib/local-history";
 import { runBuildTask, runTestTask } from "@/lib/tasks";
 import { useNavHistory } from "@/lib/nav-history";
@@ -42,6 +43,8 @@ export function AppHotkeys() {
     "task.build": () => void runBuildTask(),
     "task.test": () => void runTestTask(),
     "view.screencast": () => useViewStore.getState().toggleScreencast(),
+    "clipboard.history": () =>
+      useClipboardHistory.getState().setDialogOpen(true),
     "history.local": () => {
       const path = useWorkspaceStore.getState().activeFile;
       if (path && !isPageTab(path)) useLocalHistoryDialog.getState().openFor(path);

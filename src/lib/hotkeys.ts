@@ -66,6 +66,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+L",
   },
   {
+    id: "clipboard.history",
+    label: "Zwischenablage-Verlauf einfügen",
+    group: "Bearbeiten",
+    hotkey: "Mod+Shift+V",
+  },
+  {
     id: "view.screencast",
     label: "Screencast-Modus (Tastenanzeige) umschalten",
     group: "Ansicht",

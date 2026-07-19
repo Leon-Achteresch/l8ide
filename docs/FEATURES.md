@@ -608,7 +608,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Permanente Highlight-Marker**: Symbole dauerhaft farblich markieren, um Datenfluss zu verfolgen
 
-* [ ] **Clipboard-Historie mit Kontext**: Woher kopiert, mit Syntax-Highlighting, durchsuchbar
+* [x] **Clipboard-Historie mit Kontext**: Copy/Cut aus dem Editor wird mit Quellpfad erfasst (max. 50, dedupe, ≤20k Zeichen), ⌘⇧V öffnet filterbaren Verlauf, Klick fügt an Cursor ein und setzt die System-Zwischenablage (`clipboard-history.ts`); Syntax-Highlighting im Preview fehlt
 
 * [ ] **Typing-Perfektion**: Automatische Tippfehler-Korrektur für Keywords/bekannte Symbole beim Tippen
 
