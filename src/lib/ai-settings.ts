@@ -14,8 +14,10 @@ export const AI_MODELS = [
 type AiSettings = {
   apiKey: string;
   model: string;
+  inlineCompletions: boolean;
   setApiKey: (apiKey: string) => void;
   setModel: (model: string) => void;
+  setInlineCompletions: (enabled: boolean) => void;
 };
 
 export const useAiSettings = create<AiSettings>()(
@@ -23,8 +25,10 @@ export const useAiSettings = create<AiSettings>()(
     (set) => ({
       apiKey: "",
       model: AI_MODELS[0].id,
+      inlineCompletions: false,
       setApiKey: (apiKey) => set({ apiKey }),
       setModel: (model) => set({ model }),
+      setInlineCompletions: (inlineCompletions) => set({ inlineCompletions }),
     }),
     { name: "ai-settings" },
   ),

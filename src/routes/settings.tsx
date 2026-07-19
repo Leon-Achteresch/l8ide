@@ -123,6 +123,8 @@ function AiSettingsSection() {
   const setApiKey = useAiSettings((s) => s.setApiKey);
   const model = useAiSettings((s) => s.model);
   const setModel = useAiSettings((s) => s.setModel);
+  const inlineCompletions = useAiSettings((s) => s.inlineCompletions);
+  const setInlineCompletions = useAiSettings((s) => s.setInlineCompletions);
   return (
     <div className="mt-6 max-w-sm">
       <h2 className="text-sm font-semibold">KI</h2>
@@ -156,6 +158,18 @@ function AiSettingsSection() {
             </NativeSelectOption>
           ))}
         </NativeSelect>
+      </div>
+      <div className="mt-4 flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium">Inline-Completions</p>
+          <p className="text-xs text-muted-foreground">
+            Ghost-Text-Vorschläge beim Tippen (nutzt das gewählte Modell)
+          </p>
+        </div>
+        <Switch
+          checked={inlineCompletions}
+          onCheckedChange={setInlineCompletions}
+        />
       </div>
     </div>
   );

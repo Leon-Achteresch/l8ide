@@ -165,6 +165,7 @@ function TextEditor({
             automaticLayout: true,
             links: true,
             inlayHints: { enabled: "on" },
+            inlineSuggest: { enabled: true },
             formatOnPaste,
             formatOnType,
           }}

@@ -488,7 +488,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 ## 11. KI-Features (GitHub Copilot-Integration)
 
-* [ ] **Inline Completions**: Ghost-Text-Vervollständigung ganzer Zeilen/Blöcke
+* [x] **Inline Completions**: Ghost-Text via OpenRouter (opt-in in Einstellungen → KI), 350ms-Debounce, Abbruch bei Weitertippen, 60/15-Zeilen-Kontext, max. 128 Tokens, Ein-Antwort-Cache (`ai/inline-completions.ts`)
 
 * [ ] **Next Edit Suggestions**: Vorhersage der nächsten Änderung an anderer Stelle
 
