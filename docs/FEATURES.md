@@ -500,7 +500,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Commit-Message-Generierung**: Sparkles-Button an der Commit-Eingabe erzeugt Conventional-Commit-Message aus dem gestagten Diff (Diff auf 24k gekappt, `generateCommitMessage` in `git-store.ts`)
 
-* [ ] **Chat-Kontext**: Dateien, Symbole, Ordner, Bilder anhängen
+* [x] **Chat-Kontext (Dateien)**: Dateien an die Nachricht anhängen — Chips über dem Input, „Aktive Datei" mit einem Klick, nativer Datei-Picker; Inhalt (≤16k/Datei) geht nur mit dieser einen Nachricht mit (tokeneffizient), Chips bleiben im Verlauf sichtbar; Symbole/Ordner/Bilder fehlen
 
 * [ ] **Custom Instructions** (`.github/copilot-instructions.md`) und Prompt-Files
 

@@ -1,3 +1,4 @@
+import { readTextFile } from "@tauri-apps/plugin-fs";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { runAgent, type ChatMessage } from "@/lib/ai/agent";
@@ -10,7 +11,7 @@ import { useAiSettings } from "@/lib/ai-settings";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
 export type ChatEntry =
-  | { id: string; role: "user"; text: string }
+  | { id: string; role: "user"; text: string; attachments?: string[] }
   | { id: string; role: "assistant"; text: string }
   | {
       id: string;
@@ -27,6 +28,9 @@ type ChatStore = {
   width: number;
   entries: ChatEntry[];
   busy: boolean;
+  attachments: string[];
+  addAttachment: (path: string) => void;
+  removeAttachment: (path: string) => void;
   toggle: () => void;
   setOpen: (open: boolean) => void;
   setWidth: (width: number) => void;
@@ -70,6 +74,17 @@ export const useChatStore = create<ChatStore>()(
         width: 420,
         entries: [],
         busy: false,
+        attachments: [],
+        addAttachment: (path) =>
+          set((s) =>
+            s.attachments.includes(path)
+              ? s
+              : { attachments: [...s.attachments, path] },
+          ),
+        removeAttachment: (path) =>
+          set((s) => ({
+            attachments: s.attachments.filter((p) => p !== path),
+          })),
         toggle: () => set((s) => ({ open: !s.open })),
         setOpen: (open) => set({ open }),
         setWidth: (width) =>
@@ -100,12 +115,42 @@ export const useChatStore = create<ChatStore>()(
             return;
           }
 
+          const ws = useWorkspaceStore.getState();
+          const attachments = get().attachments;
+          const attachmentNames = attachments.map(
+            (p) => p.split("/").pop() ?? p,
+          );
+          let attachmentBlock = "";
+          for (const abs of attachments) {
+            const rel =
+              ws.rootPath && abs.startsWith(`${ws.rootPath}/`)
+                ? abs.slice(ws.rootPath.length + 1)
+                : abs;
+            const content = await readTextFile(abs).catch(() => null);
+            if (content === null) continue;
+            const capped =
+              content.length > 16000
+                ? `${content.slice(0, 16000)}\n… [gekürzt]`
+                : content;
+            attachmentBlock += `=== Angehängte Datei: ${rel} ===\n${capped}\n\n`;
+          }
+
           set((s) => ({
-            entries: [...s.entries, { id: uid(), role: "user", text: trimmed }],
+            entries: [
+              ...s.entries,
+              {
+                id: uid(),
+                role: "user",
+                text: trimmed,
+                ...(attachmentNames.length
+                  ? { attachments: attachmentNames }
+                  : {}),
+              },
+            ],
+            attachments: [],
             busy: true,
           }));
 
-          const ws = useWorkspaceStore.getState();
           const history: ChatMessage[] = [
             {
               role: "system",
@@ -123,6 +168,12 @@ export const useChatStore = create<ChatStore>()(
               )
               .map((e) => ({ role: e.role, content: e.text }) as ChatMessage),
           ];
+          if (attachmentBlock) {
+            history[history.length - 1] = {
+              role: "user",
+              content: `${attachmentBlock}${trimmed}`,
+            };
+          }
 
           controller = new AbortController();
           streamingId = null;

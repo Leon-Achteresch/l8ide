@@ -6,6 +6,8 @@ import {
   CircleX,
   FileDiff,
   Loader2,
+  Paperclip,
+  Plus,
   Send,
   Sparkles,
   Square,
@@ -19,8 +21,10 @@ import { Message, MessageContent } from "@/components/ui/message";
 import { Textarea } from "@/components/ui/textarea";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { Markdown } from "@/components/chat/markdown";
+import { open } from "@tauri-apps/plugin-dialog";
 import { openAgentEditDiff, useAgentEdits } from "@/lib/agent-edits";
 import { type ChatEntry, useChatStore } from "@/lib/chat-store";
+import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { AI_MODELS, useAiSettings } from "@/lib/ai-settings";
 
 const ICON_BUTTON =
@@ -160,6 +164,7 @@ function ChatPanelInner() {
       </div>
 
       <div className="shrink-0 border-t p-2">
+        <AttachmentBar />
         <div className="relative">
           <Textarea
             value={draft}
@@ -202,6 +207,19 @@ function EntryView({ entry }: { entry: ChatEntry }) {
           <Bubble variant="tinted" align="end">
             <BubbleContent className="whitespace-pre-wrap">{entry.text}</BubbleContent>
           </Bubble>
+          {entry.attachments && entry.attachments.length > 0 && (
+            <div className="mt-1 flex flex-wrap justify-end gap-1">
+              {entry.attachments.map((name) => (
+                <span
+                  key={name}
+                  className="inline-flex h-4.5 items-center gap-1 rounded bg-foreground/[0.05] px-1.5 text-[10px] text-muted-foreground"
+                >
+                  <Paperclip className="size-2.5" />
+                  {name}
+                </span>
+              ))}
+            </div>
+          )}
         </MessageContent>
       </Message>
     );
@@ -233,6 +251,66 @@ function EntryView({ entry }: { entry: ChatEntry }) {
     );
   }
   return <ToolEntry entry={entry} />;
+}
+
+function AttachmentBar() {
+  const attachments = useChatStore((s) => s.attachments);
+  const addAttachment = useChatStore((s) => s.addAttachment);
+  const removeAttachment = useChatStore((s) => s.removeAttachment);
+  const activeFile = useWorkspaceStore((s) => s.activeFile);
+  const rootPath = useWorkspaceStore((s) => s.rootPath);
+
+  const canAttachActive = Boolean(
+    activeFile && !isPageTab(activeFile) && !attachments.includes(activeFile),
+  );
+
+  const pickFiles = async () => {
+    const selected = await open({
+      multiple: true,
+      defaultPath: rootPath ?? undefined,
+    });
+    for (const p of Array.isArray(selected) ? selected : selected ? [selected] : [])
+      addAttachment(p);
+  };
+
+  return (
+    <div className="mb-1.5 flex flex-wrap items-center gap-1">
+      {attachments.map((p) => (
+        <span
+          key={p}
+          className="inline-flex h-5 items-center gap-1 rounded-md bg-foreground/[0.06] pl-1.5 pr-0.5 text-[11px] text-foreground"
+        >
+          <Paperclip className="size-2.5 text-muted-foreground" />
+          <span className="max-w-32 truncate">{p.split("/").pop()}</span>
+          <button
+            type="button"
+            onClick={() => removeAttachment(p)}
+            className="inline-flex size-4 items-center justify-center rounded text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
+          >
+            <X className="size-2.5" />
+          </button>
+        </span>
+      ))}
+      {canAttachActive && (
+        <button
+          type="button"
+          onClick={() => activeFile && addAttachment(activeFile)}
+          className="inline-flex h-5 items-center gap-1 rounded-md px-1.5 text-[11px] text-muted-foreground transition-colors hover:bg-foreground/8 hover:text-foreground"
+        >
+          <Plus className="size-2.5" />
+          Aktive Datei
+        </button>
+      )}
+      <button
+        type="button"
+        onClick={() => void pickFiles()}
+        className="inline-flex h-5 items-center gap-1 rounded-md px-1.5 text-[11px] text-muted-foreground transition-colors hover:bg-foreground/8 hover:text-foreground"
+      >
+        <Paperclip className="size-2.5" />
+        Datei…
+      </button>
+    </div>
+  );
 }
 
 function EditActions({ editId }: { editId: string }) {
