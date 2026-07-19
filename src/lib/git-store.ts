@@ -1,6 +1,8 @@
 import { invoke } from "@tauri-apps/api/core";
 import { toast } from "sonner";
 import { create } from "zustand";
+import { createOpenRouterLlm } from "@/lib/ai/openrouter";
+import { useAiSettings } from "@/lib/ai-settings";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
 export type StatusEntry = {
@@ -60,6 +62,7 @@ type GitStore = {
   stageAll: () => Promise<void>;
   unstageAll: () => Promise<void>;
   commit: (amend?: boolean) => Promise<void>;
+  generateCommitMessage: () => Promise<void>;
   checkout: (name: string, fromRemote?: string) => Promise<void>;
   fetch: () => Promise<void>;
   pull: () => Promise<void>;
@@ -182,6 +185,43 @@ export const useGitStore = create<GitStore>()((set, get) => ({
       .entries.filter((e) => e.staged)
       .map((e) => e.path);
     await get().unstage(files);
+  },
+
+  generateCommitMessage: async () => {
+    const path = root();
+    if (!path) return;
+    const { apiKey, model } = useAiSettings.getState();
+    if (!apiKey) {
+      toast.error("Kein OpenRouter-API-Key hinterlegt. Einstellungen → KI.");
+      return;
+    }
+    set({ busy: true });
+    try {
+      const diff = await invoke<string>("repo_staged_diff", { path });
+      if (!diff.trim()) {
+        toast.info("Keine gestagten Änderungen.");
+        return;
+      }
+      const llm = createOpenRouterLlm({ apiKey, model });
+      const result = await llm(
+        [
+          {
+            role: "system",
+            content:
+              "Erzeuge aus dem Git-Diff eine Commit-Message im Conventional-Commits-Stil (feat/fix/refactor/docs/chore). Erste Zeile max. 72 Zeichen, prägnant, Englisch. Antworte nur mit der Message, ohne Anführungszeichen.",
+          },
+          { role: "user", content: diff.slice(0, 24000) },
+        ],
+        [],
+      );
+      const message = (result.content ?? "").trim().replace(/^["']|["']$/g, "");
+      if (message) set({ commitMessage: message });
+      else toast.info("Leere Antwort vom Modell.");
+    } catch (e) {
+      toast.error(describeError(e));
+    } finally {
+      set({ busy: false });
+    }
   },
 
   commit: async (amend = false) => {

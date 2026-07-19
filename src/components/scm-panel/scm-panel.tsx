@@ -4,9 +4,11 @@ import {
   ArrowUpFromLine,
   Check,
   GitBranch,
+  Loader2,
   Minus,
   Plus,
   RefreshCw,
+  Sparkles,
   SquareArrowOutUpRight,
   Undo2,
 } from "lucide-react";
@@ -196,8 +198,22 @@ export function ScmPanel({ rootPath }: { rootPath: string }) {
       </div>
 
       <div className="shrink-0 space-y-1.5 border-b border-sidebar-border p-2">
-        <textarea
-          value={commitMessage}
+        <div className="relative">
+          <button
+            type="button"
+            title="Commit-Message generieren (KI, aus gestagten Änderungen)"
+            disabled={busy || staged.length === 0}
+            onClick={() => void useGitStore.getState().generateCommitMessage()}
+            className="absolute bottom-1.5 right-1.5 z-10 inline-flex size-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-foreground/8 hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
+          >
+            {busy ? (
+              <Loader2 className="size-3 animate-spin" />
+            ) : (
+              <Sparkles className="size-3" />
+            )}
+          </button>
+          <textarea
+            value={commitMessage}
           onChange={(e) => setCommitMessage(e.target.value)}
           onKeyDown={(e) => {
             if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
@@ -205,11 +221,12 @@ export function ScmPanel({ rootPath }: { rootPath: string }) {
               if (canCommit) void doCommit();
             }
           }}
-          placeholder="Commit-Nachricht (⌘⏎ zum Committen)"
-          spellCheck={false}
-          rows={2}
-          className="w-full resize-none rounded-md border border-input bg-transparent px-2 py-1.5 text-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-        />
+            placeholder="Commit-Nachricht (⌘⏎ zum Committen)"
+            spellCheck={false}
+            rows={2}
+            className="w-full resize-none rounded-md border border-input bg-transparent py-1.5 pl-2 pr-7 text-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+          />
+        </div>
         <div className="flex gap-1.5">
           <Button
             type="button"
