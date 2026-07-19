@@ -11,6 +11,7 @@ import { useEditorZoom } from "@/lib/editor-zoom";
 import { useEditorDisplayOptions } from "@/lib/editor-settings";
 import { ideMonacoTheme } from "@/lib/ide-theme";
 import { formatAndSave, usePrettierSettings } from "@/lib/prettier-format";
+import { attachInlineChat } from "@/lib/inline-chat";
 import { trackEditorStatus } from "@/lib/status-store";
 import { registerEditorRefactors } from "@/lib/ts-refactor";
 import { useWorkspaceStore } from "@/lib/workspace-store";
@@ -184,6 +185,7 @@ function TextEditor({
             if (target) revealInEditor(editor, target);
 
             trackEditorStatus(editor);
+            attachInlineChat(editor, monaco, path);
             const gutter = attachGitGutter(editor, monaco, path);
             const unsubGutter = useGitStore.subscribe(
               () => void gutter.refresh(),

@@ -494,7 +494,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **AI-Chat (Basis)**: Chat-Panel mit Agent-Loop und Workspace-Tools (list/read/search/edit/create), OpenRouter-Streaming, tokeneffiziente History (alte Tool-Ausgaben werden gestubbt, Outputs gekappt — `pruneForLlm`, Test `test:aiprune`); Slash-Commands/Teilnehmer fehlen
 
-* [ ] **Inline Chat**: Chat direkt im Editor an der Cursor-Position (Cmd+I)
+* [x] **Inline Chat**: ⌘I öffnet Eingabe-Widget an der Cursorposition; ersetzt Selektion bzw. fügt an Cursor ein, ±30 Zeilen Kontext, undo-fähig via executeEdits (`inline-chat.ts`); auch im Editor-Kontextmenü
 
 * [x] **Edits/Agent Mode (Basis)**: Multi-File-Änderungen autonom; jede Agent-Änderung als Karte im Chat mit Diff-Ansicht (Vorher↔Agent) und Ein-Klick-Rückgängig, neu erstellte Dateien werden beim Rückgängig gelöscht (`agent-edits.ts`); `run_command`-Tool führt Shell-Kommandos im Root aus (Trust-Gate, 60s-Timeout, Output-Cap — `exec.rs`) für Test-/Build-Selbstkorrektur
 
