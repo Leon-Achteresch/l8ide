@@ -66,6 +66,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+L",
   },
   {
+    id: "view.screencast",
+    label: "Screencast-Modus (Tastenanzeige) umschalten",
+    group: "Ansicht",
+    hotkey: "Mod+Alt+K",
+  },
+  {
     id: "history.local",
     label: "Timeline: Historie der aktuellen Datei",
     group: "Dateien",

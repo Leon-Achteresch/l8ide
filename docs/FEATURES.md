@@ -552,7 +552,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Walkthroughs / Getting Started**: Interaktive Onboarding-Guides (auch von Extensions)
 
-* [ ] **Screencast Mode**: Tastenanzeige für Demos/Videos
+* [x] **Screencast Mode**: ⌘⌥K toggelt Tastenanzeige — Chips unten mittig mit Modifier-Symbolen, Wiederholungszähler (×n), Spring-Ein-/Ausblendung, max. 5 gleichzeitig (`screencast-overlay.tsx`)
 
 * [ ] **Process Explorer** und **Runtime Status** für Performance-Analyse
 

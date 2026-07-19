@@ -8,10 +8,12 @@ type ViewStore = {
   zenMode: boolean;
   centeredLayout: boolean;
   tabSizing: TabSizing;
+  screencastMode: boolean;
   toggleZen: () => void;
   exitZen: () => void;
   toggleCentered: () => void;
   setTabSizing: (mode: TabSizing) => void;
+  toggleScreencast: () => void;
 };
 
 function fullscreen(on: boolean) {
@@ -38,6 +40,9 @@ export const useViewStore = create<ViewStore>()(
         }),
       toggleCentered: () => set((s) => ({ centeredLayout: !s.centeredLayout })),
       setTabSizing: (tabSizing) => set({ tabSizing }),
+      screencastMode: false,
+      toggleScreencast: () =>
+        set((s) => ({ screencastMode: !s.screencastMode })),
     }),
     {
       name: "view-store",

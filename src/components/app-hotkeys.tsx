@@ -41,6 +41,7 @@ export function AppHotkeys() {
     "command.palette": () => useCommandPalette.getState().setOpen(true),
     "task.build": () => void runBuildTask(),
     "task.test": () => void runTestTask(),
+    "view.screencast": () => useViewStore.getState().toggleScreencast(),
     "history.local": () => {
       const path = useWorkspaceStore.getState().activeFile;
       if (path && !isPageTab(path)) useLocalHistoryDialog.getState().openFor(path);
