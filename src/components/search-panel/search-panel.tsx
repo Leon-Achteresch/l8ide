@@ -17,6 +17,7 @@ import { useWorkspaceStore } from "@/lib/workspace-store";
 import {
   CaseSensitive,
   ChevronRight,
+  FileDiff,
   Loader2,
   Regex,
   ReplaceAll,
@@ -178,6 +179,16 @@ export function SearchPanel({ rootPath }: { rootPath: string }) {
                   className="h-7 text-xs"
                 />
                 <InputGroupAddon align="inline-end" className="pr-0.5">
+                  <InputGroupButton
+                    size="icon-xs"
+                    title="Ersetzen mit Vorschau"
+                    disabled={files.length === 0 || replacing}
+                    onClick={() =>
+                      void useSearchStore.getState().previewReplaceAll()
+                    }
+                  >
+                    <FileDiff className="size-3.5" />
+                  </InputGroupButton>
                   <InputGroupButton
                     size="icon-xs"
                     title="Alle ersetzen"

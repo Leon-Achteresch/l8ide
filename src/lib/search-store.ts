@@ -1,8 +1,25 @@
 import { getMonacoInstance } from "@/lib/monaco-instance";
 import { monacoUriForPath } from "@/lib/monaco-uri";
+import { useRefactorPreview, type FileEdit } from "@/lib/refactor-preview";
 import { invoke } from "@tauri-apps/api/core";
 import { readTextFile } from "@tauri-apps/plugin-fs";
+import { toast } from "sonner";
 import { create } from "zustand";
+
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function buildReplacePattern(s: {
+  query: string;
+  useRegex: boolean;
+  wholeWord: boolean;
+  caseSensitive: boolean;
+}): RegExp {
+  let src = s.useRegex ? s.query : escapeRegExp(s.query);
+  if (s.wholeWord) src = `\\b(?:${src})\\b`;
+  return new RegExp(src, s.caseSensitive ? "g" : "gi");
+}
 
 export type SearchMatch = {
   line: number;
@@ -55,6 +72,7 @@ type SearchStore = {
   dismissMatch: (path: string, match: SearchMatch) => void;
   search: (root: string) => Promise<void>;
   replaceAll: (root: string) => Promise<void>;
+  previewReplaceAll: () => Promise<void>;
   replaceFile: (root: string, path: string) => Promise<void>;
   replaceOne: (root: string, path: string, match: SearchMatch) => Promise<void>;
 };
@@ -177,6 +195,45 @@ export const useSearchStore = create<SearchStore>()((set, get) => ({
         searched: true,
       });
     }
+  },
+
+  previewReplaceAll: async () => {
+    const s = get();
+    if (s.files.length === 0) return;
+    let pattern: RegExp;
+    try {
+      pattern = buildReplacePattern(s);
+    } catch (e) {
+      toast.error(`Ungültige Regex: ${e instanceof Error ? e.message : e}`);
+      return;
+    }
+    const replacement = s.useRegex
+      ? s.replaceValue
+      : s.replaceValue.replace(/\$/g, "$$$$");
+    const edits: FileEdit[] = [];
+    for (const f of s.files) {
+      const oldText = await readTextFile(f.path).catch(() => null);
+      if (oldText === null) continue;
+      pattern.lastIndex = 0;
+      const newText = oldText.replace(pattern, replacement);
+      if (newText === oldText) continue;
+      edits.push({
+        uri: monacoUriForPath(f.path).toString(),
+        path: f.path,
+        isNew: false,
+        oldText,
+        newText,
+        changes: [{ span: { start: 0, length: oldText.length }, newText }],
+      });
+    }
+    if (edits.length === 0) {
+      toast.info("Keine Änderungen.");
+      return;
+    }
+    useRefactorPreview.getState().show({
+      title: `Ersetzen: „${s.query}" → „${s.replaceValue}" · ${edits.length} Datei(en)`,
+      edits,
+    });
   },
 
   replaceAll: async (root) => {

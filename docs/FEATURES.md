@@ -268,7 +268,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Search & Replace projektweit**: Replace All, pro Datei, einzeln
 
-* [ ] **Search & Replace mit Vorschau**: Diff-Vorschau, Regex-Capture-Groups, Case-Preserving Replace
+* [x] **Search & Replace mit Vorschau**: Diff-Button neben „Alle ersetzen" öffnet den Mehrdatei-Diff (pro Datei an-/abwählbar, Refactor-Preview-Infra) vor dem Anwenden; Regex-Capture-Groups ($1…) funktionieren, `$` in Nicht-Regex-Ersetzung ist escaped; Case-Preserving Replace fehlt
 
 * [ ] **Search Editor**: Suchergebnisse als editierbares Dokument
 
