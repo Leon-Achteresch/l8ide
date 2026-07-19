@@ -8,6 +8,7 @@ import {
 import { FolderIcon } from "@/components/folder-icon";
 import { dlog, installDndDiagnostics } from "@/lib/dnd-log";
 import { fileIcon } from "@/lib/file-icons";
+import { nestEntries } from "@/lib/file-nesting";
 import { useCommandHotkeys } from "@/lib/hotkeys";
 import { basename, canMove, dragRoots, parentDir } from "@/lib/fs-move";
 import { cn } from "@/lib/utils";
@@ -80,6 +81,7 @@ type Entry = {
 	name: string;
 	path: string;
 	isDirectory: boolean;
+	nested?: Entry[];
 };
 
 const ROOT_ID = "__root__";
@@ -218,7 +220,7 @@ async function listDir(path: string): Promise<Entry[]> {
 					? -1
 					: 1,
 		);
-	return Promise.all(mapped.map(compactChain));
+	return nestEntries(await Promise.all(mapped.map(compactChain)));
 }
 
 async function copyEntry(src: string, dest: string) {
@@ -520,11 +522,24 @@ const TreeNode = memo(function TreeNode({
 									aria-hidden
 								/>
 							)}
-							{entry.isDirectory ? (
+							{entry.isDirectory || entry.nested ? (
 								<motion.span
 									animate={{ rotate: open ? 90 : 0 }}
 									transition={{ type: "spring", stiffness: 500, damping: 32 }}
-									className="relative z-10 shrink-0"
+									className={cn(
+										"relative z-10 shrink-0",
+										entry.nested &&
+											"opacity-0 transition-opacity group-hover/row:opacity-100",
+										entry.nested && open && "opacity-100",
+									)}
+									onClick={
+										entry.nested
+											? (e) => {
+													e.stopPropagation();
+													setOpen((o) => !o);
+												}
+											: undefined
+									}
 								>
 									<ChevronRight className="size-3.5 text-muted-foreground" strokeWidth={2} />
 								</motion.span>
@@ -698,7 +713,7 @@ const TreeNode = memo(function TreeNode({
 				</ContextMenuContent>
 			</ContextMenu>
 			<AnimatePresence initial={false}>
-				{open && children !== null && (
+				{open && (entry.isDirectory ? children !== null : Boolean(entry.nested)) && (
 					<motion.div
 						initial={{ height: 0, opacity: 0 }}
 						animate={{ height: "auto", opacity: 1 }}
@@ -706,7 +721,7 @@ const TreeNode = memo(function TreeNode({
 						transition={{ type: "spring", stiffness: 500, damping: 38, mass: 0.6 }}
 						className="overflow-hidden"
 					>
-						{children
+						{(entry.isDirectory ? (children ?? []) : (entry.nested ?? []))
 							.filter((c) => !ctx.hidden.has(c.name))
 							.map((child) => (
 								<TreeNode key={child.path} entry={child} depth={depth + 1} />

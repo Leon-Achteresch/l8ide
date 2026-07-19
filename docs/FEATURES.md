@@ -224,7 +224,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Compact Folders**: Einzelne verschachtelte Ordner werden als `a/b/c` zusammengefasst (max. 12 Ebenen, respektiert ausgeblendete Namen; Aktionen wirken auf den tiefsten Ordner der Kette)
 
-* [ ] **File Nesting**: Zugehörige Dateien unterordnen (z.B. `.js` unter `.ts`)
+* [x] **File Nesting**: `.js`/`.d.ts`/`.js.map` unter `.ts`, `.jsx` unter `.tsx`, `.css.map` unter `.css`, Lockfiles unter `package.json`; Chevron erscheint beim Hover, Klick öffnet die Datei (`file-nesting.ts`, Test `test:nesting`)
 
 * [x] **Datei-Dekorationen (Icons)**: Datei- und Ordner-Icons nach Typ
 
