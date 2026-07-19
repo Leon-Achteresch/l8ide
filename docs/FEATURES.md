@@ -238,7 +238,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Layout-Persistenz**: Tabs, Gruppen und Sidebar-Zustand überleben Neustart
 
-* [ ] **Hot Exit (Inhalt)**: Ungespeicherte Editor-Inhalte überleben Neustart
+* [x] **Hot Exit (Inhalt)**: Ungespeicherte Inhalte werden 1s-debounced nach App-Data gesichert (≤1MB), beim Öffnen wiederhergestellt (mit Toast) und bei Speichern/Gleichstand aufgeräumt (`hot-exit.ts`)
 
 * [x] **Auto Save**: afterDelay, ein-/ausschaltbar im Logo-Menü
 

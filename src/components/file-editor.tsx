@@ -4,6 +4,7 @@ import { readTextFile } from "@tauri-apps/plugin-fs";
 import { Columns2 } from "lucide-react";
 import * as monaco from "monaco-editor";
 import { useTheme } from "next-themes";
+import { toast } from "sonner";
 import { applyEditorConfig } from "@/lib/editorconfig";
 import { attachGitGutter } from "@/lib/git-gutter";
 import { useGitStore } from "@/lib/git-store";
@@ -11,6 +12,7 @@ import { useEditorZoom } from "@/lib/editor-zoom";
 import { useEditorDisplayOptions } from "@/lib/editor-settings";
 import { ideMonacoTheme } from "@/lib/ide-theme";
 import { formatAndSave, usePrettierSettings } from "@/lib/prettier-format";
+import { scheduleBackup, takeBackup } from "@/lib/hot-exit";
 import { attachInlineChat } from "@/lib/inline-chat";
 import { trackEditorStatus } from "@/lib/status-store";
 import { registerEditorRefactors } from "@/lib/ts-refactor";
@@ -127,8 +129,17 @@ function TextEditor({
       return;
     }
     readTextFile(path)
-      .then((content) => {
-        if (!cancelled) setFile({ path, content });
+      .then(async (content) => {
+        const backup = await takeBackup(path, content);
+        if (cancelled) return;
+        if (backup !== null) {
+          toast.info("Ungespeicherte Änderungen wiederhergestellt", {
+            description: path.split("/").pop(),
+          });
+          setFile({ path, content: backup });
+        } else {
+          setFile({ path, content });
+        }
       })
       .catch((e) => {
         if (!cancelled) setError(String(e));
@@ -210,6 +221,7 @@ function TextEditor({
 
             let timer: ReturnType<typeof setTimeout> | undefined;
             editor.onDidChangeModelContent(() => {
+              scheduleBackup(path, () => editor.getModel()?.getValue() ?? "");
               useWorkspaceStore.getState().promoteTab(path);
               clearTimeout(gutterTimer);
               gutterTimer = setTimeout(() => void gutter.refresh(), 400);

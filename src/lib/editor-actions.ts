@@ -1,3 +1,4 @@
+import { clearBackup } from "@/lib/hot-exit";
 import { snapshotBeforeSave } from "@/lib/local-history";
 import { getMonacoInstance } from "@/lib/monaco-instance";
 import { monacoUriForPath, pathFromMonacoUri } from "@/lib/monaco-uri";
@@ -15,7 +16,9 @@ export function saveModel(model: monaco.editor.ITextModel) {
   const path = pathFromMonacoUri(model.uri);
   if (isPageTab(path)) return;
   const content = model.getValue();
-  void snapshotBeforeSave(path).finally(() => void writeTextFile(path, content));
+  void snapshotBeforeSave(path).finally(() =>
+    writeTextFile(path, content).then(() => clearBackup(path)),
+  );
 }
 
 export function saveActiveFile() {

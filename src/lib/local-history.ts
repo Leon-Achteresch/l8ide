@@ -16,7 +16,7 @@ import { languageOf } from "@/lib/language-of";
 const MAX_SNAPSHOTS = 20;
 const MAX_SIZE = 1_000_000;
 
-function hashPath(path: string): string {
+export function hashPath(path: string): string {
   let h = 5381;
   for (let i = 0; i < path.length; i++) {
     h = ((h << 5) + h + path.charCodeAt(i)) >>> 0;
