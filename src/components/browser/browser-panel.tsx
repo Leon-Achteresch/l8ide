@@ -5,10 +5,13 @@ import {
   ExternalLink,
   Loader2,
   RotateCw,
+  SquareTerminal,
+  Wrench,
   X,
 } from "lucide-react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import {
+  browserDevtools,
   browserEval,
   closeBrowser,
   openBrowser,
@@ -17,6 +20,11 @@ import {
   navigateBrowser,
   type Rect,
 } from "@/lib/browser";
+import { BrowserConsole } from "@/components/browser/browser-console";
+import {
+  useBrowserConsole,
+  wireBrowserConsole,
+} from "@/lib/browser-console-store";
 import { useBrowserStore } from "@/lib/browser-store";
 import { cn } from "@/lib/utils";
 
@@ -42,9 +50,17 @@ function BrowserPanelInner() {
   const setWidth = useBrowserStore((s) => s.setWidth);
   const setOpen = useBrowserStore((s) => s.setOpen);
 
+  const consoleOpen = useBrowserConsole((s) => s.open);
+  const toggleConsole = useBrowserConsole((s) => s.toggle);
+  const errorCount = useBrowserConsole((s) => s.errorCount);
+
   const hostRef = useRef<HTMLDivElement>(null);
   const editingRef = useRef(false);
   const [draft, setDraft] = useState(url);
+
+  useEffect(() => {
+    wireBrowserConsole();
+  }, []);
 
   useEffect(() => {
     if (!editingRef.current) setDraft(url);
@@ -85,6 +101,7 @@ function BrowserPanelInner() {
     const observed = host.parentElement ?? host;
     const ro = new ResizeObserver(sync);
     ro.observe(observed);
+    ro.observe(host);
     window.addEventListener("resize", sync);
 
     const isObscured = () =>
@@ -217,6 +234,25 @@ function BrowserPanelInner() {
         </form>
         <button
           type="button"
+          onClick={toggleConsole}
+          title="Konsole"
+          className={cn(ICON_BUTTON, "relative", consoleOpen && "bg-accent text-foreground")}
+        >
+          <SquareTerminal className="size-4" />
+          {errorCount > 0 && !consoleOpen && (
+            <span className="absolute right-0.5 top-0.5 size-1.5 rounded-full bg-red-500" />
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={() => void browserDevtools()}
+          title="DevTools öffnen"
+          className={ICON_BUTTON}
+        >
+          <Wrench className="size-4" />
+        </button>
+        <button
+          type="button"
           onClick={() => url && void openUrl(url)}
           title="Extern öffnen"
           className={ICON_BUTTON}
@@ -233,6 +269,7 @@ function BrowserPanelInner() {
         </button>
       </div>
       <div ref={hostRef} className="min-h-0 flex-1" />
+      <BrowserConsole />
     </div>
   );
 }

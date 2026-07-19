@@ -38,6 +38,10 @@ export function browserEval(js: string) {
   return invoke("browser_eval", { js });
 }
 
+export function browserDevtools() {
+  return invoke("browser_devtools");
+}
+
 export function closeBrowser() {
   return invoke("browser_close");
 }

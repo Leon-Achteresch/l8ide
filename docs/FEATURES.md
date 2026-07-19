@@ -762,6 +762,10 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [x] **Eingebauter Browser (Basis)**: Webview-Panel mit Navigation im Dock
 
+* [x] **Browser-Konsole in der IDE**: console.log/warn/error + Fehler/unhandled rejections aus dem Browser-Webview live im Panel (injizierter Hook → lokaler Log-Sink → Tauri-Event; `console_sink.rs`, `browser-console-store.ts`, `browser-console.tsx`); Fehler-Badge am Konsole-Button
+
+* [x] **Native DevTools für den Browser**: Web-Inspector per Button (`browser_devtools`, Tauri-Feature `devtools`)
+
 * [ ] **Browser-Preview mit DevTools-Brücke**: Element-Klick im Browser springt zur JSX/Component-Quelle
 
 * [ ] **Komponenten-Explorer**: Alle UI-Komponenten des Projekts als Galerie mit Props-Playground (Storybook-nativ)

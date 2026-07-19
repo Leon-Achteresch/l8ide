@@ -1,4 +1,5 @@
 mod browser;
+mod console_sink;
 mod favicon;
 pub mod git;
 mod git_cmd;
@@ -403,6 +404,12 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .manage(terminal::PtyState::default())
+        .setup(|app| {
+            if let Some(port) = console_sink::start(app.handle().clone()) {
+                browser::set_console_port(port);
+            }
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             greet,
             list_files,
@@ -447,6 +454,7 @@ pub fn run() {
             browser::browser_show,
             browser::browser_navigate,
             browser::browser_eval,
+            browser::browser_devtools,
             browser::browser_close,
             favicon::read_repo_favicon
         ])
