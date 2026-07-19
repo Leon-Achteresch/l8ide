@@ -624,7 +624,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Trail-/Tour-System**: Navigationspfade aufzeichnen und als geführte Code-Touren teilen (Onboarding)
 
-* [ ] **Arbeits-Kontexte / Task-Scopes**: Benannte Sets aus offenen Dateien, Breakpoints, Terminalzuständen — pro Ticket/Feature umschaltbar
+* [x] **Arbeits-Kontexte / Task-Scopes**: ⌘⌥X — Tabs, Splits, Pins und Sidebar-Modus als benannte Kontexte pro Projekt speichern/wechseln/überschreiben (`workspace-contexts.ts`); Breakpoints/Terminalzustände folgen, sobald es sie gibt
 
 * [ ] **Automatische Architektur-Doku**: Live generierte Modul-Übersichten aus dem Code
 

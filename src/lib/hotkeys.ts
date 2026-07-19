@@ -66,6 +66,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+L",
   },
   {
+    id: "workspace.contexts",
+    label: "Arbeitskontexte (Tabs & Layout speichern/wechseln)",
+    group: "Allgemein",
+    hotkey: "Mod+Alt+X",
+  },
+  {
     id: "clipboard.history",
     label: "Zwischenablage-Verlauf einfügen",
     group: "Bearbeiten",
