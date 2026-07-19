@@ -1,8 +1,9 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { AppHeader } from "@/components/app-header/app-header";
 import { AppHotkeys } from "@/components/app-hotkeys";
-import { BrowserPanel } from "@/components/browser/browser-panel";
-import { ChatPanel } from "@/components/chat/chat-panel";
+import { closeBrowser } from "@/lib/browser";
+import { useBrowserStore } from "@/lib/browser-store";
+import { useChatStore } from "@/lib/chat-store";
 import { FileSearch } from "@/components/file-search";
 import { CommandPalette } from "@/components/command-palette";
 import { MonacoWorkspace } from "@/components/monaco-workspace";
@@ -33,6 +34,41 @@ const ProblemsPanel = lazy(() =>
     default: m.ProblemsPanel,
   })),
 );
+
+const ChatPanel = lazy(() =>
+  import("@/components/chat/chat-panel").then((m) => ({
+    default: m.ChatPanel,
+  })),
+);
+
+const BrowserPanel = lazy(() =>
+  import("@/components/browser/browser-panel").then((m) => ({
+    default: m.BrowserPanel,
+  })),
+);
+
+function ChatSlot() {
+  const open = useChatStore((s) => s.open);
+  if (!open) return null;
+  return (
+    <Suspense fallback={null}>
+      <ChatPanel />
+    </Suspense>
+  );
+}
+
+function BrowserSlot() {
+  const open = useBrowserStore((s) => s.open);
+  useEffect(() => {
+    if (!useBrowserStore.getState().open) void closeBrowser();
+  }, []);
+  if (!open) return null;
+  return (
+    <Suspense fallback={null}>
+      <BrowserPanel />
+    </Suspense>
+  );
+}
 
 const RouterDevtools = import.meta.env.DEV
   ? lazy(() =>
@@ -133,8 +169,8 @@ function RootComponent() {
                   <Outlet />
                 )}
               </div>
-              <BrowserPanel />
-              <ChatPanel />
+              <BrowserSlot />
+              <ChatSlot />
             </div>
             {!zenMode && <ProblemsSlot />}
             {!zenMode && <TerminalSlot />}

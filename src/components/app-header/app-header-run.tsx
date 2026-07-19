@@ -14,7 +14,6 @@ import {
   type PackageManager,
   type Script,
 } from "@/lib/run-scripts";
-import { runInTerminal } from "@/lib/terminal";
 import { useIsWorkspaceTrusted, useWorkspaceStore } from "@/lib/workspace-store";
 import { Play } from "lucide-react";
 import { type CSSProperties, useCallback, useEffect, useState } from "react";
@@ -61,7 +60,11 @@ export function AppHeaderRun() {
             {scripts.map((s) => (
               <DropdownMenuItem
                 key={s.name}
-                onClick={() => void runInTerminal(scriptCommand(pm, s.name))}
+                onClick={() =>
+                  void import("@/lib/terminal").then((m) =>
+                    m.runInTerminal(scriptCommand(pm, s.name)),
+                  )
+                }
                 className="flex-col items-start gap-0"
               >
                 <span className="font-medium">{s.name}</span>

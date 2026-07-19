@@ -4,7 +4,6 @@ import {
   readScripts,
   scriptCommand,
 } from "@/lib/run-scripts";
-import { runInTerminal } from "@/lib/terminal";
 import { isPathTrusted } from "@/lib/workspace-trust";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
@@ -24,6 +23,7 @@ async function runScriptTask(name: string) {
     return;
   }
   const pm = await detectPackageManager(rootPath);
+  const { runInTerminal } = await import("@/lib/terminal");
   await runInTerminal(scriptCommand(pm, name));
 }
 
