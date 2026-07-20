@@ -18,6 +18,12 @@ export type Command = {
 
 export const COMMANDS: Command[] = [
   {
+    id: "welcome.open",
+    label: "Willkommen / Erste Schritte öffnen",
+    group: "Allgemein",
+    hotkey: "Mod+Alt+0",
+  },
+  {
     id: "command.palette",
     label: "Befehlspalette",
     group: "Allgemein",

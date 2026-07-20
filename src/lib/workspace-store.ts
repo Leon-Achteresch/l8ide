@@ -23,6 +23,7 @@ export const PAGES: Record<string, string> = {
   "/processes": "Dev-Prozesse",
   "/design-tokens": "Design-Tokens",
   "/git-history": "Verlauf",
+  "/welcome": "Willkommen",
 };
 
 export function isPageTab(tab: string) {

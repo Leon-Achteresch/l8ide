@@ -56,6 +56,8 @@ export function AppHotkeys() {
 
   const handlers: Record<string, () => void> = {
     "command.palette": () => useCommandPalette.getState().setOpen(true),
+    "welcome.open": () =>
+      useWorkspaceStore.getState().openFile(pageTab("/welcome")),
     "task.build": () => void runBuildTask(),
     "task.test": () => void runTestTask(),
     "view.screencast": () => useViewStore.getState().toggleScreencast(),

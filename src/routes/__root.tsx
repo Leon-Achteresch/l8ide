@@ -28,6 +28,7 @@ import { StatusBar } from "@/components/status-bar";
 import { Toaster } from "@/components/ui/sonner";
 import { WorkspaceTrustBanner } from "@/components/workspace-trust-banner";
 import { useProblemsPanel } from "@/lib/markers-store";
+import { pageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { useTerminalStore } from "@/lib/terminal-store";
 import { useUiZoom } from "@/lib/ui-zoom";
 import { useViewStore } from "@/lib/view-store";
@@ -160,6 +161,12 @@ function RootComponent() {
   useEffect(() => {
     document.documentElement.style.zoom = String(uiZoom);
   }, [uiZoom]);
+
+  useEffect(() => {
+    if (localStorage.getItem("l8-welcomed")) return;
+    localStorage.setItem("l8-welcomed", "1");
+    useWorkspaceStore.getState().openFile(pageTab("/welcome"));
+  }, []);
 
   return (
     <>
