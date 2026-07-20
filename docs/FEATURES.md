@@ -368,7 +368,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [~] **Variablen-Ansicht**: Lokale Variablen des Top-Frames bei Pause automatisch in der Debug-Island (Name+Wert, Objekte lazy expandierbar bis Tiefe 4, max. 40 Props via `Runtime.getProperties` — verifiziert); weitere Scopes, Wertänderung, Kopieren fehlen
 
-* [ ] **Watch-Ausdrücke**
+* [x] **Watch-Ausdrücke**: Auge-Button in der Debug-Island — Ausdrücke hinzufügen/entfernen (persistiert), Werte bei jedem Halt automatisch neu ausgewertet (side-effect-frei)
 
 * [ ] **Call Stack** mit Multi-Thread-/Multi-Session-Support
 
@@ -384,7 +384,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Debug-Toolbar & Statusbar-Färbung**
 
-* [ ] **Exception Breakpoints**: Bei (un)caught Exceptions stoppen
+* [x] **Exception Breakpoints**: Zap-Button in der Island wechselt aus → nur unbehandelte (amber) → alle (rot); persistiert, beim Attach gesetzt, live umschaltbar (`setPauseOnExceptions` verifiziert, Pause-Reason „exception")
 
 * [ ] **Disassembly View** (bei unterstützten Debuggern)
 

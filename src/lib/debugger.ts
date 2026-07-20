@@ -33,6 +33,12 @@ type DebuggerStore = {
   topCallFrameId: string | null;
   port: number;
   breakpoints: Record<string, number[]>;
+  watches: string[];
+  watchValues: Record<string, string>;
+  pauseOnExceptions: "none" | "uncaught" | "all";
+  addWatch: (expr: string) => void;
+  removeWatch: (expr: string) => void;
+  cyclePauseOnExceptions: () => void;
   connect: (port?: number) => Promise<void>;
   disconnect: () => void;
   resume: () => void;
@@ -168,6 +174,33 @@ export const useDebugger = create<DebuggerStore>()(
   topCallFrameId: null,
   port: 9229,
   breakpoints: {},
+  watches: [],
+  watchValues: {},
+  pauseOnExceptions: "none",
+
+  addWatch: (expr) => {
+    const trimmed = expr.trim();
+    if (!trimmed || get().watches.includes(trimmed)) return;
+    set((s) => ({ watches: [...s.watches, trimmed] }));
+    void refreshWatches();
+  },
+
+  removeWatch: (expr) =>
+    set((s) => {
+      const watchValues = { ...s.watchValues };
+      delete watchValues[expr];
+      return { watches: s.watches.filter((w) => w !== expr), watchValues };
+    }),
+
+  cyclePauseOnExceptions: () => {
+    const order = ["none", "uncaught", "all"] as const;
+    const next =
+      order[(order.indexOf(get().pauseOnExceptions) + 1) % order.length];
+    set({ pauseOnExceptions: next });
+    if (get().state === "running" || get().state === "paused") {
+      send("Debugger.setPauseOnExceptions", { state: next });
+    }
+  },
 
   toggleBreakpoint: (path, line) => {
     const current = get().breakpoints[path] ?? [];
@@ -219,6 +252,10 @@ export const useDebugger = create<DebuggerStore>()(
       send("Debugger.enable");
       send("Runtime.enable");
       syncAllBreakpoints();
+      const { pauseOnExceptions } = get();
+      if (pauseOnExceptions !== "none") {
+        send("Debugger.setPauseOnExceptions", { state: pauseOnExceptions });
+      }
       send("Runtime.runIfWaitingForDebugger");
       toast.success(`Debugger verbunden (Port ${port})`);
     };
@@ -261,6 +298,7 @@ export const useDebugger = create<DebuggerStore>()(
             if (useDebugger.getState().state === "paused") set({ variables });
           });
         }
+        void refreshWatches();
         const top = frames.find((f) => f.url.startsWith("file://"));
         if (top) {
           openFileAt(decodeURI(top.url.slice("file://".length)), {
@@ -269,7 +307,7 @@ export const useDebugger = create<DebuggerStore>()(
           });
         }
       } else if (msg.method === "Debugger.resumed") {
-        set({ state: "running", frames: [], variables: [], topCallFrameId: null });
+        set({ state: "running", frames: [], variables: [], topCallFrameId: null, watchValues: {} });
       }
     };
     socket.onclose = () => {
@@ -297,9 +335,30 @@ export const useDebugger = create<DebuggerStore>()(
   stepInto: () => send("Debugger.stepInto"),
   stepOut: () => send("Debugger.stepOut"),
     }),
-    { name: "debugger", partialize: (s) => ({ breakpoints: s.breakpoints }) },
+    {
+      name: "debugger",
+      partialize: (s) => ({
+        breakpoints: s.breakpoints,
+        watches: s.watches,
+        pauseOnExceptions: s.pauseOnExceptions,
+      }),
+    },
   ),
 );
+
+async function refreshWatches() {
+  const { watches, state } = useDebugger.getState();
+  if (state !== "paused" || watches.length === 0) return;
+  const entries = await Promise.all(
+    watches.map(async (expr) => {
+      const value = await evaluateOnTopFrame(expr);
+      return [expr, value ?? "⟨nicht auswertbar⟩"] as const;
+    }),
+  );
+  if (useDebugger.getState().state === "paused") {
+    useDebugger.setState({ watchValues: Object.fromEntries(entries) });
+  }
+}
 
 export async function evaluateOnTopFrame(
   expression: string,

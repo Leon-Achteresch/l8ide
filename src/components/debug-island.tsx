@@ -3,10 +3,12 @@ import {
   ArrowUpFromDot,
   Bug,
   ChevronRight,
+  Eye,
   Pause,
   Play,
   Redo2,
   X,
+  Zap,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
@@ -77,13 +79,59 @@ function VarRow({ node, depth }: { node: VarNodeData; depth: number }) {
   );
 }
 
+function WatchSection() {
+  const watches = useDebugger((s) => s.watches);
+  const watchValues = useDebugger((s) => s.watchValues);
+  const [draft, setDraft] = useState("");
+
+  return (
+    <div className="w-[min(440px,80vw)] px-2 pb-2">
+      {watches.map((expr) => (
+        <div
+          key={expr}
+          className="group flex items-baseline gap-1.5 rounded-md px-1.5 py-0.5 font-mono text-[11px]"
+        >
+          <Eye className="size-3 shrink-0 self-center text-background/50" />
+          <span className="shrink-0 text-sky-300/90">{expr}</span>
+          <span className="min-w-0 flex-1 truncate text-background/80">
+            {watchValues[expr] ?? "—"}
+          </span>
+          <button
+            type="button"
+            onClick={() => useDebugger.getState().removeWatch(expr)}
+            className="shrink-0 self-center rounded p-0.5 text-background/40 opacity-0 hover:text-background group-hover:opacity-100"
+          >
+            <X className="size-3" />
+          </button>
+        </div>
+      ))}
+      <input
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && draft.trim()) {
+            useDebugger.getState().addWatch(draft);
+            setDraft("");
+          }
+        }}
+        placeholder="Ausdruck beobachten… (⏎)"
+        spellCheck={false}
+        className="mt-0.5 w-full bg-transparent px-1.5 font-mono text-[11px] text-background outline-none placeholder:text-background/40"
+      />
+    </div>
+  );
+}
+
 export function DebugIsland() {
   const state = useDebugger((s) => s.state);
   const frames = useDebugger((s) => s.frames);
   const variables = useDebugger((s) => s.variables);
+  const watches = useDebugger((s) => s.watches);
+  const pauseOnExceptions = useDebugger((s) => s.pauseOnExceptions);
   const dbg = useDebugger.getState();
   const [stackOpen, setStackOpen] = useState(false);
   const [varsOpen, setVarsOpen] = useState(true);
+  const [watchOpen, setWatchOpen] = useState(false);
 
   if (state === "disconnected") return null;
   const paused = state === "paused";
@@ -157,11 +205,49 @@ export function DebugIsland() {
               Vars {variables.length}
             </button>
           )}
+          <button
+            type="button"
+            title={`Watch-Ausdrücke (${watches.length})`}
+            onClick={() => setWatchOpen((v) => !v)}
+            className={cn(BTN, watchOpen && "text-background")}
+          >
+            <Eye className="size-3.5" />
+          </button>
+          <button
+            type="button"
+            title={`Bei Exceptions pausieren: ${
+              pauseOnExceptions === "none"
+                ? "aus"
+                : pauseOnExceptions === "uncaught"
+                  ? "nur unbehandelte"
+                  : "alle"
+            } (Klick wechselt)`}
+            onClick={dbg.cyclePauseOnExceptions}
+            className={cn(
+              BTN,
+              pauseOnExceptions === "uncaught" && "text-amber-300",
+              pauseOnExceptions === "all" && "text-red-300",
+            )}
+          >
+            <Zap className="size-3.5" />
+          </button>
           <button type="button" title="Trennen" onClick={dbg.disconnect} className={BTN}>
             <X className="size-3.5" />
           </button>
         </div>
         <AnimatePresence initial={false}>
+          {watchOpen && (
+            <motion.div
+              key="watch"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={SPRING_LAYOUT}
+              className="overflow-hidden"
+            >
+              <WatchSection />
+            </motion.div>
+          )}
           {paused && varsOpen && variables.length > 0 && (
             <motion.div
               key="vars"
