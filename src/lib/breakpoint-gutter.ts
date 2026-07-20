@@ -9,22 +9,27 @@ export function attachBreakpointGutter(
   const collection = editor.createDecorationsCollection([]);
 
   const render = () => {
-    const { breakpoints, bpConditions } = useDebugger.getState();
+    const { breakpoints, bpConditions, bpLogpoints } = useDebugger.getState();
     const lines = breakpoints[path] ?? [];
     collection.set(
       lines.map((line) => {
         const condition = bpConditions[`${path}:${line}`];
+        const log = bpLogpoints[`${path}:${line}`];
+        const className = log
+          ? "l8-breakpoint l8-breakpoint-log"
+          : condition
+            ? "l8-breakpoint l8-breakpoint-cond"
+            : "l8-breakpoint";
+        const hover = log
+          ? `Logpoint: \`${log}\` — Klick entfernt, Alt+Klick bearbeitet`
+          : condition
+            ? `Bedingung: \`${condition}\` — Klick entfernt, Alt+Klick bearbeitet`
+            : "Breakpoint — Klick entfernt, Alt+Klick: Bedingung/Logpoint";
         return {
           range: new monaco.Range(line, 1, line, 1),
           options: {
-            glyphMarginClassName: condition
-              ? "l8-breakpoint l8-breakpoint-cond"
-              : "l8-breakpoint",
-            glyphMarginHoverMessage: {
-              value: condition
-                ? `Bedingung: \`${condition}\` — Klick entfernt, Alt+Klick bearbeitet`
-                : "Breakpoint — Klick entfernt, Alt+Klick macht ihn bedingt",
-            },
+            glyphMarginClassName: className,
+            glyphMarginHoverMessage: { value: hover },
             stickiness:
               monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
           },
@@ -49,10 +54,16 @@ export function attachBreakpointGutter(
 
   let prevBp = useDebugger.getState().breakpoints[path];
   let prevCond = useDebugger.getState().bpConditions;
+  let prevLog = useDebugger.getState().bpLogpoints;
   const unsub = useDebugger.subscribe((s) => {
-    if (s.breakpoints[path] !== prevBp || s.bpConditions !== prevCond) {
+    if (
+      s.breakpoints[path] !== prevBp ||
+      s.bpConditions !== prevCond ||
+      s.bpLogpoints !== prevLog
+    ) {
       prevBp = s.breakpoints[path];
       prevCond = s.bpConditions;
+      prevLog = s.bpLogpoints;
       render();
     }
   });
