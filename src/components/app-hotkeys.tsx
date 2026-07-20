@@ -59,6 +59,8 @@ export function AppHotkeys() {
     "workspace.settings": () => void openWorkspaceSettings(),
     "debug.attach": () => void useDebugger.getState().connect(),
     "debug.file": () => void debugActiveFile(),
+    "project.graph": () =>
+      useWorkspaceStore.getState().openFile(pageTab("/project-graph")),
     "file.deps": () => {
       const path = useWorkspaceStore.getState().activeFile;
       if (path && !isPageTab(path)) void useFileDeps.getState().openFor(path);

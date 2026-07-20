@@ -66,6 +66,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+L",
   },
   {
+    id: "project.graph",
+    label: "Projekt-Graph öffnen (Modul-Abhängigkeiten)",
+    group: "Navigation",
+    hotkey: "Mod+Alt+G",
+  },
+  {
     id: "file.deps",
     label: "Datei-Abhängigkeiten anzeigen (Imports & Importer)",
     group: "Navigation",

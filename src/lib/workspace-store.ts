@@ -18,6 +18,7 @@ export type SidebarMode = "FileTree" | "Search" | "Scm" | "Outline";
 export const PAGES: Record<string, string> = {
   "/settings": "Settings",
   "/shortcuts": "Shortcuts",
+  "/project-graph": "Projekt-Graph",
 };
 
 export function isPageTab(tab: string) {
