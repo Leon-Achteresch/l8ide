@@ -754,7 +754,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [x] **Notizen/Scratchpads pro Projekt**: ⌘⌥N öffnet die Projekt-Notizen als Markdown-Tab (Rich-Editor via Milkdown); liegen im App-Data außerhalb des Repos, überleben Branch-Wechsel (`project-notes.ts`)
 
-* [ ] **Fokus-Timer & Flow-Schutz**: Benachrichtigungen bündeln, Pomodoro, "nicht stören" bei aktiver Tipp-Phase
+* [x] **Fokus-Timer & Flow-Schutz**: Pomodoro in der Statusbar (⌘⌥F) — 25 Min Fokus / 5 Min Pause mit Countdown, aktiviert automatisch Do-not-disturb während der Fokusphase und stellt den vorherigen DND-Zustand danach wieder her, Toast mit Anschluss-Aktion (`focus-timer.ts`)
 
 * [ ] **Spatial Audio Cues / haptisches Feedback** für Build-/Testereignisse im Hintergrund
 

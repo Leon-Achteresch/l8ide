@@ -30,6 +30,8 @@ import {
   Info,
   Radio,
   Sparkles,
+  Timer,
+  TimerOff,
   TriangleAlert,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -42,6 +44,7 @@ import {
   type NodeEnv,
   type TodoCounts,
 } from "@/lib/project-health";
+import { formatRemaining, useFocusTimer } from "@/lib/focus-timer";
 import { useSearchStore } from "@/lib/search-store";
 
 const KIND_META: Record<
@@ -75,6 +78,34 @@ function AiActivity() {
         </motion.button>
       )}
     </AnimatePresence>
+  );
+}
+
+function FocusTimer() {
+  const phase = useFocusTimer((s) => s.phase);
+  const remaining = useFocusTimer((s) => s.remaining);
+  const active = phase !== "idle";
+  return (
+    <Item
+      onClick={() =>
+        active
+          ? useFocusTimer.getState().stop()
+          : useFocusTimer.getState().start("focus")
+      }
+      title={
+        active ? "Fokus-Session beenden" : "Fokus starten (25 Min, DND an)"
+      }
+      className={cn(active && phase === "focus" && "text-violet-500")}
+    >
+      {active ? (
+        <Timer className="size-3" strokeWidth={2} />
+      ) : (
+        <TimerOff className="size-3" strokeWidth={2} />
+      )}
+      {active && (
+        <span className="tabular-nums">{formatRemaining(remaining)}</span>
+      )}
+    </Item>
   );
 }
 
@@ -412,6 +443,7 @@ export function StatusBar() {
         </Item>
         <DevPorts />
         <ProjectHealth />
+        <FocusTimer />
         <AiActivity />
       </div>
       {showEditor && (

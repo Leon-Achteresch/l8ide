@@ -21,6 +21,7 @@ import { useHttpClient } from "@/lib/http-client";
 import { useWorkContexts } from "@/lib/workspace-contexts";
 import { useLocalHistoryDialog } from "@/lib/local-history";
 import { useBlameSettings } from "@/lib/blame-layer";
+import { useFocusTimer } from "@/lib/focus-timer";
 import { useReflog } from "@/lib/reflog-store";
 import { runBuildTask, runTestTask } from "@/lib/tasks";
 import { useNavHistory } from "@/lib/nav-history";
@@ -54,6 +55,11 @@ export function AppHotkeys() {
     "task.build": () => void runBuildTask(),
     "task.test": () => void runTestTask(),
     "view.screencast": () => useViewStore.getState().toggleScreencast(),
+    "focus.toggle": () => {
+      const f = useFocusTimer.getState();
+      if (f.phase === "idle") f.start("focus");
+      else f.stop();
+    },
     "clipboard.history": () =>
       useClipboardHistory.getState().setDialogOpen(true),
     "workspace.contexts": () =>

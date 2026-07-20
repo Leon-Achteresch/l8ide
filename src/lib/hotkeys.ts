@@ -144,6 +144,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Shift+V",
   },
   {
+    id: "focus.toggle",
+    label: "Fokus-Session starten/beenden (Pomodoro)",
+    group: "Ansicht",
+    hotkey: "Mod+Alt+F",
+  },
+  {
     id: "view.screencast",
     label: "Screencast-Modus (Tastenanzeige) umschalten",
     group: "Ansicht",
