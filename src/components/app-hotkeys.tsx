@@ -11,6 +11,7 @@ import { useCommandPalette } from "@/components/command-palette";
 import { setCommandRegistry } from "@/lib/command-registry";
 import { useClipboardHistory } from "@/lib/clipboard-history";
 import { useFileHeatmap } from "@/lib/file-heatmap";
+import { openProjectNotes } from "@/lib/project-notes";
 import { useWorkContexts } from "@/lib/workspace-contexts";
 import { useLocalHistoryDialog } from "@/lib/local-history";
 import { runBuildTask, runTestTask } from "@/lib/tasks";
@@ -50,6 +51,7 @@ export function AppHotkeys() {
     "workspace.contexts": () =>
       useWorkContexts.getState().setDialogOpen(true),
     "explorer.heatmap": () => useFileHeatmap.getState().toggle(),
+    "project.notes": () => void openProjectNotes(),
     "history.local": () => {
       const path = useWorkspaceStore.getState().activeFile;
       if (path && !isPageTab(path)) useLocalHistoryDialog.getState().openFor(path);

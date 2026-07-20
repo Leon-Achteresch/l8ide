@@ -66,6 +66,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+L",
   },
   {
+    id: "project.notes",
+    label: "Projekt-Notizen öffnen",
+    group: "Allgemein",
+    hotkey: "Mod+Alt+N",
+  },
+  {
     id: "explorer.heatmap",
     label: "Explorer: Änderungs-Heatmap umschalten",
     group: "Ansicht",

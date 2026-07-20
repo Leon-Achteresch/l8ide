@@ -752,7 +752,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Befehls-Vorhersage**: Häufige Aktionsfolgen lernen und als Ein-Klick-Makro anbieten
 
-* [ ] **Notizen/Scratchpads pro Projekt**: Markdown-Notizen mit Code-Links, die Refactorings überleben
+* [x] **Notizen/Scratchpads pro Projekt**: ⌘⌥N öffnet die Projekt-Notizen als Markdown-Tab (Rich-Editor via Milkdown); liegen im App-Data außerhalb des Repos, überleben Branch-Wechsel (`project-notes.ts`)
 
 * [ ] **Fokus-Timer & Flow-Schutz**: Benachrichtigungen bündeln, Pomodoro, "nicht stören" bei aktiver Tipp-Phase
 
