@@ -13,6 +13,7 @@ import { useEditorDisplayOptions } from "@/lib/editor-settings";
 import { ideMonacoTheme } from "@/lib/ide-theme";
 import { formatAndSave, usePrettierSettings } from "@/lib/prettier-format";
 import { scheduleBackup, takeBackup } from "@/lib/hot-exit";
+import { attachBreakpointGutter } from "@/lib/breakpoint-gutter";
 import { attachCallHierarchy } from "@/lib/call-hierarchy";
 import { attachInlineChat } from "@/lib/inline-chat";
 import { trackEditorStatus } from "@/lib/status-store";
@@ -174,6 +175,7 @@ function TextEditor({
             ...displayOptions,
             fontSize,
             minimap: { enabled: false },
+            glyphMargin: true,
             automaticLayout: true,
             links: true,
             inlayHints: { enabled: "on" },
@@ -200,6 +202,7 @@ function TextEditor({
             trackEditorStatus(editor);
             attachInlineChat(editor, monaco, path);
             attachCallHierarchy(editor);
+            attachBreakpointGutter(editor, monaco, path);
             const gutter = attachGitGutter(editor, monaco, path);
             const unsubGutter = useGitStore.subscribe(
               () => void gutter.refresh(),

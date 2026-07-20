@@ -362,7 +362,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [~] **Node.js/JavaScript-Debugger eingebaut**: Attach an `node --inspect` via V8-Inspector-WebSocket (⌘⌥D, Port 9229); Debug-Island mit Pause/Continue, Step Over/Into/Out, aufklappbarem Call Stack (Klick springt zur Datei), Auto-Sprung zum Top-Frame bei Pause (`debugger.ts`, `debug-island.tsx`); Breakpoints, Variablen, Launch-Configs fehlen (nächste Phasen)
 
-* [ ] **Breakpoints**: Standard, Conditional (Expression), Hit Count, Logpoints (Logging ohne Stop), Function Breakpoints, Data Breakpoints, Triggered Breakpoints (abhängig von anderem Breakpoint), Inline Breakpoints
+* [~] **Breakpoints**: Standard-Breakpoints per Klick in die Glyph-Margin (roter Punkt, persistiert pro Datei, live add/remove während der Session, Sync aller Breakpoints beim Attach — `breakpoint-gutter.ts`, `setBreakpointByUrl` verifiziert); Conditional/Hit-Count/Logpoints/Function/Data/Inline fehlen
 
 * [ ] **Ausführungssteuerung**: Continue, Step Over/Into/Out, Restart, Stop, Restart Frame
 

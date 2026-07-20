@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { toast } from "sonner";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { openFileAt } from "@/lib/monaco-navigation";
 
 export type DebugState = "disconnected" | "connecting" | "running" | "paused";
@@ -23,6 +24,7 @@ type DebuggerStore = {
   state: DebugState;
   frames: StackFrame[];
   port: number;
+  breakpoints: Record<string, number[]>;
   connect: (port?: number) => Promise<void>;
   disconnect: () => void;
   resume: () => void;
@@ -30,14 +32,53 @@ type DebuggerStore = {
   stepOver: () => void;
   stepInto: () => void;
   stepOut: () => void;
+  toggleBreakpoint: (path: string, line: number) => void;
 };
 
 let ws: WebSocket | null = null;
 let nextId = 1;
+const pending = new Map<number, (result: unknown) => void>();
+const bpIds = new Map<string, string>();
 
-function send(method: string, params?: Record<string, unknown>) {
+function send(
+  method: string,
+  params?: Record<string, unknown>,
+  onResult?: (result: unknown) => void,
+) {
   if (ws?.readyState === WebSocket.OPEN) {
-    ws.send(JSON.stringify({ id: nextId++, method, ...(params ? { params } : {}) }));
+    const id = nextId++;
+    if (onResult) pending.set(id, onResult);
+    ws.send(JSON.stringify({ id, method, ...(params ? { params } : {}) }));
+  }
+}
+
+function bpKey(path: string, line: number) {
+  return `${path}:${line}`;
+}
+
+function sendSetBreakpoint(path: string, line: number) {
+  send(
+    "Debugger.setBreakpointByUrl",
+    { lineNumber: line - 1, url: `file://${encodeURI(path)}` },
+    (result) => {
+      const id = (result as { breakpointId?: string } | undefined)?.breakpointId;
+      if (id) bpIds.set(bpKey(path, line), id);
+    },
+  );
+}
+
+function sendRemoveBreakpoint(path: string, line: number) {
+  const id = bpIds.get(bpKey(path, line));
+  if (id) {
+    send("Debugger.removeBreakpoint", { breakpointId: id });
+    bpIds.delete(bpKey(path, line));
+  }
+}
+
+function syncAllBreakpoints() {
+  const { breakpoints } = useDebugger.getState();
+  for (const [path, lines] of Object.entries(breakpoints)) {
+    for (const line of lines) sendSetBreakpoint(path, line);
   }
 }
 
@@ -58,10 +99,31 @@ function toFrames(callFrames: unknown): StackFrame[] {
   });
 }
 
-export const useDebugger = create<DebuggerStore>()((set, get) => ({
+export const useDebugger = create<DebuggerStore>()(
+  persist(
+    (set, get) => ({
   state: "disconnected",
   frames: [],
   port: 9229,
+  breakpoints: {},
+
+  toggleBreakpoint: (path, line) => {
+    const current = get().breakpoints[path] ?? [];
+    const has = current.includes(line);
+    const lines = has
+      ? current.filter((l) => l !== line)
+      : [...current, line].sort((a, b) => a - b);
+    set((s) => {
+      const breakpoints = { ...s.breakpoints };
+      if (lines.length === 0) delete breakpoints[path];
+      else breakpoints[path] = lines;
+      return { breakpoints };
+    });
+    if (get().state === "running" || get().state === "paused") {
+      if (has) sendRemoveBreakpoint(path, line);
+      else sendSetBreakpoint(path, line);
+    }
+  },
 
   connect: async (port = 9229) => {
     if (get().state !== "disconnected") get().disconnect();
@@ -94,14 +156,25 @@ export const useDebugger = create<DebuggerStore>()((set, get) => ({
       set({ state: "running" });
       send("Debugger.enable");
       send("Runtime.enable");
+      syncAllBreakpoints();
       send("Runtime.runIfWaitingForDebugger");
       toast.success(`Debugger verbunden (Port ${port})`);
     };
     socket.onmessage = (event) => {
-      let msg: { method?: string; params?: { callFrames?: unknown } };
+      let msg: {
+        id?: number;
+        result?: unknown;
+        method?: string;
+        params?: { callFrames?: unknown };
+      };
       try {
         msg = JSON.parse(String(event.data));
       } catch {
+        return;
+      }
+      if (msg.id !== undefined) {
+        pending.get(msg.id)?.(msg.result);
+        pending.delete(msg.id);
         return;
       }
       if (msg.method === "Debugger.paused") {
@@ -121,6 +194,8 @@ export const useDebugger = create<DebuggerStore>()((set, get) => ({
     socket.onclose = () => {
       if (ws === socket) {
         ws = null;
+        pending.clear();
+        bpIds.clear();
         set({ state: "disconnected", frames: [] });
       }
     };
@@ -130,6 +205,8 @@ export const useDebugger = create<DebuggerStore>()((set, get) => ({
   disconnect: () => {
     ws?.close();
     ws = null;
+    pending.clear();
+    bpIds.clear();
     set({ state: "disconnected", frames: [] });
   },
 
@@ -138,7 +215,10 @@ export const useDebugger = create<DebuggerStore>()((set, get) => ({
   stepOver: () => send("Debugger.stepOver"),
   stepInto: () => send("Debugger.stepInto"),
   stepOut: () => send("Debugger.stepOut"),
-}));
+    }),
+    { name: "debugger", partialize: (s) => ({ breakpoints: s.breakpoints }) },
+  ),
+);
 
 export function jumpToFrame(frame: StackFrame) {
   if (!frame.url.startsWith("file://")) return;

@@ -207,6 +207,13 @@
 
 .git-gutter { width: 3px !important; margin-left: 3px; cursor: pointer; }
 
+.l8-breakpoint {
+  background: radial-gradient(circle at 50% 50%, #ef4444 0 4.5px, transparent 5.5px);
+  cursor: pointer;
+}
+.glyph-margin-widgets .codicon,
+.monaco-editor .margin-view-overlays .cgmr { cursor: pointer; }
+
 @keyframes ai-shimmer {
   0% { background-position: 0% 50%; }
   100% { background-position: 200% 50%; }
