@@ -66,6 +66,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+L",
   },
   {
+    id: "debug.file",
+    label: "Debugger: Aktive Datei debuggen (node --inspect-brk)",
+    group: "Debug",
+    hotkey: "Mod+Alt+B",
+  },
+  {
     id: "debug.attach",
     label: "Debugger: Mit Node verbinden (Port 9229)",
     group: "Debug",

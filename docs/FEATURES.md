@@ -380,7 +380,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **launch.json**: Konfigurationen, Compounds (mehrere Debugger parallel), Variablensubstitution
 
-* [ ] **Auto-Attach & JavaScript Debug Terminal**: Node-Prozesse automatisch debuggen
+* [~] **Auto-Attach & Debug-Launcher**: ⌘⌥B startet die aktive .js/.mjs/.cjs-Datei mit `node --inspect-brk` im Terminal und attacht automatisch (Inspector-Polling, Port-Belegt-Schutz — `debug-launcher.ts`); generelles Auto-Attach an beliebige Node-Prozesse fehlt
 
 * [ ] **Debug-Toolbar & Statusbar-Färbung**
 
