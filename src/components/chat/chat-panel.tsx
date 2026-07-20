@@ -23,6 +23,7 @@ import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { Markdown } from "@/components/chat/markdown";
 import { open } from "@tauri-apps/plugin-dialog";
 import { openAgentEditDiff, useAgentEdits } from "@/lib/agent-edits";
+import { parseSlash, SLASH_COMMANDS } from "@/lib/chat-slash";
 import { type ChatEntry, useChatStore } from "@/lib/chat-store";
 import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { AI_MODELS, useAiSettings } from "@/lib/ai-settings";
@@ -59,7 +60,14 @@ function ChatPanelInner() {
   function submit() {
     const text = draft;
     setDraft("");
-    void send(text);
+    const parsed = parseSlash(text);
+    if (parsed) {
+      if (parsed.attachActivePath)
+        useChatStore.getState().addAttachment(parsed.attachActivePath);
+      void send(parsed.text);
+    } else {
+      void send(text);
+    }
   }
 
   function onKeyDown(e: React.KeyboardEvent) {
@@ -164,6 +172,25 @@ function ChatPanelInner() {
       </div>
 
       <div className="shrink-0 border-t p-2">
+        {draft.startsWith("/") && !draft.includes(" ") && (
+          <div className="mb-1.5 overflow-hidden rounded-lg bg-foreground/[0.03]">
+            {SLASH_COMMANDS.filter((c) =>
+              c.name.startsWith(draft.slice(1).toLowerCase()),
+            ).map((c) => (
+              <button
+                key={c.name}
+                type="button"
+                onClick={() => setDraft(`/${c.name} `)}
+                className="flex w-full items-baseline gap-2 px-2.5 py-1 text-left text-xs hover:bg-foreground/[0.05]"
+              >
+                <span className="font-mono font-medium text-violet-500">
+                  /{c.name}
+                </span>
+                <span className="text-muted-foreground">{c.description}</span>
+              </button>
+            ))}
+          </div>
+        )}
         <AttachmentBar />
         <div className="relative">
           <Textarea

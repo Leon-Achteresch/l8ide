@@ -494,7 +494,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Next Edit Suggestions**: Vorhersage der nächsten Änderung an anderer Stelle
 
-* [x] **AI-Chat (Basis)**: Chat-Panel mit Agent-Loop und Workspace-Tools (list/read/search/edit/create), OpenRouter-Streaming, tokeneffiziente History (alte Tool-Ausgaben werden gestubbt, Outputs gekappt — `pruneForLlm`, Test `test:aiprune`); Slash-Commands/Teilnehmer fehlen
+* [x] **AI-Chat**: Chat-Panel mit Agent-Loop und Workspace-Tools (list/read/search/edit/create/run_command), OpenRouter-Streaming, tokeneffiziente History (`pruneForLlm`, Test `test:aiprune`), Datei-Anhänge; **Slash-Commands** `/explain /fix /test /review /refactor` mit Autocomplete, hängen die aktive Datei automatisch an (`chat-slash.ts`)
 
 * [x] **Inline Chat**: ⌘I öffnet Eingabe-Widget an der Cursorposition; ersetzt Selektion bzw. fügt an Cursor ein, ±30 Zeilen Kontext, undo-fähig via executeEdits (`inline-chat.ts`); auch im Editor-Kontextmenü
 
