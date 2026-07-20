@@ -428,6 +428,7 @@ pub fn run() {
             git::repo_full_status,
             git::repo_status,
             git::repo_staged_diff,
+            git::repo_blame,
             git::repo_file_diff,
             git::repo_file_content_at,
             git::git_current_branch,

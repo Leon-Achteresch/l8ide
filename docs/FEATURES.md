@@ -340,7 +340,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Commit-Eingabe**: Textarea mit ⌘⏎; Message-Vervollständigung und Hooks-Feedback fehlen
 
-* [ ] **Git Blame** (via Extension/Timeline), **File History** in Timeline
+* [x] **Git Blame**: ⌘⌥U blendet Autor, Alter und Commit-Summary der Cursorzeile dezent inline ein (GitLens-Stil, folgt dem Cursor, debounced, refresht bei Änderungen/Git-Events — `blame-layer.ts`, Backend `repo_blame`); **File History** in Timeline ✓
 
 * [ ] **Stashes, Tags, Submodule, Worktrees** (Basis-Support)
 
@@ -710,7 +710,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Commit-Komposition**: Hunks/Zeilen per Checkbox auf mehrere Commits verteilen (GitButler-artig, virtuelle Branches)
 
-* [ ] **Blame-Layer permanent**: Dezente Autor/Alter-Anzeige pro Zeile, mit Commit-Peek (GitLens nativ)
+* [~] **Blame-Layer**: Inline-Autor/Alter der aktuellen Zeile, umschaltbar (⌘⌥U), persistiert (`blame-layer.ts`); permanente Alle-Zeilen-Anzeige und Commit-Peek als Ausbau offen
 
 * [ ] **Code-Archäologie**: "Zeig mir jede Version dieser Funktion über die Zeit" als Slider
 

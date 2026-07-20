@@ -20,6 +20,7 @@ import { useStructSearch } from "@/lib/struct-search";
 import { useHttpClient } from "@/lib/http-client";
 import { useWorkContexts } from "@/lib/workspace-contexts";
 import { useLocalHistoryDialog } from "@/lib/local-history";
+import { useBlameSettings } from "@/lib/blame-layer";
 import { runBuildTask, runTestTask } from "@/lib/tasks";
 import { useNavHistory } from "@/lib/nav-history";
 import { open } from "@tauri-apps/plugin-dialog";
@@ -77,6 +78,7 @@ export function AppHotkeys() {
       const path = useWorkspaceStore.getState().activeFile;
       if (path && !isPageTab(path)) void useFileDeps.getState().openFor(path);
     },
+    "blame.toggle": () => useBlameSettings.getState().toggle(),
     "history.local": () => {
       const path = useWorkspaceStore.getState().activeFile;
       if (path && !isPageTab(path)) useLocalHistoryDialog.getState().openFor(path);

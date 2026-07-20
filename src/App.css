@@ -207,6 +207,13 @@
 
 .git-gutter { width: 3px !important; margin-left: 3px; cursor: pointer; }
 
+.l8-blame {
+  color: var(--muted-foreground);
+  opacity: 0.5;
+  font-style: italic;
+  font-size: 0.85em;
+}
+
 .l8-breakpoint {
   background: radial-gradient(circle at 50% 50%, #ef4444 0 4.5px, transparent 5.5px);
   cursor: pointer;

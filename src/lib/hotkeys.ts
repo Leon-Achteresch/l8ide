@@ -150,6 +150,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+K",
   },
   {
+    id: "blame.toggle",
+    label: "Git-Blame-Zeile ein-/ausblenden",
+    group: "Navigation",
+    hotkey: "Mod+Alt+U",
+  },
+  {
     id: "history.local",
     label: "Timeline: Historie der aktuellen Datei",
     group: "Dateien",
