@@ -714,7 +714,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Code-Archäologie**: "Zeig mir jede Version dieser Funktion über die Zeit" als Slider
 
-* [ ] **Undo-Everything**: Journal aller Git-Operationen mit Ein-Klick-Rückgängig (reflog als UI)
+* [x] **Undo-Everything**: ⌘⌥R öffnet das Git-Reflog als Liste (Kurz-Hash, Aktionstyp, Betreff), Klick setzt per `reset --hard` auf den Stand zurück (Bestätigung, selbst wieder übers Reflog auffindbar; `git_reflog`/`git_reset`, `reflog-store.ts`)
 
 * [ ] **Automatische WIP-Snapshots**: Commit-loser Sicherungsstand bei jedem Testlauf/Branch-Wechsel
 

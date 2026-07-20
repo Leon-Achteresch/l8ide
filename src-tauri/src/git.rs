@@ -4671,6 +4671,44 @@ pub async fn git_reset(path: String, target: String, mode: String) -> Result<Str
 }
 
 #[derive(Serialize)]
+pub struct ReflogEntry {
+    pub short_hash: String,
+    pub selector: String,
+    pub action: String,
+    pub subject: String,
+}
+
+#[tauri::command]
+pub async fn git_reflog(path: String, limit: Option<usize>) -> Result<Vec<ReflogEntry>, String> {
+    spawn_git(move || {
+        let repo = PathBuf::from(path.trim());
+        let n = format!("-{}", limit.unwrap_or(40).clamp(1, 200));
+        let out = run_git(
+            &repo,
+            &[
+                "reflog",
+                &n,
+                "--format=%h%x1f%gd%x1f%gs%x1f%s",
+            ],
+        )?;
+        Ok(out
+            .lines()
+            .filter(|l| !l.trim().is_empty())
+            .filter_map(|line| {
+                let mut parts = line.split('\u{1f}');
+                Some(ReflogEntry {
+                    short_hash: parts.next()?.to_string(),
+                    selector: parts.next()?.to_string(),
+                    action: parts.next().unwrap_or("").to_string(),
+                    subject: parts.next().unwrap_or("").to_string(),
+                })
+            })
+            .collect())
+    })
+    .await
+}
+
+#[derive(Serialize)]
 pub struct ContributorStat {
     pub name: String,
     pub email: String,

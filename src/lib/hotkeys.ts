@@ -150,6 +150,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+K",
   },
   {
+    id: "git.reflog",
+    label: "Git-Verlauf (Reflog / Undo Everything)",
+    group: "Navigation",
+    hotkey: "Mod+Alt+R",
+  },
+  {
     id: "blame.toggle",
     label: "Git-Blame-Zeile ein-/ausblenden",
     group: "Navigation",
