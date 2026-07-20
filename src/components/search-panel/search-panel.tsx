@@ -22,6 +22,7 @@ import {
   FileDiff,
   FileOutput,
   Loader2,
+  PanelTop,
   Regex,
   ReplaceAll,
   Search,
@@ -82,6 +83,8 @@ export function SearchPanel({ rootPath }: { rootPath: string }) {
   const useRegex = useSearchStore((s) => s.useRegex);
   const noIgnore = useSearchStore((s) => s.noIgnore);
   const toggleNoIgnore = useSearchStore((s) => s.toggleNoIgnore);
+  const openOnly = useSearchStore((s) => s.openOnly);
+  const toggleOpenOnly = useSearchStore((s) => s.toggleOpenOnly);
   const toggleCaseSensitive = useSearchStore((s) => s.toggleCaseSensitive);
   const toggleWholeWord = useSearchStore((s) => s.toggleWholeWord);
   const toggleRegex = useSearchStore((s) => s.toggleRegex);
@@ -238,6 +241,16 @@ export function SearchPanel({ rootPath }: { rootPath: string }) {
             className="size-6 min-w-6 p-0"
           >
             <Regex className="size-3.5" />
+          </Toggle>
+          <Toggle
+            size="sm"
+            variant="outline"
+            pressed={openOnly}
+            onPressedChange={() => toggleOpenOnly()}
+            title="Nur in geöffneten Editoren suchen"
+            className="size-6 min-w-6 p-0"
+          >
+            <PanelTop className="size-3.5" />
           </Toggle>
 
           <button

@@ -272,7 +272,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Search Editor**: „Als Tab"-Button friert die Suchergebnisse als Editor-Tab ein (Query-Header, nach Datei gruppiert, Treffer-Highlighting, Klick springt zur Stelle; überlebt neue Suchen — `search-editor-store.ts`, `search-editor-page.tsx`); nicht editierbar
 
-* [ ] **Suche in geöffneten Editoren**
+* [x] **Suche in geöffneten Editoren**: Toggle in der Such-Optionsleiste beschränkt die Suche auf die offenen Tabs aller Editor-Gruppen (als Include-Globs ans Backend gereicht, kombinierbar mit eigenen Filtern)
 
 * [x] **Suchergebnis-Kontextzeilen**
 

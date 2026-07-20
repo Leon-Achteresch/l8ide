@@ -1,6 +1,7 @@
 import { getMonacoInstance } from "@/lib/monaco-instance";
 import { monacoUriForPath } from "@/lib/monaco-uri";
 import { useRefactorPreview, type FileEdit } from "@/lib/refactor-preview";
+import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { invoke } from "@tauri-apps/api/core";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import { toast } from "sonner";
@@ -48,6 +49,7 @@ type SearchStore = {
   wholeWord: boolean;
   useRegex: boolean;
   noIgnore: boolean;
+  openOnly: boolean;
   showReplace: boolean;
   showFilters: boolean;
   files: FileMatches[];
@@ -67,6 +69,7 @@ type SearchStore = {
   toggleWholeWord: () => void;
   toggleRegex: () => void;
   toggleNoIgnore: () => void;
+  toggleOpenOnly: () => void;
   toggleShowReplace: () => void;
   toggleShowFilters: () => void;
   toggleCollapsed: (path: string) => void;
@@ -79,13 +82,31 @@ type SearchStore = {
   replaceOne: (root: string, path: string, match: SearchMatch) => Promise<void>;
 };
 
+function openEditorGlobs(): string {
+  const ws = useWorkspaceStore.getState();
+  const root = ws.rootPath?.replace(/\/+$/, "");
+  if (!root) return "";
+  const paths = new Set<string>();
+  for (const group of Object.values(ws.groups)) {
+    for (const tab of group.tabs) {
+      if (!isPageTab(tab) && tab.startsWith(`${root}/`)) {
+        paths.add(tab.slice(root.length + 1));
+      }
+    }
+  }
+  return [...paths].join(",");
+}
+
 function backendOptions(s: SearchStore) {
+  const include = s.openOnly
+    ? [openEditorGlobs(), s.include].filter(Boolean).join(",")
+    : s.include;
   return {
     query: s.query,
     caseSensitive: s.caseSensitive,
     wholeWord: s.wholeWord,
     regex: s.useRegex,
-    include: s.include,
+    include,
     exclude: s.exclude,
     noIgnore: s.noIgnore,
   };
@@ -115,6 +136,7 @@ export const useSearchStore = create<SearchStore>()((set, get) => ({
   wholeWord: false,
   useRegex: false,
   noIgnore: false,
+  openOnly: false,
   showReplace: false,
   showFilters: false,
   files: [],
@@ -135,6 +157,7 @@ export const useSearchStore = create<SearchStore>()((set, get) => ({
   toggleWholeWord: () => set((s) => ({ wholeWord: !s.wholeWord })),
   toggleRegex: () => set((s) => ({ useRegex: !s.useRegex })),
   toggleNoIgnore: () => set((s) => ({ noIgnore: !s.noIgnore })),
+  toggleOpenOnly: () => set((s) => ({ openOnly: !s.openOnly })),
   toggleShowReplace: () => set((s) => ({ showReplace: !s.showReplace })),
   toggleShowFilters: () => set((s) => ({ showFilters: !s.showFilters })),
   toggleCollapsed: (path) =>
