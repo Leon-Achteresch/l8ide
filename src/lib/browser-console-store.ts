@@ -2,7 +2,13 @@ import { listen } from "@tauri-apps/api/event";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type ConsoleLevel = "log" | "info" | "warn" | "error" | "debug";
+export type ConsoleLevel =
+  | "log"
+  | "info"
+  | "warn"
+  | "error"
+  | "debug"
+  | "input";
 export type ConsoleEntry = {
   id: number;
   level: ConsoleLevel;
@@ -43,6 +49,21 @@ export const useBrowserConsole = create<BrowserConsoleStore>()(
     },
   ),
 );
+
+export function pushConsoleInput(code: string) {
+  useBrowserConsole.setState((s) => ({
+    entries: [
+      ...s.entries,
+      { id: nextId++, level: "input" as const, text: code, time: Date.now() },
+    ].slice(-MAX_ENTRIES),
+  }));
+}
+
+export function evalInBrowser(code: string) {
+  pushConsoleInput(code);
+  const wrapped = `try { var __l8r = (0, eval)(${JSON.stringify(code)}); console.log(__l8r === undefined ? "undefined" : __l8r); } catch (e) { console.error(String(e)); }`;
+  void import("@/lib/browser").then((m) => m.browserEval(wrapped));
+}
 
 let wired = false;
 

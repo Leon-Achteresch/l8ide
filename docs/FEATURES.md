@@ -372,7 +372,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Call Stack** mit Multi-Thread-/Multi-Session-Support
 
-* [ ] **Debug Console / REPL**: Ausdrücke im aktuellen Kontext auswerten
+* [x] **Debug Console / REPL (Browser)**: Eingabezeile in der Browser-Konsole führt JS im Seitenkontext aus (Ergebnis/Fehler als Log-Eintrag, ↑/↓-History, Eingaben violett mit ❯-Prompt); Node-Debug-Kontext fehlt
 
 * [ ] **Inline Values**: Variablenwerte direkt im Code während Debugging
 

@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Ban, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { SPRING_PANEL } from "@/lib/ease";
 import {
+  evalInBrowser,
   useBrowserConsole,
   type ConsoleLevel,
 } from "@/lib/browser-console-store";
@@ -14,10 +15,64 @@ const LEVEL_CLASS: Record<ConsoleLevel, string> = {
   info: "text-sky-500",
   warn: "text-amber-500",
   error: "text-red-500",
+  input: "text-violet-500",
 };
 
 function timeLabel(t: number) {
   return new Date(t).toLocaleTimeString("de-DE", { hour12: false });
+}
+
+function ReplInput() {
+  const [value, setValue] = useState("");
+  const historyRef = useRef<string[]>([]);
+  const indexRef = useRef(-1);
+
+  const submit = () => {
+    const code = value.trim();
+    if (!code) return;
+    evalInBrowser(code);
+    historyRef.current.push(code);
+    indexRef.current = -1;
+    setValue("");
+  };
+
+  const navigate = (delta: number) => {
+    const history = historyRef.current;
+    if (history.length === 0) return;
+    const next =
+      indexRef.current === -1
+        ? delta < 0
+          ? history.length - 1
+          : -1
+        : Math.min(history.length - 1, Math.max(-1, indexRef.current + delta));
+    indexRef.current = next;
+    setValue(next === -1 ? "" : history[next]);
+  };
+
+  return (
+    <div className="flex shrink-0 items-center gap-2 px-2.5 pb-1.5">
+      <span className="shrink-0 font-mono text-[11px] text-violet-500">❯</span>
+      <input
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") submit();
+          else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            navigate(-1);
+          } else if (e.key === "ArrowDown") {
+            e.preventDefault();
+            navigate(1);
+          }
+        }}
+        placeholder="JS im Seitenkontext ausführen…"
+        spellCheck={false}
+        autoCapitalize="off"
+        autoCorrect="off"
+        className="min-w-0 flex-1 bg-transparent font-mono text-[11px] text-foreground outline-none placeholder:text-muted-foreground/60"
+      />
+    </div>
+  );
 }
 
 export function BrowserConsole() {
@@ -82,7 +137,7 @@ export function BrowserConsole() {
                 entries.map((e) => (
                   <div key={e.id} className="flex gap-2">
                     <span className="shrink-0 tabular-nums text-muted-foreground/60">
-                      {timeLabel(e.time)}
+                      {e.level === "input" ? "❯" : timeLabel(e.time)}
                     </span>
                     <span
                       className={cn(
@@ -96,6 +151,7 @@ export function BrowserConsole() {
                 ))
               )}
             </div>
+            <ReplInput />
           </div>
         </motion.div>
       )}
