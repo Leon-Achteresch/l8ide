@@ -8,6 +8,7 @@ import {
 import { FolderIcon } from "@/components/folder-icon";
 import { dlog, installDndDiagnostics } from "@/lib/dnd-log";
 import { fileIcon } from "@/lib/file-icons";
+import { heatOf, useFileHeatmap } from "@/lib/file-heatmap";
 import { nestEntries } from "@/lib/file-nesting";
 import { useCommandHotkeys } from "@/lib/hotkeys";
 import { basename, canMove, dragRoots, parentDir } from "@/lib/fs-move";
@@ -331,6 +332,11 @@ const TreeNode = memo(function TreeNode({
 		(entry.isDirectory ? s.dirCounts : s.fileCounts)[entry.path],
 	);
 	const gitDeco = useGitDeco(entry.path, entry.isDirectory);
+	const heat = useFileHeatmap((s) =>
+		s.enabled && !entry.isDirectory && s.max > 0
+			? heatOf(s.counts, s.max, entry.path)
+			: 0,
+	);
 	const isSelected = useTreeStore((s) => s.selected.includes(entry.path));
 	const isDropTarget = useTreeStore((s) => s.dropTarget === entry.path);
 	const isDragSource = useTreeStore((s) => s.dragging.includes(entry.path));
@@ -592,6 +598,13 @@ const TreeNode = memo(function TreeNode({
 									>
 										{entry.name}
 									</span>
+									{heat > 0 && (
+										<span
+											title="Häufig geändert (Git-Heatmap)"
+											className="relative z-10 ml-1 size-1.5 shrink-0 rounded-full bg-amber-500"
+											style={{ opacity: 0.25 + heat * 0.75 }}
+										/>
+									)}
 									{counts && (counts.errors > 0 || counts.warnings > 0) ? (
 										<span
 											className={cn(
@@ -812,6 +825,11 @@ export function FileTree({ rootPath }: { rootPath: string }) {
 	useEffect(() => {
 		installDndDiagnostics();
 	}, []);
+
+	useEffect(() => {
+		if (useFileHeatmap.getState().enabled)
+			void useFileHeatmap.getState().ensureLoaded();
+	}, [rootPath]);
 
 	useEffect(() => {
 		const onKey = (e: KeyboardEvent) => {

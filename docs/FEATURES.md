@@ -630,7 +630,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Frage-basierte Navigation**: "Wo wird der User authentifiziert?" → semantische Suche über Embeddings der Codebase
 
-* [ ] **Heatmap im Dateibaum**: Änderungsfrequenz, Bug-Dichte, Ownership farblich im Explorer
+* [x] **Heatmap im Dateibaum (Änderungsfrequenz)**: ⌘⌥M toggelt amber Punkte im Explorer, Intensität = Commit-Häufigkeit der Datei (git log der letzten 500 Commits, lazy geladen, opt-in; `file-heatmap.ts`); Bug-Dichte/Ownership fehlen
 
 * [ ] **Verlaufs-Graph des eigenen Arbeitstags**: Welche Dateien wann besucht/geändert, als Timeline zum Zurückspringen
 

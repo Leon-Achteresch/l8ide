@@ -10,6 +10,7 @@ import { useFileSearchStore } from "@/components/file-search";
 import { useCommandPalette } from "@/components/command-palette";
 import { setCommandRegistry } from "@/lib/command-registry";
 import { useClipboardHistory } from "@/lib/clipboard-history";
+import { useFileHeatmap } from "@/lib/file-heatmap";
 import { useWorkContexts } from "@/lib/workspace-contexts";
 import { useLocalHistoryDialog } from "@/lib/local-history";
 import { runBuildTask, runTestTask } from "@/lib/tasks";
@@ -48,6 +49,7 @@ export function AppHotkeys() {
       useClipboardHistory.getState().setDialogOpen(true),
     "workspace.contexts": () =>
       useWorkContexts.getState().setDialogOpen(true),
+    "explorer.heatmap": () => useFileHeatmap.getState().toggle(),
     "history.local": () => {
       const path = useWorkspaceStore.getState().activeFile;
       if (path && !isPageTab(path)) useLocalHistoryDialog.getState().openFor(path);

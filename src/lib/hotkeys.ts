@@ -66,6 +66,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+L",
   },
   {
+    id: "explorer.heatmap",
+    label: "Explorer: Änderungs-Heatmap umschalten",
+    group: "Ansicht",
+    hotkey: "Mod+Alt+M",
+  },
+  {
     id: "workspace.contexts",
     label: "Arbeitskontexte (Tabs & Layout speichern/wechseln)",
     group: "Allgemein",
