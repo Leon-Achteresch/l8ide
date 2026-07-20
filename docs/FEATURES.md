@@ -594,7 +594,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Strukturelles Editieren (AST-basiert)**: Ausdrücke/Statements als Einheiten verschieben, tauschen, umschließen (Paredit-artig für alle Sprachen via Tree-sitter)
 
-* [ ] **Strukturelle Suche & Replace**: Suchen nach Code-Mustern statt Text (wie IntelliJ SSR / ast-grep integriert)
+* [~] **Strukturelle Suche**: ⌘⇧S — Code-Muster mit `$name` (ein Token) und `$$$` (beliebig), whitespace-tolerant um Klammern/Kommas; ripgrep-Vorfilter + struktureller Nachfilter über die Trefferdateien, Klick springt zur Stelle (`struct-search-core.ts` mit Test `test:structsearch`); strukturelles Replace fehlt
 
 * [ ] **Multi-File-Rename mit Datei-/Ordnernamen-Kopplung**: Symbol umbenennen benennt Datei, Tests, Storybook-Dateien mit um
 

@@ -16,6 +16,7 @@ import { openWorkspaceSettings } from "@/lib/workspace-settings";
 import { useDebugger } from "@/lib/debugger";
 import { debugActiveFile } from "@/lib/debug-launcher";
 import { useFileDeps } from "@/lib/file-deps";
+import { useStructSearch } from "@/lib/struct-search";
 import { useWorkContexts } from "@/lib/workspace-contexts";
 import { useLocalHistoryDialog } from "@/lib/local-history";
 import { runBuildTask, runTestTask } from "@/lib/tasks";
@@ -59,6 +60,7 @@ export function AppHotkeys() {
     "workspace.settings": () => void openWorkspaceSettings(),
     "debug.attach": () => void useDebugger.getState().connect(),
     "debug.file": () => void debugActiveFile(),
+    "search.structural": () => useStructSearch.getState().setOpen(true),
     "project.graph": () =>
       useWorkspaceStore.getState().openFile(pageTab("/project-graph")),
     "file.deps": () => {

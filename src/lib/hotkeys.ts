@@ -66,6 +66,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+L",
   },
   {
+    id: "search.structural",
+    label: "Strukturelle Suche (Code-Muster mit $-Wildcards)",
+    group: "Allgemein",
+    hotkey: "Mod+Shift+S",
+  },
+  {
     id: "project.graph",
     label: "Projekt-Graph öffnen (Modul-Abhängigkeiten)",
     group: "Navigation",

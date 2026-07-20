@@ -13,6 +13,7 @@ import { BreakpointConditionDialog } from "@/components/breakpoint-condition-dia
 import { CallHierarchyDialog } from "@/components/call-hierarchy-dialog";
 import { DebugIsland } from "@/components/debug-island";
 import { FileDepsDialog } from "@/components/file-deps-dialog";
+import { StructSearchDialog } from "@/components/struct-search-dialog";
 import { ClipboardHistoryDialog } from "@/components/clipboard-history-dialog";
 import { WorkContextsDialog } from "@/components/work-contexts-dialog";
 import { ScreencastOverlay } from "@/components/screencast-overlay";
@@ -195,6 +196,7 @@ function RootComponent() {
       <DebugIsland />
       <BreakpointConditionDialog />
       <FileDepsDialog />
+      <StructSearchDialog />
       <Toaster />
       {RouterDevtools && (
         <Suspense fallback={null}>

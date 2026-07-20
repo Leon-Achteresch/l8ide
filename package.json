@@ -16,6 +16,7 @@
     "test:postfix": "node scripts/test-postfix.mjs",
     "test:filedeps": "node scripts/test-file-deps.mjs",
     "test:projectgraph": "node scripts/test-project-graph.mjs",
+    "test:structsearch": "node scripts/test-struct-search.mjs",
     "test:semantic": "node scripts/test-semantic-tokens.mjs",
     "test:tw": "node scripts/test-tailwind.mjs",
     "test:url": "node scripts/test-url-normalize.mjs",
