@@ -63,6 +63,10 @@ type GitStore = {
   unstageAll: () => Promise<void>;
   commit: (amend?: boolean) => Promise<void>;
   generateCommitMessage: () => Promise<void>;
+  review: string | null;
+  reviewing: boolean;
+  reviewStaged: () => Promise<void>;
+  clearReview: () => void;
   checkout: (name: string, fromRemote?: string) => Promise<void>;
   fetch: () => Promise<void>;
   pull: () => Promise<void>;
@@ -89,6 +93,8 @@ export const useGitStore = create<GitStore>()((set, get) => ({
   entries: [],
   branches: [],
   commitMessage: "",
+  review: null,
+  reviewing: false,
   busy: false,
   loaded: false,
   error: null,
@@ -186,6 +192,44 @@ export const useGitStore = create<GitStore>()((set, get) => ({
       .map((e) => e.path);
     await get().unstage(files);
   },
+
+  reviewStaged: async () => {
+    const path = root();
+    if (!path) return;
+    const { apiKey, model } = useAiSettings.getState();
+    if (!apiKey) {
+      toast.error("Kein OpenRouter-API-Key hinterlegt. Einstellungen → KI.");
+      return;
+    }
+    set({ reviewing: true });
+    try {
+      const diff = await invoke<string>("repo_staged_diff", { path });
+      if (!diff.trim()) {
+        toast.info("Keine gestagten Änderungen.");
+        return;
+      }
+      const llm = createOpenRouterLlm({ apiKey, model });
+      const result = await llm(
+        [
+          {
+            role: "system",
+            content:
+              "Du bist ein strenger Code-Reviewer. Prüfe den Git-Diff auf Bugs, Logikfehler, Sicherheitsprobleme und vergessene Reste (Debug-Ausgaben, tote Codepfade). Keine Stil-Nörgelei. Antworte kompakt auf Deutsch in Markdown: pro Fund eine Zeile im Format '- datei: Problem'. Wenn nichts auffällt, antworte exakt: Keine Auffälligkeiten.",
+          },
+          { role: "user", content: diff.slice(0, 24000) },
+        ],
+        [],
+      );
+      const review = (result.content ?? "").trim();
+      set({ review: review || null });
+    } catch (e) {
+      toast.error(describeError(e));
+    } finally {
+      set({ reviewing: false });
+    }
+  },
+
+  clearReview: () => set({ review: null }),
 
   generateCommitMessage: async () => {
     const path = root();

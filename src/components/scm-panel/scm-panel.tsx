@@ -8,6 +8,7 @@ import {
   Minus,
   Plus,
   RefreshCw,
+  ShieldCheck,
   Sparkles,
   SquareArrowOutUpRight,
   Undo2,
@@ -29,6 +30,42 @@ function baseName(p: string) {
 function dirName(p: string) {
   const i = p.lastIndexOf("/");
   return i > 0 ? p.slice(0, i) : "";
+}
+
+function ReviewResult() {
+  const review = useGitStore((s) => s.review);
+  const clearReview = useGitStore((s) => s.clearReview);
+  if (!review) return null;
+  const clean = review === "Keine Auffälligkeiten.";
+  return (
+    <div
+      className={cn(
+        "rounded-lg px-2.5 py-2 text-[11px] leading-relaxed",
+        clean ? "bg-emerald-500/10" : "bg-amber-500/10",
+      )}
+    >
+      <div className="mb-1 flex items-center gap-1.5">
+        <ShieldCheck
+          className={cn(
+            "size-3",
+            clean ? "text-emerald-500" : "text-amber-500",
+          )}
+        />
+        <span className="font-semibold text-foreground">KI-Review</span>
+        <button
+          type="button"
+          title="Schließen"
+          onClick={clearReview}
+          className="ml-auto inline-flex size-4.5 items-center justify-center rounded text-muted-foreground hover:bg-foreground/8 hover:text-foreground"
+        >
+          <Minus className="size-3" />
+        </button>
+      </div>
+      <div className="whitespace-pre-wrap break-words text-foreground/85">
+        {review}
+      </div>
+    </div>
+  );
 }
 
 function confirmDiscard(entry: StatusEntry) {
@@ -151,6 +188,7 @@ export function ScmPanel({ rootPath }: { rootPath: string }) {
   const error = useGitStore((s) => s.error);
   const loaded = useGitStore((s) => s.loaded);
   const busy = useGitStore((s) => s.busy);
+  const reviewing = useGitStore((s) => s.reviewing);
   const commitMessage = useGitStore((s) => s.commitMessage);
   const setCommitMessage = useGitStore((s) => s.setCommitMessage);
   const refresh = useGitStore((s) => s.refresh);
@@ -198,6 +236,7 @@ export function ScmPanel({ rootPath }: { rootPath: string }) {
       </div>
 
       <div className="shrink-0 space-y-1.5 border-b border-sidebar-border p-2">
+        <ReviewResult />
         <div className="relative">
           <button
             type="button"
@@ -251,6 +290,20 @@ export function ScmPanel({ rootPath }: { rootPath: string }) {
             )}
           >
             Amend
+          </button>
+          <button
+            type="button"
+            title="KI-Review der gestagten Änderungen"
+            disabled={busy || reviewing || staged.length === 0}
+            onClick={() => void useGitStore.getState().reviewStaged()}
+            className="inline-flex h-7 items-center gap-1 rounded-md px-2 text-[10px] font-medium text-muted-foreground transition-colors hover:bg-foreground/8 hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
+          >
+            {reviewing ? (
+              <Loader2 className="size-3 animate-spin" />
+            ) : (
+              <ShieldCheck className="size-3" />
+            )}
+            Review
           </button>
           <ToolbarButton icon={RefreshCw} label="Fetch" onClick={() => void fetch()} disabled={busy} />
         </div>

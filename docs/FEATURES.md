@@ -660,7 +660,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Codebase-Wissensgraph für KI**: Persistenter, inkrementell aktualisierter Index (Symbole, Architektur, Konventionen) als Kontextquelle
 
-* [ ] **KI-Review vor Commit**: Automatischer Diff-Review mit projekt-spezifischen Regeln als Pre-Commit-Stufe
+* [x] **KI-Review vor Commit**: „Review"-Button im SCM-Panel prüft den gestagten Diff auf Bugs/Logikfehler/Sicherheit/Debug-Reste (one-shot, Diff auf 24k gekappt); Ergebnis als grüne/amber Box über der Commit-Eingabe (`reviewStaged` in `git-store.ts`); projekt-spezifische Regeln fehlen
 
 * [ ] **Intent-basierte Snippets**: Beschreibung tippen, Snippet mit projektüblichen Patterns generiert
 
