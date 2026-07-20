@@ -13,6 +13,7 @@ import { useEditorDisplayOptions } from "@/lib/editor-settings";
 import { ideMonacoTheme } from "@/lib/ide-theme";
 import { formatAndSave, usePrettierSettings } from "@/lib/prettier-format";
 import { scheduleBackup, takeBackup } from "@/lib/hot-exit";
+import { attachCallHierarchy } from "@/lib/call-hierarchy";
 import { attachInlineChat } from "@/lib/inline-chat";
 import { trackEditorStatus } from "@/lib/status-store";
 import { registerEditorRefactors } from "@/lib/ts-refactor";
@@ -198,6 +199,7 @@ function TextEditor({
 
             trackEditorStatus(editor);
             attachInlineChat(editor, monaco, path);
+            attachCallHierarchy(editor);
             const gutter = attachGitGutter(editor, monaco, path);
             const unsubGutter = useGitStore.subscribe(
               () => void gutter.refresh(),

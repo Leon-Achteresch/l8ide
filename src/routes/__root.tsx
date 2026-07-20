@@ -9,6 +9,7 @@ import { CommandPalette } from "@/components/command-palette";
 import { MonacoWorkspace } from "@/components/monaco-workspace";
 import { LocalHistoryDialog } from "@/components/local-history-dialog";
 import { RefactorDialogs } from "@/components/refactor-preview-dialog";
+import { CallHierarchyDialog } from "@/components/call-hierarchy-dialog";
 import { ClipboardHistoryDialog } from "@/components/clipboard-history-dialog";
 import { WorkContextsDialog } from "@/components/work-contexts-dialog";
 import { ScreencastOverlay } from "@/components/screencast-overlay";
@@ -185,6 +186,7 @@ function RootComponent() {
       <RefactorDialogs />
       <LocalHistoryDialog />
       <ClipboardHistoryDialog />
+      <CallHierarchyDialog />
       <WorkContextsDialog />
       <ScreencastOverlay />
       <Toaster />

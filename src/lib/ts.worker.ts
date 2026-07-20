@@ -110,6 +110,54 @@ class RefactorTsWorker extends TypeScriptWorker {
     }
   }
 
+  async getIncomingCalls(
+    fileName: string,
+    offset: number,
+  ): Promise<{
+    root: { name: string; file: string; line: number; column: number } | null;
+    calls: {
+      name: string;
+      file: string;
+      line: number;
+      column: number;
+      offset: number;
+    }[];
+  }> {
+    const empty = { root: null, calls: [] };
+    try {
+      const program = this._languageService.getProgram();
+      if (!program) return empty;
+      const locate = (file: string, pos: number) => {
+        const sf = program.getSourceFile(file);
+        if (!sf) return { line: 1, column: 1 };
+        const lc = sf.getLineAndCharacterOfPosition(pos);
+        return { line: lc.line + 1, column: lc.character + 1 };
+      };
+      const prepared = this._languageService.prepareCallHierarchy(
+        fileName,
+        offset,
+      );
+      if (!prepared) return empty;
+      const item = Array.isArray(prepared) ? prepared[0] : prepared;
+      if (!item) return empty;
+      const incoming = this._languageService.provideCallHierarchyIncomingCalls(
+        item.file,
+        item.selectionSpan.start,
+      );
+      return {
+        root: { name: item.name, file: item.file, ...locate(item.file, item.selectionSpan.start) },
+        calls: incoming.map((c) => ({
+          name: c.from.name,
+          file: c.from.file,
+          offset: c.from.selectionSpan.start,
+          ...locate(c.from.file, c.from.selectionSpan.start),
+        })),
+      };
+    } catch {
+      return empty;
+    }
+  }
+
   async getEncodedSemanticClassifications(
     fileName: string,
     span: ts.TextSpan,

@@ -43,7 +43,22 @@ const FORMAT: ts.FormatCodeSettings = {
   semicolons: "insert" as ts.SemicolonPreference,
 };
 
+export type CallHierarchyNode = {
+  name: string;
+  file: string;
+  line: number;
+  column: number;
+  offset: number;
+};
+
 export type RefactorWorker = {
+  getIncomingCalls(
+    fileName: string,
+    offset: number,
+  ): Promise<{
+    root: Omit<CallHierarchyNode, "offset"> | null;
+    calls: CallHierarchyNode[];
+  }>;
   getImportCompletions(
     fileName: string,
     offset: number,
