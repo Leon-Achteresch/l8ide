@@ -71,6 +71,8 @@ export function AppHotkeys() {
       useWorkspaceStore.getState().openFile(pageTab("/project-graph")),
     "deps.dashboard": () =>
       useWorkspaceStore.getState().openFile(pageTab("/dependencies")),
+    "processes.dashboard": () =>
+      useWorkspaceStore.getState().openFile(pageTab("/processes")),
     "file.deps": () => {
       const path = useWorkspaceStore.getState().activeFile;
       if (path && !isPageTab(path)) void useFileDeps.getState().openFor(path);

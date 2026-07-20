@@ -648,7 +648,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Datenbank-Client nativ**: Verbindungen, Schema-Browser, Query-Editor mit Completion gegen echtes Schema, ER-Diagramme
 
-* [ ] **Prozess-/Service-Dashboard**: Alle dev-Prozesse (Server, Watcher, Container) mit Status, Logs, Ports, Restart-Buttons
+* [~] **Prozess-/Service-Dashboard**: ⌘⌥J listet alle lauschenden Dev-Server (Port, Prozessname, PID, Auto-Refresh), Browser-Öffnen und Beenden (SIGTERM mit Bestätigung) pro Eintrag (`ports.rs`, `process-dashboard-page.tsx`); Log-Streams und Container fehlen
 
 * [ ] **Snapshot-Debugging**: Programmzustand einfrieren, teilen, im Editor eines Kollegen wiederherstellen
 

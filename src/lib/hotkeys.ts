@@ -78,6 +78,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Shift+S",
   },
   {
+    id: "processes.dashboard",
+    label: "Dev-Prozesse-Dashboard öffnen",
+    group: "Ausführen",
+    hotkey: "Mod+Alt+J",
+  },
+  {
     id: "deps.dashboard",
     label: "Abhängigkeiten-Dashboard öffnen",
     group: "Navigation",

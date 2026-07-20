@@ -2,7 +2,15 @@ import { invoke } from "@tauri-apps/api/core";
 import { create } from "zustand";
 import { useBrowserStore } from "@/lib/browser-store";
 
-export type DevPort = { port: number; process: string };
+export type DevPort = { port: number; process: string; pid: number };
+
+export async function killPort(pid: number) {
+  await invoke("kill_process", { pid }).catch(() => {});
+  const ports = await invoke<DevPort[]>("list_dev_ports").catch(
+    () => [] as DevPort[],
+  );
+  usePortsStore.setState({ ports });
+}
 
 const POLL_MS = 5000;
 

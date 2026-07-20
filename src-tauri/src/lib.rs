@@ -464,6 +464,7 @@ pub fn run() {
             browser::browser_navigate,
             exec::run_shell,
             ports::list_dev_ports,
+            ports::kill_process,
             browser::browser_eval,
             browser::browser_devtools,
             browser::browser_close,
