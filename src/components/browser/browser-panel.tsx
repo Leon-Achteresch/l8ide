@@ -5,12 +5,19 @@ import {
   ExternalLink,
   Loader2,
   RotateCw,
+  Smartphone,
   SquareDashedMousePointer,
   SquareTerminal,
   Wrench,
   X,
 } from "lucide-react";
 import { openUrl } from "@tauri-apps/plugin-opener";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   browserDevtools,
   browserEval,
@@ -35,6 +42,15 @@ const OVERLAY_SELECTOR =
 
 const ICON_BUTTON =
   "inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground";
+
+const VIEWPORT_PRESETS = [
+  { label: "iPhone SE", width: 375 },
+  { label: "iPhone 15", width: 393 },
+  { label: "Pixel 8", width: 412 },
+  { label: "iPad Mini", width: 768 },
+  { label: "iPad Pro", width: 1024 },
+  { label: "Desktop", width: 1280 },
+];
 
 export function BrowserPanel() {
   const open = useBrowserStore((s) => s.open);
@@ -234,6 +250,28 @@ function BrowserPanelInner() {
             )}
           />
         </form>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            title="Viewport-Breite (Geräte-Presets)"
+            className={ICON_BUTTON}
+          >
+            <Smartphone className="size-4" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-52">
+            {VIEWPORT_PRESETS.map((p) => (
+              <DropdownMenuItem
+                key={p.width}
+                onClick={() => setWidth(p.width)}
+                className="flex items-center justify-between"
+              >
+                <span>{p.label}</span>
+                <span className="font-mono text-[11px] text-muted-foreground">
+                  {p.width}px
+                </span>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
         <button
           type="button"
           onClick={() => {

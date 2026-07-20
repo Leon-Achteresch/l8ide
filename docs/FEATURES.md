@@ -776,5 +776,5 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **State-Inspektion für Frameworks**: React/Vue/Svelte-Komponentenbaum + State im Editor-Panel
 
-* [ ] **Responsive-Preview-Matrix**: Mehrere Viewports gleichzeitig live
+* [~] **Responsive-Preview**: Geräte-Presets (iPhone SE/15, Pixel 8, iPad Mini/Pro, Desktop) setzen die Browser-Panel-Breite per Dropdown; Matrix mit mehreren Viewports gleichzeitig fehlt
 
