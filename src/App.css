@@ -207,6 +207,18 @@
 
 .git-gutter { width: 3px !important; margin-left: 3px; cursor: pointer; }
 
+.l8-bookmark::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: #f59e0b;
+}
+
 .l8-blame {
   color: var(--muted-foreground);
   opacity: 0.5;

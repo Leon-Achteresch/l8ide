@@ -204,6 +204,18 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+R",
   },
   {
+    id: "bookmark.toggle",
+    label: "Lesezeichen setzen/entfernen (aktuelle Zeile)",
+    group: "Navigation",
+    hotkey: "Mod+Alt+8",
+  },
+  {
+    id: "bookmark.next",
+    label: "Nächstes Lesezeichen",
+    group: "Navigation",
+    hotkey: "Mod+Alt+9",
+  },
+  {
     id: "blame.toggle",
     label: "Git-Blame-Zeile ein-/ausblenden",
     group: "Navigation",

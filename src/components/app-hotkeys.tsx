@@ -21,6 +21,8 @@ import { useHttpClient } from "@/lib/http-client";
 import { useWorkContexts } from "@/lib/workspace-contexts";
 import { useLocalHistoryDialog } from "@/lib/local-history";
 import { useBlameSettings } from "@/lib/blame-layer";
+import { toggleBookmarkHere, jumpBookmark } from "@/lib/bookmarks";
+import { getMonacoInstance } from "@/lib/monaco-instance";
 import { useFocusTimer } from "@/lib/focus-timer";
 import { useReflog } from "@/lib/reflog-store";
 import { useWorktrees } from "@/lib/worktree-store";
@@ -37,6 +39,11 @@ const IMAGE_EXTENSIONS = /\.(png|jpe?g|gif|webp|svg|bmp|ico|avif)$/i;
 
 function isTextEditorActive(path: string | null) {
   return Boolean(path && !isPageTab(path) && !IMAGE_EXTENSIONS.test(path));
+}
+
+function focusedEditor() {
+  const editors = getMonacoInstance()?.editor.getEditors() ?? [];
+  return editors.find((e) => e.hasTextFocus()) ?? editors[0] ?? null;
 }
 
 function cycleTab(delta: number) {
@@ -94,6 +101,15 @@ export function AppHotkeys() {
       if (path && !isPageTab(path)) void useFileDeps.getState().openFor(path);
     },
     "blame.toggle": () => useBlameSettings.getState().toggle(),
+    "bookmark.toggle": () => {
+      const ed = focusedEditor();
+      if (ed) toggleBookmarkHere(ed);
+    },
+    "bookmark.next": () => {
+      const ed = focusedEditor();
+      const line = ed?.getPosition()?.lineNumber;
+      if (line) jumpBookmark(1, line);
+    },
     "git.reflog": () => useReflog.getState().setOpen(true),
     "git.worktrees": () => useWorktrees.getState().setOpen(true),
     "git.stashes": () => useStashStore.getState().setOpen(true),
