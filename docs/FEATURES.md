@@ -664,7 +664,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Intent-basierte Snippets**: Beschreibung tippen, Snippet mit projektüblichen Patterns generiert
 
-* [ ] **Erklär-Layer**: Jede Funktion auf Wunsch mit generierter, gecachter Zusammenfassung im Hover
+* [x] **Erklär-Layer**: ⌘⌥E (oder Rechtsklick → „Code erklären") erklärt die Selektion bzw. die umgebende Funktion (via Outline) in einem schwebenden Widget; Erklärungen sind gehasht gecacht (max. 200, persistiert) — zweiter Abruf ist instant und kostet keine Tokens (`explain-layer.ts`)
 
 * [ ] **KI-gestützte Merge-Konfliktlösung** mit Begründung pro Hunk
 

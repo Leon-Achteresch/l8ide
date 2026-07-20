@@ -15,6 +15,7 @@ import { formatAndSave, usePrettierSettings } from "@/lib/prettier-format";
 import { scheduleBackup, takeBackup } from "@/lib/hot-exit";
 import { attachBreakpointGutter } from "@/lib/breakpoint-gutter";
 import { attachCallHierarchy } from "@/lib/call-hierarchy";
+import { attachExplainLayer } from "@/lib/explain-layer";
 import { attachInlineChat } from "@/lib/inline-chat";
 import { trackEditorStatus } from "@/lib/status-store";
 import { registerEditorRefactors } from "@/lib/ts-refactor";
@@ -203,6 +204,7 @@ function TextEditor({
             attachInlineChat(editor, monaco, path);
             attachCallHierarchy(editor);
             attachBreakpointGutter(editor, monaco, path);
+            attachExplainLayer(editor, monaco, path);
             const gutter = attachGitGutter(editor, monaco, path);
             const unsubGutter = useGitStore.subscribe(
               () => void gutter.refresh(),
