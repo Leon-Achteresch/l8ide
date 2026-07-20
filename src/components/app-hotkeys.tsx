@@ -97,6 +97,8 @@ export function AppHotkeys() {
     "git.stashes": () => useStashStore.getState().setOpen(true),
     "git.remotes": () => useRemotes.getState().setOpen(true),
     "git.tags": () => useTags.getState().setOpen(true),
+    "git.history": () =>
+      useWorkspaceStore.getState().openFile(pageTab("/git-history")),
     "history.local": () => {
       const path = useWorkspaceStore.getState().activeFile;
       if (path && !isPageTab(path)) useLocalHistoryDialog.getState().openFor(path);

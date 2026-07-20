@@ -354,7 +354,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Incoming/Outgoing Changes-Ansicht**
 
-* [ ] **Git Graph / Source Control Graph**: Commit-Graph-Visualisierung
+* [~] **Git-Verlauf / Source Control**: ⌘⌥L öffnet die Commit-Liste (100 neueste, mit Tags-Badges) als Tab; Rechtsklick pro Commit: Hash kopieren, Cherry-Pick, Revert, Tag anlegen (`git-history-page.tsx`, Backends `repo_log_page`/`git_cherry_pick`/`git_revert_commit`); grafische Graph-Linien fehlen
 
 * [x] **Zu .gitignore hinzufügen**: Dateien/Ordner per Kontextmenü ignorieren
 

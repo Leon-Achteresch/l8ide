@@ -162,6 +162,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+K",
   },
   {
+    id: "git.history",
+    label: "Git-Verlauf öffnen (Commit-Liste mit Aktionen)",
+    group: "Navigation",
+    hotkey: "Mod+Alt+L",
+  },
+  {
     id: "git.tags",
     label: "Git-Tags verwalten",
     group: "Navigation",

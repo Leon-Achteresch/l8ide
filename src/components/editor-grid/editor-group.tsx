@@ -6,6 +6,7 @@ import { ProjectGraphPage } from "@/components/project-graph-page";
 import { DepDashboardPage } from "@/components/dep-dashboard-page";
 import { ProcessDashboardPage } from "@/components/process-dashboard-page";
 import { DesignTokensPage } from "@/components/design-tokens-page";
+import { GitHistoryPage } from "@/components/git-history-page";
 import { SearchEditorPage } from "@/components/search-editor-page";
 import { store } from "@/components/tab-bar/lib";
 import { TabBar } from "@/components/tab-bar/tab-bar";
@@ -37,6 +38,7 @@ const PAGE_COMPONENTS: Record<string, () => React.JSX.Element> = {
   "/dependencies": DepDashboardPage,
   "/processes": ProcessDashboardPage,
   "/design-tokens": DesignTokensPage,
+  "/git-history": GitHistoryPage,
 };
 
 const CONTROL =
