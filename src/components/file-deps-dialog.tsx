@@ -5,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useDepGraph } from "@/lib/dep-graph-store";
 import { useFileDeps } from "@/lib/file-deps";
 import { openFileAt } from "@/lib/monaco-navigation";
 import { useWorkspaceStore } from "@/lib/workspace-store";
@@ -64,6 +65,17 @@ export function FileDepsDialog() {
             <Network className="size-4 text-muted-foreground" />
             Abhängigkeiten · {name}
             {loading && <Loader2 className="size-3.5 animate-spin text-muted-foreground" />}
+            <button
+              type="button"
+              onClick={() => {
+                close();
+                useDepGraph.getState().openGraph(result.path);
+              }}
+              className="ml-auto inline-flex h-6 items-center gap-1 rounded-md px-2 text-[11px] font-normal text-muted-foreground transition-colors hover:bg-foreground/8 hover:text-foreground"
+            >
+              <Network className="size-3" />
+              Als Graph
+            </button>
           </DialogTitle>
         </DialogHeader>
         <div className="max-h-96 space-y-3 overflow-y-auto">

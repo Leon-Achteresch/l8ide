@@ -618,7 +618,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 ## B. Navigation & Verständnis
 
-* [~] **Codebase-Karte / Graph-View**: ⌘⌥I zeigt pro Datei „Importiert" / „Wird importiert von" / externe Pakete (Import-Parsing inkl. dynamic import/require, Alias- und Index-Auflösung, Importer via ripgrep+Gegenprobe — `file-deps-core.ts` mit Test `test:filedeps`); visueller Graph mit Zoom fehlt
+* [x] **Codebase-Karte / Graph-View**: ⌘⌥I zeigt pro Datei Imports/Importer/Pakete (Parsing inkl. dynamic import/require, Alias-/Index-Auflösung, ripgrep+Gegenprobe — Test `test:filedeps`); „Als Graph" öffnet den interaktiven Ego-Graph als Tab (Importer links, Imports rechts, Bezier-Kanten; Klick re-zentriert mit Spring-Animation, ⌘Klick öffnet die Datei — `dep-graph-page.tsx`)
 
 * [ ] **Datenfluss-Analyse visuell**: "Woher kann dieser Wert kommen?" / "Wohin fließt er?" als navigierbare Ansicht
 
