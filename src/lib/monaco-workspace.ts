@@ -1,3 +1,4 @@
+import { useEditorSettings } from "@/lib/editor-settings";
 import { clearEditorConfigCache } from "@/lib/editorconfig";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import * as monaco from "monaco-editor";
@@ -78,15 +79,40 @@ async function loadCompilerOptions(
   }
 }
 
+const MODULE_RESOLUTION_CODES = [
+  2307, 2792, 7016, 2688, 2503, 2602, 7026, 2580, 2582, 2583, 2584, 2591,
+];
+
 function applyCompilerOptions(options: CompilerOptions) {
+  const semantic = useEditorSettings.getState().semanticValidation;
   for (const defaults of [ts.typescriptDefaults, ts.javascriptDefaults]) {
     defaults.setCompilerOptions(options);
     defaults.setDiagnosticsOptions({
-      noSemanticValidation: true,
+      noSemanticValidation: !semantic,
       noSyntaxValidation: false,
+      diagnosticCodesToIgnore: MODULE_RESOLUTION_CODES,
     });
     defaults.setEagerModelSync(true);
   }
+}
+
+let watchingSetting = false;
+
+function watchSemanticSetting() {
+  if (watchingSetting) return;
+  watchingSetting = true;
+  let prev = useEditorSettings.getState().semanticValidation;
+  useEditorSettings.subscribe((s) => {
+    if (s.semanticValidation === prev) return;
+    prev = s.semanticValidation;
+    for (const defaults of [ts.typescriptDefaults, ts.javascriptDefaults]) {
+      defaults.setDiagnosticsOptions({
+        noSemanticValidation: !s.semanticValidation,
+        noSyntaxValidation: false,
+        diagnosticCodesToIgnore: MODULE_RESOLUTION_CODES,
+      });
+    }
+  });
 }
 
 export async function configureMonacoWorkspace(rootPath: string) {
@@ -101,6 +127,7 @@ export async function configureMonacoWorkspace(rootPath: string) {
 
   const options = await loadCompilerOptions(rootPath);
   applyCompilerOptions(options);
+  watchSemanticSetting();
 }
 
 export async function syncMonacoWorkspaceModels(files: string[]) {

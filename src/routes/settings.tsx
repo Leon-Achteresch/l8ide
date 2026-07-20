@@ -237,6 +237,13 @@ function EditorDisplaySettings() {
           <Switch checked={s.breadcrumbs} onCheckedChange={s.setBreadcrumbs} />
         </DisplayRow>
 
+        <DisplayRow label="TypeScript-Typfehler (semantische Validierung)">
+          <Switch
+            checked={s.semanticValidation}
+            onCheckedChange={s.setSemanticValidation}
+          />
+        </DisplayRow>
+
         <DisplayRow label="Zeilenumbruch (Word Wrap)">
           <Switch checked={s.wordWrap} onCheckedChange={s.setWordWrap} />
         </DisplayRow>

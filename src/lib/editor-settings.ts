@@ -15,6 +15,7 @@ type EditorSettings = {
   renderWhitespace: WhitespaceRender;
   renderControlCharacters: boolean;
   semanticHighlighting: boolean;
+  semanticValidation: boolean;
   stickyScroll: boolean;
   breadcrumbs: boolean;
   setWordWrap: (v: boolean) => void;
@@ -26,6 +27,7 @@ type EditorSettings = {
   setRenderWhitespace: (v: WhitespaceRender) => void;
   setRenderControlCharacters: (v: boolean) => void;
   setSemanticHighlighting: (v: boolean) => void;
+  setSemanticValidation: (v: boolean) => void;
   setStickyScroll: (v: boolean) => void;
   setBreadcrumbs: (v: boolean) => void;
 };
@@ -42,6 +44,7 @@ export const useEditorSettings = create<EditorSettings>()(
       renderWhitespace: "selection",
       renderControlCharacters: true,
       semanticHighlighting: true,
+      semanticValidation: true,
       stickyScroll: true,
       breadcrumbs: true,
       setWordWrap: (wordWrap) => set({ wordWrap }),
@@ -56,6 +59,7 @@ export const useEditorSettings = create<EditorSettings>()(
         set({ renderControlCharacters }),
       setSemanticHighlighting: (semanticHighlighting) =>
         set({ semanticHighlighting }),
+      setSemanticValidation: (semanticValidation) => set({ semanticValidation }),
       setStickyScroll: (stickyScroll) => set({ stickyScroll }),
       setBreadcrumbs: (breadcrumbs) => set({ breadcrumbs }),
     }),

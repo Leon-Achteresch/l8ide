@@ -132,7 +132,7 @@ Umgesetzt via eigenem TypeScript-Worker (`ts.worker.ts`), der die TS-Language-Se
 
 * [x] **Problems-Panel**: Filterbar (Text + Schweregrad), nach Datei gruppiert/einklappbar, Klick springt zur Stelle, Quick-Fix-Zugriff (Cmd+.)
 
-Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers-store.ts`. Aktuell nur Syntax- + JSON-Schema-Marker (semantische TS-Validierung ist in `monaco-workspace.ts` deaktiviert — `noSemanticValidation: true` umlegen für Typfehler).
+Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers-store.ts`: Syntax-, JSON-Schema-, tsc-Terminal- und semantische TS-Marker. Semantische Validierung ist aktiv (abschaltbar in den Einstellungen); Modul-Auflösungs-Codes (2307 u.a.) werden ignoriert, da node_modules-Typen nicht im Worker liegen.
 
 ### 1.6 Darstellung
 
@@ -312,7 +312,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **TypeScript/JavaScript IntelliSense (Basis)**: Completions, Hover, Navigation, tsconfig-Sync
 
-* [ ] **TypeScript/JavaScript (vollständig)**: Refactorings, Auto-Imports, semantische Validation
+* [~] **TypeScript/JavaScript (vollständig)**: Refactorings ✓, semantische Validation ✓ (ohne node_modules-Typen, Modul-Codes ignoriert); Auto-Imports fehlen weiterhin
 
 * [x] **Markdown-Vorschau**: Split-View mit Editor
 
