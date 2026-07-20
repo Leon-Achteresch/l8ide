@@ -5,6 +5,7 @@ import {
   ExternalLink,
   Loader2,
   RotateCw,
+  SquareDashedMousePointer,
   SquareTerminal,
   Wrench,
   X,
@@ -13,6 +14,7 @@ import { openUrl } from "@tauri-apps/plugin-opener";
 import {
   browserDevtools,
   browserEval,
+  pickElement,
   closeBrowser,
   openBrowser,
   setBrowserBounds,
@@ -232,6 +234,17 @@ function BrowserPanelInner() {
             )}
           />
         </form>
+        <button
+          type="button"
+          onClick={() => {
+            useBrowserConsole.getState().setOpen(true);
+            void pickElement();
+          }}
+          title="Element untersuchen (Klick wählt, Esc bricht ab)"
+          className={ICON_BUTTON}
+        >
+          <SquareDashedMousePointer className="size-4" />
+        </button>
         <button
           type="button"
           onClick={toggleConsole}

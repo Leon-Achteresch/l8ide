@@ -766,7 +766,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [x] **Native DevTools für den Browser**: Web-Inspector per Button (`browser_devtools`, Tauri-Feature `devtools`)
 
-* [ ] **Browser-Preview mit DevTools-Brücke**: Element-Klick im Browser springt zur JSX/Component-Quelle
+* [~] **Browser-Preview mit DevTools-Brücke**: Element-Picker in der Browser-Toolbar — Hover highlightet (violette Outline), Klick loggt Selector, Maße, display/position, Schriftgröße und Farbe in die Konsole, Esc bricht ab; Sprung zur JSX-Quelle fehlt (React 19 ohne _debugSource)
 
 * [ ] **Komponenten-Explorer**: Alle UI-Komponenten des Projekts als Galerie mit Props-Playground (Storybook-nativ)
 
