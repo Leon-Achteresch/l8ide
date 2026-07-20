@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/input-group";
 import { Toggle } from "@/components/ui/toggle";
 import { useFileIndexStore } from "@/lib/file-index";
+import { useSearchEditor } from "@/lib/search-editor-store";
 import {
   useSearchStore,
 } from "@/lib/search-store";
@@ -18,6 +19,7 @@ import {
   CaseSensitive,
   ChevronRight,
   FileDiff,
+  FileOutput,
   Loader2,
   Regex,
   ReplaceAll,
@@ -297,6 +299,25 @@ export function SearchPanel({ rootPath }: { rootPath: string }) {
                   in {files.length}{" "}
                   {files.length === 1 ? "Datei" : "Dateien"}
                 </span>
+              )}
+              {files.length > 0 && (
+                <button
+                  type="button"
+                  title="Ergebnisse als Editor-Tab öffnen (bleibt bei neuer Suche erhalten)"
+                  onClick={() => {
+                    const s = useSearchStore.getState();
+                    useSearchEditor.getState().openSnapshot({
+                      query: s.query,
+                      total: s.total,
+                      files: s.files,
+                      time: Date.now(),
+                    });
+                  }}
+                  className="inline-flex h-5 items-center gap-1 rounded-md px-1.5 text-[10px] text-muted-foreground transition-colors hover:bg-foreground/8 hover:text-foreground"
+                >
+                  <FileOutput className="size-3" />
+                  Als Tab
+                </button>
               )}
               {total === 0 && nameHits.length > 0 && (
                 <span className="text-[10px] text-muted-foreground">
