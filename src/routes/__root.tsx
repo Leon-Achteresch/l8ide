@@ -9,6 +9,7 @@ import { CommandPalette } from "@/components/command-palette";
 import { MonacoWorkspace } from "@/components/monaco-workspace";
 import { LocalHistoryDialog } from "@/components/local-history-dialog";
 import { RefactorDialogs } from "@/components/refactor-preview-dialog";
+import { BreakpointConditionDialog } from "@/components/breakpoint-condition-dialog";
 import { CallHierarchyDialog } from "@/components/call-hierarchy-dialog";
 import { DebugIsland } from "@/components/debug-island";
 import { ClipboardHistoryDialog } from "@/components/clipboard-history-dialog";
@@ -191,6 +192,7 @@ function RootComponent() {
       <WorkContextsDialog />
       <ScreencastOverlay />
       <DebugIsland />
+      <BreakpointConditionDialog />
       <Toaster />
       {RouterDevtools && (
         <Suspense fallback={null}>

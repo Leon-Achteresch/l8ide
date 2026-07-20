@@ -9,17 +9,27 @@ export function attachBreakpointGutter(
   const collection = editor.createDecorationsCollection([]);
 
   const render = () => {
-    const lines = useDebugger.getState().breakpoints[path] ?? [];
+    const { breakpoints, bpConditions } = useDebugger.getState();
+    const lines = breakpoints[path] ?? [];
     collection.set(
-      lines.map((line) => ({
-        range: new monaco.Range(line, 1, line, 1),
-        options: {
-          glyphMarginClassName: "l8-breakpoint",
-          glyphMarginHoverMessage: { value: "Breakpoint entfernen" },
-          stickiness:
-            monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
-        },
-      })),
+      lines.map((line) => {
+        const condition = bpConditions[`${path}:${line}`];
+        return {
+          range: new monaco.Range(line, 1, line, 1),
+          options: {
+            glyphMarginClassName: condition
+              ? "l8-breakpoint l8-breakpoint-cond"
+              : "l8-breakpoint",
+            glyphMarginHoverMessage: {
+              value: condition
+                ? `Bedingung: \`${condition}\` — Klick entfernt, Alt+Klick bearbeitet`
+                : "Breakpoint — Klick entfernt, Alt+Klick macht ihn bedingt",
+            },
+            stickiness:
+              monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
+          },
+        };
+      }),
     );
   };
 
@@ -28,16 +38,21 @@ export function attachBreakpointGutter(
       e.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN &&
       e.target.position
     ) {
-      useDebugger
-        .getState()
-        .toggleBreakpoint(path, e.target.position.lineNumber);
+      const line = e.target.position.lineNumber;
+      if (e.event.altKey) {
+        useDebugger.getState().setConditionTarget({ path, line });
+      } else {
+        useDebugger.getState().toggleBreakpoint(path, line);
+      }
     }
   });
 
-  let prev = useDebugger.getState().breakpoints[path];
+  let prevBp = useDebugger.getState().breakpoints[path];
+  let prevCond = useDebugger.getState().bpConditions;
   const unsub = useDebugger.subscribe((s) => {
-    if (s.breakpoints[path] !== prev) {
-      prev = s.breakpoints[path];
+    if (s.breakpoints[path] !== prevBp || s.bpConditions !== prevCond) {
+      prevBp = s.breakpoints[path];
+      prevCond = s.bpConditions;
       render();
     }
   });

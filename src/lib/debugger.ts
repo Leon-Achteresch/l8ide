@@ -33,6 +33,10 @@ type DebuggerStore = {
   topCallFrameId: string | null;
   port: number;
   breakpoints: Record<string, number[]>;
+  bpConditions: Record<string, string>;
+  conditionTarget: { path: string; line: number } | null;
+  setConditionTarget: (t: { path: string; line: number } | null) => void;
+  setBreakpointCondition: (path: string, line: number, condition: string) => void;
   watches: string[];
   watchValues: Record<string, string>;
   pauseOnExceptions: "none" | "uncaught" | "all";
@@ -123,9 +127,14 @@ export async function loadProperties(objectId: string): Promise<VarNode[]> {
 }
 
 function sendSetBreakpoint(path: string, line: number) {
+  const condition = useDebugger.getState().bpConditions[bpKey(path, line)];
   send(
     "Debugger.setBreakpointByUrl",
-    { lineNumber: line - 1, url: `file://${encodeURI(path)}` },
+    {
+      lineNumber: line - 1,
+      url: `file://${encodeURI(path)}`,
+      ...(condition ? { condition } : {}),
+    },
     (result) => {
       const id = (result as { breakpointId?: string } | undefined)?.breakpointId;
       if (id) bpIds.set(bpKey(path, line), id);
@@ -174,6 +183,28 @@ export const useDebugger = create<DebuggerStore>()(
   topCallFrameId: null,
   port: 9229,
   breakpoints: {},
+  bpConditions: {},
+  conditionTarget: null,
+  setConditionTarget: (conditionTarget) => set({ conditionTarget }),
+
+  setBreakpointCondition: (path, line, condition) => {
+    const key = bpKey(path, line);
+    set((s) => {
+      const bpConditions = { ...s.bpConditions };
+      if (condition.trim()) bpConditions[key] = condition.trim();
+      else delete bpConditions[key];
+      return { bpConditions };
+    });
+    const lines = get().breakpoints[path] ?? [];
+    if (!lines.includes(line)) {
+      get().toggleBreakpoint(path, line);
+      return;
+    }
+    if (get().state === "running" || get().state === "paused") {
+      sendRemoveBreakpoint(path, line);
+      sendSetBreakpoint(path, line);
+    }
+  },
   watches: [],
   watchValues: {},
   pauseOnExceptions: "none",
@@ -212,7 +243,9 @@ export const useDebugger = create<DebuggerStore>()(
       const breakpoints = { ...s.breakpoints };
       if (lines.length === 0) delete breakpoints[path];
       else breakpoints[path] = lines;
-      return { breakpoints };
+      const bpConditions = { ...s.bpConditions };
+      if (has) delete bpConditions[bpKey(path, line)];
+      return { breakpoints, bpConditions };
     });
     if (get().state === "running" || get().state === "paused") {
       if (has) sendRemoveBreakpoint(path, line);
@@ -339,6 +372,7 @@ export const useDebugger = create<DebuggerStore>()(
       name: "debugger",
       partialize: (s) => ({
         breakpoints: s.breakpoints,
+        bpConditions: s.bpConditions,
         watches: s.watches,
         pauseOnExceptions: s.pauseOnExceptions,
       }),
