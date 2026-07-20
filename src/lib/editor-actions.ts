@@ -17,7 +17,15 @@ export function saveModel(model: monaco.editor.ITextModel) {
   if (isPageTab(path)) return;
   const content = model.getValue();
   void snapshotBeforeSave(path).finally(() =>
-    writeTextFile(path, content).then(() => clearBackup(path)),
+    writeTextFile(path, content).then(() => {
+      void clearBackup(path);
+      if (path.endsWith("/.l8ide/settings.json")) {
+        const root = path.slice(0, -"/.l8ide/settings.json".length);
+        void import("@/lib/workspace-settings").then((m) =>
+          m.applyWorkspaceSettings(root),
+        );
+      }
+    }),
   );
 }
 

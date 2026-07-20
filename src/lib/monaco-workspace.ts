@@ -1,4 +1,5 @@
 import { useEditorSettings } from "@/lib/editor-settings";
+import { applyWorkspaceSettings } from "@/lib/workspace-settings";
 import { clearEditorConfigCache } from "@/lib/editorconfig";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import * as monaco from "monaco-editor";
@@ -125,6 +126,7 @@ export async function configureMonacoWorkspace(rootPath: string) {
     syncGeneration++;
   }
 
+  await applyWorkspaceSettings(rootPath).catch(() => {});
   const options = await loadCompilerOptions(rootPath);
   applyCompilerOptions(options);
   watchSemanticSetting();

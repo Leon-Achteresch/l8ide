@@ -290,7 +290,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Settings (GUI)**: Dark Mode, Icons, Hidden Files, Trust, Prettier
 
-* [ ] **Settings (JSON & Ebenen)**: `settings.json`, User-/Workspace-/Folder-Ebenen, sprach-spezifische Settings
+* [~] **Settings (JSON & Ebenen)**: Workspace-Ebene via `.l8ide/settings.json` (⌘⌥, — autoSave/-Delay, formatOnSave, organizeImportsOnSave, semanticValidation, hidden[]; wird beim Projekt-Öffnen und bei jedem Speichern der Datei angewandt, versionierbar — `workspace-settings.ts`); User-JSON-Ebene und sprach-spezifische Settings fehlen
 
 * [ ] **Settings Sync**: Einstellungen, Keybindings, Extensions, Snippets, UI-State über Geräte synchronisieren
 

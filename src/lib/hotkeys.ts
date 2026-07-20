@@ -66,6 +66,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+L",
   },
   {
+    id: "workspace.settings",
+    label: "Workspace-Einstellungen (JSON) öffnen",
+    group: "Allgemein",
+    hotkey: "Mod+Alt+,",
+  },
+  {
     id: "project.notes",
     label: "Projekt-Notizen öffnen",
     group: "Allgemein",
