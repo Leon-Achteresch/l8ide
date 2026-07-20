@@ -13,6 +13,7 @@ import { useEditorDisplayOptions } from "@/lib/editor-settings";
 import { ideMonacoTheme } from "@/lib/ide-theme";
 import { formatAndSave, usePrettierSettings } from "@/lib/prettier-format";
 import { scheduleBackup, takeBackup } from "@/lib/hot-exit";
+import { checkSecretExposure } from "@/lib/secrets-guard";
 import { attachBreakpointGutter } from "@/lib/breakpoint-gutter";
 import { attachCallHierarchy } from "@/lib/call-hierarchy";
 import { attachExplainLayer } from "@/lib/explain-layer";
@@ -131,6 +132,7 @@ function TextEditor({
       setFile({ path, content: "" });
       return;
     }
+    void checkSecretExposure(path);
     readTextFile(path)
       .then(async (content) => {
         const backup = await takeBackup(path, content);

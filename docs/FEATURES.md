@@ -690,7 +690,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Umgebungs-Manager nativ**: Node/Python/Ruby/Java-Versionen pro Projekt erkennen, installieren, umschalten (mise/asdf integriert)
 
-* [ ] **Secrets-Management**: `.env`-Editor mit Maskierung, Schema-Validierung, Sync mit Vaults, Warnung bei Commit von Secrets
+* [~] **Secrets-Management**: Beim Öffnen einer `.env`/`.env.*`-Datei warnt ein Toast, falls sie nicht in `.gitignore` steht (`git check-ignore`-Prüfung, verifiziert), mit „Zu .gitignore"-Aktion (`secrets-guard.ts`); Maskierung/Schema-Validierung/Vault-Sync fehlen
 
 * [ ] **Dependency-Dashboard**: Alle Abhängigkeiten mit Versionen, Vulnerabilities, Lizenzchecks, Update-PRs per Klick
 
