@@ -66,6 +66,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+L",
   },
   {
+    id: "file.deps",
+    label: "Datei-Abhängigkeiten anzeigen (Imports & Importer)",
+    group: "Navigation",
+    hotkey: "Mod+Alt+I",
+  },
+  {
     id: "debug.file",
     label: "Debugger: Aktive Datei debuggen (node --inspect-brk)",
     group: "Debug",

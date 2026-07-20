@@ -14,6 +14,7 @@
     "test:nesting": "node scripts/test-file-nesting.mjs",
     "test:problems": "node scripts/test-problem-matcher.mjs",
     "test:postfix": "node scripts/test-postfix.mjs",
+    "test:filedeps": "node scripts/test-file-deps.mjs",
     "test:semantic": "node scripts/test-semantic-tokens.mjs",
     "test:tw": "node scripts/test-tailwind.mjs",
     "test:url": "node scripts/test-url-normalize.mjs",

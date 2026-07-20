@@ -12,6 +12,7 @@ import { RefactorDialogs } from "@/components/refactor-preview-dialog";
 import { BreakpointConditionDialog } from "@/components/breakpoint-condition-dialog";
 import { CallHierarchyDialog } from "@/components/call-hierarchy-dialog";
 import { DebugIsland } from "@/components/debug-island";
+import { FileDepsDialog } from "@/components/file-deps-dialog";
 import { ClipboardHistoryDialog } from "@/components/clipboard-history-dialog";
 import { WorkContextsDialog } from "@/components/work-contexts-dialog";
 import { ScreencastOverlay } from "@/components/screencast-overlay";
@@ -193,6 +194,7 @@ function RootComponent() {
       <ScreencastOverlay />
       <DebugIsland />
       <BreakpointConditionDialog />
+      <FileDepsDialog />
       <Toaster />
       {RouterDevtools && (
         <Suspense fallback={null}>

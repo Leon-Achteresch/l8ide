@@ -15,6 +15,7 @@ import { openProjectNotes } from "@/lib/project-notes";
 import { openWorkspaceSettings } from "@/lib/workspace-settings";
 import { useDebugger } from "@/lib/debugger";
 import { debugActiveFile } from "@/lib/debug-launcher";
+import { useFileDeps } from "@/lib/file-deps";
 import { useWorkContexts } from "@/lib/workspace-contexts";
 import { useLocalHistoryDialog } from "@/lib/local-history";
 import { runBuildTask, runTestTask } from "@/lib/tasks";
@@ -58,6 +59,10 @@ export function AppHotkeys() {
     "workspace.settings": () => void openWorkspaceSettings(),
     "debug.attach": () => void useDebugger.getState().connect(),
     "debug.file": () => void debugActiveFile(),
+    "file.deps": () => {
+      const path = useWorkspaceStore.getState().activeFile;
+      if (path && !isPageTab(path)) void useFileDeps.getState().openFor(path);
+    },
     "history.local": () => {
       const path = useWorkspaceStore.getState().activeFile;
       if (path && !isPageTab(path)) useLocalHistoryDialog.getState().openFor(path);
