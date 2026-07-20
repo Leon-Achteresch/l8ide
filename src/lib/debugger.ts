@@ -30,6 +30,7 @@ type DebuggerStore = {
   state: DebugState;
   frames: StackFrame[];
   variables: VarNode[];
+  topCallFrameId: string | null;
   port: number;
   breakpoints: Record<string, number[]>;
   connect: (port?: number) => Promise<void>;
@@ -164,6 +165,7 @@ export const useDebugger = create<DebuggerStore>()(
   state: "disconnected",
   frames: [],
   variables: [],
+  topCallFrameId: null,
   port: 9229,
   breakpoints: {},
 
@@ -240,12 +242,18 @@ export const useDebugger = create<DebuggerStore>()(
       if (msg.method === "Debugger.paused") {
         const raw = msg.params?.callFrames;
         const frames = toFrames(raw);
-        set({ state: "paused", frames, variables: [] });
         const topRaw = Array.isArray(raw)
           ? (raw[0] as {
+              callFrameId?: string;
               scopeChain?: { type?: string; object?: { objectId?: string } }[];
             })
           : undefined;
+        set({
+          state: "paused",
+          frames,
+          variables: [],
+          topCallFrameId: topRaw?.callFrameId ?? null,
+        });
         const scopeId = topRaw?.scopeChain?.find((s) => s.type === "local")
           ?.object?.objectId;
         if (scopeId) {
@@ -261,7 +269,7 @@ export const useDebugger = create<DebuggerStore>()(
           });
         }
       } else if (msg.method === "Debugger.resumed") {
-        set({ state: "running", frames: [], variables: [] });
+        set({ state: "running", frames: [], variables: [], topCallFrameId: null });
       }
     };
     socket.onclose = () => {
@@ -269,7 +277,7 @@ export const useDebugger = create<DebuggerStore>()(
         ws = null;
         pending.clear();
         bpIds.clear();
-        set({ state: "disconnected", frames: [], variables: [] });
+        set({ state: "disconnected", frames: [], variables: [], topCallFrameId: null });
       }
     };
     socket.onerror = () => socket.close();
@@ -280,7 +288,7 @@ export const useDebugger = create<DebuggerStore>()(
     ws = null;
     pending.clear();
     bpIds.clear();
-    set({ state: "disconnected", frames: [], variables: [] });
+    set({ state: "disconnected", frames: [], variables: [], topCallFrameId: null });
   },
 
   resume: () => send("Debugger.resume"),
@@ -292,6 +300,23 @@ export const useDebugger = create<DebuggerStore>()(
     { name: "debugger", partialize: (s) => ({ breakpoints: s.breakpoints }) },
   ),
 );
+
+export async function evaluateOnTopFrame(
+  expression: string,
+): Promise<string | null> {
+  const { state, topCallFrameId } = useDebugger.getState();
+  if (state !== "paused" || !topCallFrameId) return null;
+  const result = (await sendAndWait("Debugger.evaluateOnCallFrame", {
+    callFrameId: topCallFrameId,
+    expression,
+    throwOnSideEffect: true,
+    timeout: 500,
+  })) as
+    | { result?: RemoteObject; exceptionDetails?: unknown }
+    | undefined;
+  if (!result || result.exceptionDetails) return null;
+  return describeRemote(result.result);
+}
 
 export function jumpToFrame(frame: StackFrame) {
   if (!frame.url.startsWith("file://")) return;

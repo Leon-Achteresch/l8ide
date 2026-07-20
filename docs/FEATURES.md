@@ -376,7 +376,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Inline Values**: Variablenwerte direkt im Code während Debugging
 
-* [ ] **Hover-Evaluation** während Debug-Session
+* [x] **Hover-Evaluation** während Debug-Session: Bei Pause zeigt der Editor-Hover den Live-Wert des Ausdrucks unterm Cursor (Member-Ketten wie `a.b.c`, side-effect-frei via `throwOnSideEffect`, 500ms-Timeout — `debug-hover.ts`, verifiziert)
 
 * [ ] **launch.json**: Konfigurationen, Compounds (mehrere Debugger parallel), Variablensubstitution
 
