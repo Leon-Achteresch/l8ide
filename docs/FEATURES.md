@@ -738,7 +738,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Flaky-Test-Erkennung**: Historie der Testläufe, Flakiness-Score im Test-Explorer
 
-* [ ] **Accessibility-Linting für UI-Code**: Live-a11y-Prüfung in JSX/Templates mit Vorschau
+* [x] **Accessibility-Linting für UI-Code**: Live-a11y-Prüfung in JSX/TSX/HTML (img ohne alt, leerer `<a href>`, onClick ohne role, positiver tabindex, `<html>` ohne lang), 500ms-debounced als Warnungen im Problems-Panel; abschaltbar in Einstellungen (`a11y-lint-core.ts`, Test `test:a11y`)
 
 ## J. UI/UX-Innovationen
 

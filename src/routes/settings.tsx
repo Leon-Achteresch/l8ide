@@ -356,6 +356,10 @@ function EditorDisplaySettings() {
           />
         </DisplayRow>
 
+        <DisplayRow label="Accessibility-Linting (JSX/HTML)">
+          <Switch checked={s.a11yLint} onCheckedChange={s.setA11yLint} />
+        </DisplayRow>
+
         <DisplayRow label="Zeilenumbruch (Word Wrap)">
           <Switch checked={s.wordWrap} onCheckedChange={s.setWordWrap} />
         </DisplayRow>

@@ -16,6 +16,7 @@ type EditorSettings = {
   renderControlCharacters: boolean;
   semanticHighlighting: boolean;
   semanticValidation: boolean;
+  a11yLint: boolean;
   stickyScroll: boolean;
   breadcrumbs: boolean;
   setWordWrap: (v: boolean) => void;
@@ -28,6 +29,7 @@ type EditorSettings = {
   setRenderControlCharacters: (v: boolean) => void;
   setSemanticHighlighting: (v: boolean) => void;
   setSemanticValidation: (v: boolean) => void;
+  setA11yLint: (v: boolean) => void;
   setStickyScroll: (v: boolean) => void;
   setBreadcrumbs: (v: boolean) => void;
 };
@@ -45,6 +47,7 @@ export const useEditorSettings = create<EditorSettings>()(
       renderControlCharacters: true,
       semanticHighlighting: true,
       semanticValidation: true,
+      a11yLint: true,
       stickyScroll: true,
       breadcrumbs: true,
       setWordWrap: (wordWrap) => set({ wordWrap }),
@@ -60,6 +63,7 @@ export const useEditorSettings = create<EditorSettings>()(
       setSemanticHighlighting: (semanticHighlighting) =>
         set({ semanticHighlighting }),
       setSemanticValidation: (semanticValidation) => set({ semanticValidation }),
+      setA11yLint: (a11yLint) => set({ a11yLint }),
       setStickyScroll: (stickyScroll) => set({ stickyScroll }),
       setBreadcrumbs: (breadcrumbs) => set({ breadcrumbs }),
     }),

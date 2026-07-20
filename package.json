@@ -20,6 +20,7 @@
     "test:httpparse": "node scripts/test-http-parse.mjs",
     "test:commands": "node scripts/test-commands.mjs",
     "test:tokens": "node scripts/test-design-tokens.mjs",
+    "test:a11y": "node scripts/test-a11y-lint.mjs",
     "test:semantic": "node scripts/test-semantic-tokens.mjs",
     "test:tw": "node scripts/test-tailwind.mjs",
     "test:url": "node scripts/test-url-normalize.mjs",

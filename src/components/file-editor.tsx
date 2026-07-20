@@ -16,6 +16,7 @@ import { scheduleBackup, takeBackup } from "@/lib/hot-exit";
 import { checkSecretExposure } from "@/lib/secrets-guard";
 import { attachBreakpointGutter } from "@/lib/breakpoint-gutter";
 import { attachCallHierarchy } from "@/lib/call-hierarchy";
+import { attachA11yLint } from "@/lib/a11y-lint";
 import { attachBlameLayer } from "@/lib/blame-layer";
 import { attachExplainLayer } from "@/lib/explain-layer";
 import { attachInlineChat } from "@/lib/inline-chat";
@@ -209,6 +210,7 @@ function TextEditor({
             attachBreakpointGutter(editor, monaco, path);
             attachExplainLayer(editor, monaco, path);
             attachBlameLayer(editor, monaco, path);
+            attachA11yLint(editor, path);
             const gutter = attachGitGutter(editor, monaco, path);
             const unsubGutter = useGitStore.subscribe(
               () => void gutter.refresh(),
