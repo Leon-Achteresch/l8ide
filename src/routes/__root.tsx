@@ -10,6 +10,7 @@ import { MonacoWorkspace } from "@/components/monaco-workspace";
 import { LocalHistoryDialog } from "@/components/local-history-dialog";
 import { RefactorDialogs } from "@/components/refactor-preview-dialog";
 import { CallHierarchyDialog } from "@/components/call-hierarchy-dialog";
+import { DebugIsland } from "@/components/debug-island";
 import { ClipboardHistoryDialog } from "@/components/clipboard-history-dialog";
 import { WorkContextsDialog } from "@/components/work-contexts-dialog";
 import { ScreencastOverlay } from "@/components/screencast-overlay";
@@ -189,6 +190,7 @@ function RootComponent() {
       <CallHierarchyDialog />
       <WorkContextsDialog />
       <ScreencastOverlay />
+      <DebugIsland />
       <Toaster />
       {RouterDevtools && (
         <Suspense fallback={null}>

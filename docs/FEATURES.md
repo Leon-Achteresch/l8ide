@@ -360,7 +360,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Debug Adapter Protocol (DAP)**: Standardisierte Anbindung beliebiger Debugger
 
-* [ ] **Node.js/JavaScript-Debugger eingebaut** (inkl. Browser-Debugging via Chrome/Edge)
+* [~] **Node.js/JavaScript-Debugger eingebaut**: Attach an `node --inspect` via V8-Inspector-WebSocket (⌘⌥D, Port 9229); Debug-Island mit Pause/Continue, Step Over/Into/Out, aufklappbarem Call Stack (Klick springt zur Datei), Auto-Sprung zum Top-Frame bei Pause (`debugger.ts`, `debug-island.tsx`); Breakpoints, Variablen, Launch-Configs fehlen (nächste Phasen)
 
 * [ ] **Breakpoints**: Standard, Conditional (Expression), Hit Count, Logpoints (Logging ohne Stop), Function Breakpoints, Data Breakpoints, Triggered Breakpoints (abhängig von anderem Breakpoint), Inline Breakpoints
 

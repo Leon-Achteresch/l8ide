@@ -66,6 +66,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+L",
   },
   {
+    id: "debug.attach",
+    label: "Debugger: Mit Node verbinden (Port 9229)",
+    group: "Debug",
+    hotkey: "Mod+Alt+D",
+  },
+  {
     id: "workspace.settings",
     label: "Workspace-Einstellungen (JSON) öffnen",
     group: "Allgemein",
