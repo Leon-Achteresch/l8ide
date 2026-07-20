@@ -162,6 +162,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+K",
   },
   {
+    id: "git.worktrees",
+    label: "Git-Worktrees verwalten/wechseln",
+    group: "Navigation",
+    hotkey: "Mod+Alt+O",
+  },
+  {
     id: "git.reflog",
     label: "Git-Verlauf (Reflog / Undo Everything)",
     group: "Navigation",

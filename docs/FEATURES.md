@@ -704,7 +704,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 ## G. Git & Historie (erweitert)
 
-* [ ] **First-Class Worktree-UI**: Worktrees als Tabs/Fenster mit eigenem Zustand, schnelles Umschalten
+* [x] **First-Class Worktree-UI**: ⌘⌥O listet alle Git-Worktrees (Branch, Pfad, main/locked-Markierung, aktiver hervorgehoben), Klick wechselt den Workspace-Root dorthin, Anlegen (Pfad + Branch) und Entfernen inline (`list_worktrees`/`git_worktree_add/remove`, `worktree-store.ts`)
 
 * [ ] **Interaktives Rebase als GUI**: Commits per Drag\&Drop ordnen, squashen, editieren
 
