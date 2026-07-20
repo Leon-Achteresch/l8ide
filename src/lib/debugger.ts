@@ -13,6 +13,12 @@ export type StackFrame = {
   column: number;
 };
 
+export type VarNode = {
+  name: string;
+  value: string;
+  objectId?: string;
+};
+
 type ShellResult = {
   code: number | null;
   stdout: string;
@@ -23,6 +29,7 @@ type ShellResult = {
 type DebuggerStore = {
   state: DebugState;
   frames: StackFrame[];
+  variables: VarNode[];
   port: number;
   breakpoints: Record<string, number[]>;
   connect: (port?: number) => Promise<void>;
@@ -54,6 +61,58 @@ function send(
 
 function bpKey(path: string, line: number) {
   return `${path}:${line}`;
+}
+
+function sendAndWait(
+  method: string,
+  params?: Record<string, unknown>,
+): Promise<unknown> {
+  return new Promise((resolve) => {
+    if (ws?.readyState !== WebSocket.OPEN) return resolve(undefined);
+    send(method, params, resolve);
+  });
+}
+
+type RemoteObject = {
+  type?: string;
+  subtype?: string;
+  value?: unknown;
+  description?: string;
+  objectId?: string;
+};
+
+function describeRemote(v: RemoteObject | undefined): string {
+  if (!v) return "undefined";
+  if (v.value !== undefined) {
+    try {
+      return JSON.stringify(v.value);
+    } catch {
+      return String(v.value);
+    }
+  }
+  if (v.type === "undefined") return "undefined";
+  if (v.subtype === "null") return "null";
+  return v.description ?? v.type ?? "?";
+}
+
+export async function loadProperties(objectId: string): Promise<VarNode[]> {
+  const result = (await sendAndWait("Runtime.getProperties", {
+    objectId,
+    ownProperties: true,
+  })) as
+    | { result?: { name: string; value?: RemoteObject }[] }
+    | undefined;
+  return (result?.result ?? [])
+    .filter((p) => p.value)
+    .slice(0, 40)
+    .map((p) => ({
+      name: p.name,
+      value: describeRemote(p.value),
+      objectId:
+        p.value?.type === "object" && p.value.subtype !== "null"
+          ? p.value.objectId
+          : undefined,
+    }));
 }
 
 function sendSetBreakpoint(path: string, line: number) {
@@ -104,6 +163,7 @@ export const useDebugger = create<DebuggerStore>()(
     (set, get) => ({
   state: "disconnected",
   frames: [],
+  variables: [],
   port: 9229,
   breakpoints: {},
 
@@ -178,8 +238,21 @@ export const useDebugger = create<DebuggerStore>()(
         return;
       }
       if (msg.method === "Debugger.paused") {
-        const frames = toFrames(msg.params?.callFrames);
-        set({ state: "paused", frames });
+        const raw = msg.params?.callFrames;
+        const frames = toFrames(raw);
+        set({ state: "paused", frames, variables: [] });
+        const topRaw = Array.isArray(raw)
+          ? (raw[0] as {
+              scopeChain?: { type?: string; object?: { objectId?: string } }[];
+            })
+          : undefined;
+        const scopeId = topRaw?.scopeChain?.find((s) => s.type === "local")
+          ?.object?.objectId;
+        if (scopeId) {
+          void loadProperties(scopeId).then((variables) => {
+            if (useDebugger.getState().state === "paused") set({ variables });
+          });
+        }
         const top = frames.find((f) => f.url.startsWith("file://"));
         if (top) {
           openFileAt(decodeURI(top.url.slice("file://".length)), {
@@ -188,7 +261,7 @@ export const useDebugger = create<DebuggerStore>()(
           });
         }
       } else if (msg.method === "Debugger.resumed") {
-        set({ state: "running", frames: [] });
+        set({ state: "running", frames: [], variables: [] });
       }
     };
     socket.onclose = () => {
@@ -196,7 +269,7 @@ export const useDebugger = create<DebuggerStore>()(
         ws = null;
         pending.clear();
         bpIds.clear();
-        set({ state: "disconnected", frames: [] });
+        set({ state: "disconnected", frames: [], variables: [] });
       }
     };
     socket.onerror = () => socket.close();
@@ -207,7 +280,7 @@ export const useDebugger = create<DebuggerStore>()(
     ws = null;
     pending.clear();
     bpIds.clear();
-    set({ state: "disconnected", frames: [] });
+    set({ state: "disconnected", frames: [], variables: [] });
   },
 
   resume: () => send("Debugger.resume"),

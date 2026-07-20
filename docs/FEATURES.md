@@ -366,7 +366,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Ausführungssteuerung**: Continue, Step Over/Into/Out, Restart, Stop, Restart Frame
 
-* [ ] **Variablen-Ansicht**: Scopes, Lazy Evaluation, Wertänderung zur Laufzeit, Kopieren
+* [~] **Variablen-Ansicht**: Lokale Variablen des Top-Frames bei Pause automatisch in der Debug-Island (Name+Wert, Objekte lazy expandierbar bis Tiefe 4, max. 40 Props via `Runtime.getProperties` — verifiziert); weitere Scopes, Wertänderung, Kopieren fehlen
 
 * [ ] **Watch-Ausdrücke**
 

@@ -11,7 +11,12 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { SPRING_LAYOUT } from "@/lib/ease";
-import { jumpToFrame, useDebugger } from "@/lib/debugger";
+import {
+  jumpToFrame,
+  loadProperties,
+  useDebugger,
+  type VarNode as VarNodeData,
+} from "@/lib/debugger";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { cn } from "@/lib/utils";
 
@@ -25,11 +30,60 @@ function relLabel(url: string): string {
   return path.split("/").slice(-2).join("/");
 }
 
+function VarRow({ node, depth }: { node: VarNodeData; depth: number }) {
+  const [children, setChildren] = useState<VarNodeData[] | null>(null);
+  const [open, setOpen] = useState(false);
+
+  const expand = async () => {
+    if (open) {
+      setOpen(false);
+      return;
+    }
+    setOpen(true);
+    if (children === null && node.objectId) {
+      setChildren(await loadProperties(node.objectId));
+    }
+  };
+
+  return (
+    <div>
+      <div
+        className="flex items-baseline gap-1.5 rounded-md px-1.5 py-0.5 font-mono text-[11px]"
+        style={{ paddingLeft: depth * 12 + 6 }}
+      >
+        {node.objectId && depth < 4 ? (
+          <button type="button" onClick={() => void expand()} className="shrink-0">
+            <motion.span
+              animate={{ rotate: open ? 90 : 0 }}
+              transition={{ type: "spring", stiffness: 500, damping: 32 }}
+              className="block"
+            >
+              <ChevronRight className="size-3 text-background/50" />
+            </motion.span>
+          </button>
+        ) : (
+          <span className="w-3 shrink-0" />
+        )}
+        <span className="shrink-0 text-sky-300/90">{node.name}</span>
+        <span className="min-w-0 truncate text-background/80">
+          {node.value}
+        </span>
+      </div>
+      {open &&
+        children?.map((c, i) => (
+          <VarRow key={`${c.name}:${i}`} node={c} depth={depth + 1} />
+        ))}
+    </div>
+  );
+}
+
 export function DebugIsland() {
   const state = useDebugger((s) => s.state);
   const frames = useDebugger((s) => s.frames);
+  const variables = useDebugger((s) => s.variables);
   const dbg = useDebugger.getState();
   const [stackOpen, setStackOpen] = useState(false);
+  const [varsOpen, setVarsOpen] = useState(true);
 
   if (state === "disconnected") return null;
   const paused = state === "paused";
@@ -87,13 +141,46 @@ export function DebugIsland() {
               Stack {frames.length}
             </button>
           )}
+          {paused && variables.length > 0 && (
+            <button
+              type="button"
+              title="Lokale Variablen"
+              onClick={() => setVarsOpen((v) => !v)}
+              className={cn(BTN, "w-auto gap-0.5 px-1.5 text-[10px] font-medium")}
+            >
+              <motion.span
+                animate={{ rotate: varsOpen ? 90 : 0 }}
+                transition={{ type: "spring", stiffness: 500, damping: 32 }}
+              >
+                <ChevronRight className="size-3" />
+              </motion.span>
+              Vars {variables.length}
+            </button>
+          )}
           <button type="button" title="Trennen" onClick={dbg.disconnect} className={BTN}>
             <X className="size-3.5" />
           </button>
         </div>
         <AnimatePresence initial={false}>
+          {paused && varsOpen && variables.length > 0 && (
+            <motion.div
+              key="vars"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={SPRING_LAYOUT}
+              className="overflow-hidden"
+            >
+              <div className="max-h-52 w-[min(440px,80vw)] overflow-y-auto px-2 pb-2">
+                {variables.map((v, i) => (
+                  <VarRow key={`${v.name}:${i}`} node={v} depth={0} />
+                ))}
+              </div>
+            </motion.div>
+          )}
           {paused && stackOpen && (
             <motion.div
+              key="stack"
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
