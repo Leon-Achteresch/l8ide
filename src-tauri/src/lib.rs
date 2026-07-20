@@ -32,6 +32,8 @@ struct SearchOptions {
     regex: bool,
     include: String,
     exclude: String,
+    #[serde(default)]
+    no_ignore: bool,
 }
 
 #[derive(Serialize)]
@@ -118,6 +120,9 @@ fn search_in_files(root: String, options: SearchOptions) -> Result<SearchRespons
 
     WalkBuilder::new(&root)
         .hidden(false)
+        .git_ignore(!options.no_ignore)
+        .git_global(!options.no_ignore)
+        .git_exclude(!options.no_ignore)
         .overrides(overrides)
         .build_parallel()
         .run(|| {
@@ -330,6 +335,7 @@ mod tests {
             regex,
             include: String::new(),
             exclude: String::new(),
+            no_ignore: false,
         }
     }
 

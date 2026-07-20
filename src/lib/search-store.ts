@@ -47,6 +47,7 @@ type SearchStore = {
   caseSensitive: boolean;
   wholeWord: boolean;
   useRegex: boolean;
+  noIgnore: boolean;
   showReplace: boolean;
   showFilters: boolean;
   files: FileMatches[];
@@ -65,6 +66,7 @@ type SearchStore = {
   toggleCaseSensitive: () => void;
   toggleWholeWord: () => void;
   toggleRegex: () => void;
+  toggleNoIgnore: () => void;
   toggleShowReplace: () => void;
   toggleShowFilters: () => void;
   toggleCollapsed: (path: string) => void;
@@ -85,6 +87,7 @@ function backendOptions(s: SearchStore) {
     regex: s.useRegex,
     include: s.include,
     exclude: s.exclude,
+    noIgnore: s.noIgnore,
   };
 }
 
@@ -111,6 +114,7 @@ export const useSearchStore = create<SearchStore>()((set, get) => ({
   caseSensitive: false,
   wholeWord: false,
   useRegex: false,
+  noIgnore: false,
   showReplace: false,
   showFilters: false,
   files: [],
@@ -130,6 +134,7 @@ export const useSearchStore = create<SearchStore>()((set, get) => ({
   toggleCaseSensitive: () => set((s) => ({ caseSensitive: !s.caseSensitive })),
   toggleWholeWord: () => set((s) => ({ wholeWord: !s.wholeWord })),
   toggleRegex: () => set((s) => ({ useRegex: !s.useRegex })),
+  toggleNoIgnore: () => set((s) => ({ noIgnore: !s.noIgnore })),
   toggleShowReplace: () => set((s) => ({ showReplace: !s.showReplace })),
   toggleShowFilters: () => set((s) => ({ showFilters: !s.showFilters })),
   toggleCollapsed: (path) =>

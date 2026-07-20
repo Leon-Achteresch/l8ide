@@ -1,6 +1,7 @@
 import { SearchFileGroup } from "@/components/search-panel/search-file-group";
 import { SearchFilenameGroup } from "@/components/search-panel/search-filename-group";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import {
   InputGroup,
   InputGroupAddon,
@@ -79,6 +80,8 @@ export function SearchPanel({ rootPath }: { rootPath: string }) {
   const caseSensitive = useSearchStore((s) => s.caseSensitive);
   const wholeWord = useSearchStore((s) => s.wholeWord);
   const useRegex = useSearchStore((s) => s.useRegex);
+  const noIgnore = useSearchStore((s) => s.noIgnore);
+  const toggleNoIgnore = useSearchStore((s) => s.toggleNoIgnore);
   const toggleCaseSensitive = useSearchStore((s) => s.toggleCaseSensitive);
   const toggleWholeWord = useSearchStore((s) => s.toggleWholeWord);
   const toggleRegex = useSearchStore((s) => s.toggleRegex);
@@ -278,6 +281,12 @@ export function SearchPanel({ rootPath }: { rootPath: string }) {
                 spellCheck={false}
                 className="h-7 w-full rounded-md border border-input bg-transparent px-2 text-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
               />
+            </label>
+            <label className="flex items-center justify-between">
+              <span className="text-[10px] font-medium text-muted-foreground">
+                .gitignore ignorieren
+              </span>
+              <Switch checked={noIgnore} onCheckedChange={toggleNoIgnore} />
             </label>
           </div>
         )}

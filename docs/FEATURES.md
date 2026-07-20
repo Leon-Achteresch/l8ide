@@ -262,7 +262,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Respektierung von** **`.gitignore`** in Workspace-Suche und Datei-Index
 
-* [ ] **`.gitignore`-Respektierung abschaltbar**
+* [x] **`.gitignore`-Respektierung abschaltbar**: Schalter „.gitignore ignorieren" im Dateifilter-Bereich der Suche (`no_ignore` bis in den ripgrep-Walker durchgereicht)
 
 * [ ] **`.gitignore`-Filter im Explorer** (aktuell nur manuelles Ausblenden)
 
