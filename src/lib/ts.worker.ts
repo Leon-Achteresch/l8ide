@@ -58,6 +58,58 @@ class RefactorTsWorker extends TypeScriptWorker {
     }
   }
 
+  async getImportCompletions(
+    fileName: string,
+    offset: number,
+  ): Promise<
+    { name: string; source: string; kind: string; data?: ts.CompletionEntryData }[]
+  > {
+    try {
+      const res = this._languageService.getCompletionsAtPosition(
+        fileName,
+        offset,
+        {
+          includeCompletionsForModuleExports: true,
+          includeCompletionsWithInsertText: true,
+        },
+      );
+      if (!res) return [];
+      return res.entries
+        .filter((e) => e.hasAction && e.source)
+        .slice(0, 50)
+        .map((e) => ({
+          name: e.name,
+          source: e.source as string,
+          kind: e.kind as string,
+          data: e.data,
+        }));
+    } catch {
+      return [];
+    }
+  }
+
+  async getImportCompletionDetails(
+    fileName: string,
+    offset: number,
+    name: string,
+    source: string,
+    data?: ts.CompletionEntryData,
+  ): Promise<ts.CompletionEntryDetails | undefined> {
+    try {
+      return this._languageService.getCompletionEntryDetails(
+        fileName,
+        offset,
+        name,
+        {},
+        source,
+        { includeCompletionsForModuleExports: true },
+        data,
+      );
+    } catch {
+      return undefined;
+    }
+  }
+
   async getEncodedSemanticClassifications(
     fileName: string,
     span: ts.TextSpan,

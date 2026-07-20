@@ -43,7 +43,20 @@ const FORMAT: ts.FormatCodeSettings = {
   semicolons: "insert" as ts.SemicolonPreference,
 };
 
-type RefactorWorker = {
+export type RefactorWorker = {
+  getImportCompletions(
+    fileName: string,
+    offset: number,
+  ): Promise<
+    { name: string; source: string; kind: string; data?: ts.CompletionEntryData }[]
+  >;
+  getImportCompletionDetails(
+    fileName: string,
+    offset: number,
+    name: string,
+    source: string,
+    data?: ts.CompletionEntryData,
+  ): Promise<ts.CompletionEntryDetails | undefined>;
   getApplicableRefactors(
     fileName: string,
     positionOrRange: number | ts.TextRange,
@@ -88,7 +101,7 @@ export function isRefactorLanguage(languageId: string) {
   return REFACTOR_LANGS.includes(languageId);
 }
 
-async function getRefactorWorker(
+export async function getRefactorWorker(
   model: monaco.editor.ITextModel,
 ): Promise<RefactorWorker | null> {
   const m = getMonacoInstance();

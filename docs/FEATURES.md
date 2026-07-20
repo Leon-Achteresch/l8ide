@@ -50,7 +50,7 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 
 * [x] **Inlay Hints**: Inline-Anzeige von Parameternamen und inferierten Typen
 
-* [ ] **Auto-Imports**: Automatisches Hinzufügen von Import-Statements bei Completion — Monaco-Stock-Worker reicht keine Modul-Export-Preferences durch; braucht Custom-Worker
+* [x] **Auto-Imports**: Unimportierte Projekt-Symbole erscheinen in der Completion (Quelle als Beschriftung, hinter lokalen Vorschlägen einsortiert); Auswahl fügt das Import-Statement automatisch ein — Custom-Worker `getImportCompletions`/`getImportCompletionDetails` + eigener CompletionItemProvider mit resolve (`auto-imports.ts`); node_modules-Symbole fehlen (nicht im Worker)
 
 * [x] **Snippet-Support (eingebaut)**: Monaco-Snippets mit Tabstops und Platzhaltern
 
@@ -312,7 +312,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **TypeScript/JavaScript IntelliSense (Basis)**: Completions, Hover, Navigation, tsconfig-Sync
 
-* [~] **TypeScript/JavaScript (vollständig)**: Refactorings ✓, semantische Validation ✓ (ohne node_modules-Typen, Modul-Codes ignoriert); Auto-Imports fehlen weiterhin
+* [x] **TypeScript/JavaScript (vollständig)**: Refactorings ✓, semantische Validation ✓ (ohne node_modules-Typen, Modul-Codes ignoriert), Auto-Imports ✓ (Projekt-Symbole)
 
 * [x] **Markdown-Vorschau**: Split-View mit Editor
 

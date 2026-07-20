@@ -1,5 +1,6 @@
 import { loader } from "@monaco-editor/react";
 import { registerAiInlineCompletions } from "@/lib/ai/inline-completions";
+import { registerAutoImports } from "@/lib/auto-imports";
 import { initIdeMonacoThemes } from "@/lib/ide-theme";
 import { configureJsonSchemas } from "@/lib/json-schemas";
 import { setMonacoInstance } from "@/lib/monaco-instance";
@@ -64,6 +65,7 @@ registerRefactorProviders();
 registerSemanticTokens();
 registerTailwind(monaco);
 registerAiInlineCompletions(monaco);
+registerAutoImports();
 initIdeMonacoThemes();
 void configureJsonSchemas();
 
