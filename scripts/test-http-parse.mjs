@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
 import {
+  applyEnv,
+  interpolate,
+  missingVars,
   parseHttpFile,
   requestAtLine,
   toCurlArgs,
@@ -48,5 +51,22 @@ assert.equal(args[args.length - 1], "https://api.test/login");
 const bare = parseHttpFile("GET https://x.test/ping\n");
 assert.equal(bare.length, 1);
 assert.equal(bare[0].method, "GET");
+
+const vars = { baseUrl: "https://api.dev", token: "abc" };
+assert.equal(
+  interpolate("{{baseUrl}}/items?t={{token}}", vars),
+  "https://api.dev/items?t=abc",
+);
+assert.equal(interpolate("{{ baseUrl }}/x", vars), "https://api.dev/x");
+assert.equal(interpolate("{{unknown}}/x", vars), "{{unknown}}/x");
+
+const envReq = parseHttpFile(
+  "GET {{baseUrl}}/me\nAuthorization: Bearer {{token}}\n",
+)[0];
+const applied = applyEnv(envReq, vars);
+assert.equal(applied.url, "https://api.dev/me");
+assert.deepEqual(applied.headers[0], ["Authorization", "Bearer abc"]);
+assert.deepEqual(missingVars(envReq, vars), []);
+assert.deepEqual(missingVars(envReq, { baseUrl: "x" }), ["token"]);
 
 console.log("test-http-parse: ok");

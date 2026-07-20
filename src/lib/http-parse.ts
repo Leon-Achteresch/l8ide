@@ -86,6 +86,39 @@ export function requestAtLine(
   );
 }
 
+export function interpolate(
+  text: string,
+  vars: Record<string, string>,
+): string {
+  return text.replace(/\{\{\s*([\w.-]+)\s*\}\}/g, (whole, key: string) =>
+    key in vars ? vars[key] : whole,
+  );
+}
+
+export function applyEnv(
+  req: HttpRequest,
+  vars: Record<string, string>,
+): HttpRequest {
+  return {
+    ...req,
+    url: interpolate(req.url, vars),
+    headers: req.headers.map(([k, v]) => [k, interpolate(v, vars)]),
+    body: interpolate(req.body, vars),
+  };
+}
+
+export function missingVars(
+  req: HttpRequest,
+  vars: Record<string, string>,
+): string[] {
+  const text = `${req.url}\n${req.headers.map(([k, v]) => `${k}:${v}`).join("\n")}\n${req.body}`;
+  const found = new Set<string>();
+  for (const m of text.matchAll(/\{\{\s*([\w.-]+)\s*\}\}/g)) {
+    if (!(m[1] in vars)) found.add(m[1]);
+  }
+  return [...found];
+}
+
 export function toCurlArgs(req: HttpRequest): string[] {
   const args = ["-sS", "-i", "-X", req.method];
   for (const [k, v] of req.headers) args.push("-H", `${k}: ${v}`);

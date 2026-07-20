@@ -33,6 +33,8 @@ export function HttpClientPanel() {
   const body = useHttpClient((s) => s.body);
   const ms = useHttpClient((s) => s.ms);
   const error = useHttpClient((s) => s.error);
+  const environment = useHttpClient((s) => s.environment);
+  const setEnvironment = useHttpClient((s) => s.setEnvironment);
   const close = useHttpClient((s) => s.close);
 
   return (
@@ -50,6 +52,13 @@ export function HttpClientPanel() {
             <span className="min-w-0 flex-1 truncate text-xs font-medium">
               {request?.name ?? "HTTP"}
             </span>
+            <input
+              value={environment}
+              onChange={(e) => setEnvironment(e.target.value)}
+              title="Environment (aus .l8ide/http-env.json)"
+              spellCheck={false}
+              className="h-5 w-20 rounded bg-foreground/[0.06] px-1.5 text-[10px] text-foreground outline-none focus:bg-foreground/10"
+            />
             {running ? (
               <Loader2 className="size-3.5 animate-spin text-muted-foreground" />
             ) : (
