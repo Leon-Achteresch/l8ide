@@ -3,6 +3,7 @@ import { FileComparePage } from "@/components/file-compare-page";
 import { MergeConflictPage } from "@/components/scm-panel/merge-conflict-page";
 import { DepGraphPage } from "@/components/dep-graph-page";
 import { ProjectGraphPage } from "@/components/project-graph-page";
+import { DepDashboardPage } from "@/components/dep-dashboard-page";
 import { SearchEditorPage } from "@/components/search-editor-page";
 import { store } from "@/components/tab-bar/lib";
 import { TabBar } from "@/components/tab-bar/tab-bar";
@@ -31,6 +32,7 @@ const PAGE_COMPONENTS: Record<string, () => React.JSX.Element> = {
   "/settings": SettingsPage,
   "/shortcuts": ShortcutsPage,
   "/project-graph": ProjectGraphPage,
+  "/dependencies": DepDashboardPage,
 };
 
 const CONTROL =

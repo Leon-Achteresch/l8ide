@@ -78,6 +78,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Shift+S",
   },
   {
+    id: "deps.dashboard",
+    label: "Abhängigkeiten-Dashboard öffnen",
+    group: "Navigation",
+    hotkey: "Mod+Alt+Y",
+  },
+  {
     id: "project.graph",
     label: "Projekt-Graph öffnen (Modul-Abhängigkeiten)",
     group: "Navigation",

@@ -692,7 +692,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [~] **Secrets-Management**: Beim Öffnen einer `.env`/`.env.*`-Datei warnt ein Toast, falls sie nicht in `.gitignore` steht (`git check-ignore`-Prüfung, verifiziert), mit „Zu .gitignore"-Aktion (`secrets-guard.ts`); Maskierung/Schema-Validierung/Vault-Sync fehlen
 
-* [ ] **Dependency-Dashboard**: Alle Abhängigkeiten mit Versionen, Vulnerabilities, Lizenzchecks, Update-PRs per Klick
+* [~] **Dependency-Dashboard**: ⌘⌥Y — alle deps/devDeps mit deklarierter und tatsächlich installierter Version (aus node_modules, „fehlt" rot), „Auf Updates prüfen" (npm outdated) markiert veraltete mit Ziel-Version (`dep-dashboard.ts`); Vulnerabilities/Lizenzen/Update-PRs fehlen
 
 * [ ] **Monorepo-Bewusstsein**: Paket-Grenzen, betroffene Pakete bei Änderung, gefilterte Task-Ausführung (turbo/nx-Integration nativ)
 

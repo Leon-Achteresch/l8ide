@@ -19,6 +19,7 @@ export const PAGES: Record<string, string> = {
   "/settings": "Settings",
   "/shortcuts": "Shortcuts",
   "/project-graph": "Projekt-Graph",
+  "/dependencies": "Abhängigkeiten",
 };
 
 export function isPageTab(tab: string) {

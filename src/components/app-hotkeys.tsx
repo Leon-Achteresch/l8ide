@@ -69,6 +69,8 @@ export function AppHotkeys() {
     },
     "project.graph": () =>
       useWorkspaceStore.getState().openFile(pageTab("/project-graph")),
+    "deps.dashboard": () =>
+      useWorkspaceStore.getState().openFile(pageTab("/dependencies")),
     "file.deps": () => {
       const path = useWorkspaceStore.getState().activeFile;
       if (path && !isPageTab(path)) void useFileDeps.getState().openFor(path);
