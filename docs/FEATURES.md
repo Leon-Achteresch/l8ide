@@ -598,7 +598,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Multi-File-Rename mit Datei-/Ordnernamen-Kopplung**: Symbol umbenennen benennt Datei, Tests, Storybook-Dateien mit um
 
-* [ ] **Postfix-Completions**: `expr.if`, `expr.log`, `expr.return` expandieren zu Konstrukten (IntelliJ-Feature)
+* [x] **Postfix-Completions**: `.log`, `.error`, `.if`, `.not`, `.return`, `.const`, `.let`, `.await`, `.for` expandieren den Ausdruck davor (klammer-balancierter Zeilen-Scanner, Snippet-Tabstops; `postfix.ts`, `postfix-core.ts`, Test `test:postfix`)
 
 * [ ] **Chain-Completion / Smart Completion Tiefe 2**: Vorschläge über Aufrufketten hinweg, die den Zieltyp erfüllen
 
