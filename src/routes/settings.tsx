@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { X } from "lucide-react";
+import { Trash2, X } from "lucide-react";
+import { useUserSnippets } from "@/lib/user-snippets";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { PrettierSettings } from "@/components/prettier-settings";
@@ -110,10 +111,121 @@ export function SettingsPage() {
       />
       <WorkspaceTrust />
       <AiSettingsSection />
+      <SnippetsSection />
       <EditorDisplaySettings />
       <RefactorSettings />
       <TailwindSettings />
       <PrettierSettings />
+    </div>
+  );
+}
+
+const SNIPPET_LANGUAGES = [
+  { id: "*", label: "Alle Sprachen" },
+  { id: "typescript", label: "TypeScript" },
+  { id: "javascript", label: "JavaScript" },
+  { id: "html", label: "HTML" },
+  { id: "css", label: "CSS" },
+  { id: "json", label: "JSON" },
+  { id: "markdown", label: "Markdown" },
+];
+
+function SnippetsSection() {
+  const snippets = useUserSnippets((s) => s.snippets);
+  const add = useUserSnippets((s) => s.add);
+  const remove = useUserSnippets((s) => s.remove);
+  const [name, setName] = useState("");
+  const [prefix, setPrefix] = useState("");
+  const [language, setLanguage] = useState("*");
+  const [body, setBody] = useState("");
+
+  const canAdd = name.trim() && prefix.trim() && body.trim();
+  const submit = () => {
+    if (!canAdd) return;
+    add({ name: name.trim(), prefix: prefix.trim(), language, body });
+    setName("");
+    setPrefix("");
+    setBody("");
+  };
+
+  return (
+    <div className="mt-6 max-w-lg">
+      <h2 className="text-sm font-semibold">Snippets</h2>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Eigene Snippets erscheinen in der Completion. Tabstops: $1, $2,
+        Platzhalter: {"${1:name}"}, Endposition: $0.
+      </p>
+      <div className="mt-3 space-y-1.5">
+        {snippets.map((s) => (
+          <div
+            key={s.id}
+            className="group flex items-center gap-2 rounded-lg bg-foreground/[0.03] px-2.5 py-1.5"
+          >
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium text-foreground">
+                <span className="font-mono">{s.prefix}</span> · {s.name}
+              </p>
+              <p className="truncate font-mono text-[10px] text-muted-foreground">
+                {s.language === "*" ? "alle Sprachen" : s.language} ·{" "}
+                {s.body.split("\n")[0]}
+              </p>
+            </div>
+            <button
+              type="button"
+              title="Löschen"
+              onClick={() => remove(s.id)}
+              className="inline-flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-all hover:bg-foreground/8 hover:text-red-500 group-hover:opacity-100"
+            >
+              <Trash2 className="size-3" />
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="mt-3 space-y-1.5">
+        <div className="flex gap-1.5">
+          <Input
+            value={prefix}
+            onChange={(e) => setPrefix(e.target.value)}
+            placeholder="Prefix (z.B. cl)"
+            spellCheck={false}
+            className="h-8 w-32 font-mono text-xs"
+          />
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Name"
+            className="h-8 flex-1 text-xs"
+          />
+          <NativeSelect
+            size="sm"
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+          >
+            {SNIPPET_LANGUAGES.map((l) => (
+              <NativeSelectOption key={l.id} value={l.id}>
+                {l.label}
+              </NativeSelectOption>
+            ))}
+          </NativeSelect>
+        </div>
+        <textarea
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          placeholder={"console.log('${1:label}', $0)"}
+          spellCheck={false}
+          rows={3}
+          className="w-full resize-y rounded-md border border-input bg-transparent px-2 py-1.5 font-mono text-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+        />
+        <Button
+          type="button"
+          size="sm"
+          className="h-7 text-xs"
+          disabled={!canAdd}
+          onClick={submit}
+        >
+          Snippet hinzufügen
+        </Button>
+      </div>
     </div>
   );
 }

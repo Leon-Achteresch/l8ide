@@ -54,7 +54,7 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 
 * [x] **Snippet-Support (eingebaut)**: Monaco-Snippets mit Tabstops und Platzhaltern
 
-* [ ] **Snippet-Support (benutzerdefiniert)**: Eigene Snippets verwalten und konfigurieren
+* [x] **Snippet-Support (benutzerdefiniert)**: Eigene Snippets (Prefix, Name, Sprache oder global, Body mit Tabstops/Platzhaltern) in Einstellungen → Snippets verwalten; erscheinen als Completion-Vorschläge (`user-snippets.ts`)
 
 * [x] **Word-Based Suggestions**: Fallback-Vorschläge aus Dokumentinhalt
 
@@ -582,7 +582,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Interactive Window / REPL** (Python u.a.)
 
-* [ ] **Snippets-Verwaltung**: Global, pro Sprache, pro Projekt
+* [~] **Snippets-Verwaltung**: Global und pro Sprache ✓ (Einstellungen → Snippets); pro Projekt fehlt
 
 ***
 
