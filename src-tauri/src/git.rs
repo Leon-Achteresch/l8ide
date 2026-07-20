@@ -1276,6 +1276,43 @@ pub async fn delete_remote_branch(path: String, remote_ref: String) -> Result<St
     }).await
 }
 
+#[derive(Serialize)]
+pub struct TagInfo {
+    pub name: String,
+    pub short_hash: String,
+    pub subject: String,
+}
+
+#[tauri::command]
+pub async fn list_tags(path: String) -> Result<Vec<TagInfo>, String> {
+    spawn_git(move || {
+        let repo = PathBuf::from(path.trim());
+        let out = run_git(
+            &repo,
+            &[
+                "for-each-ref",
+                "--sort=-creatordate",
+                "--format=%(refname:short)%1f%(objectname:short)%1f%(contents:subject)",
+                "refs/tags",
+            ],
+        )
+        .unwrap_or_default();
+        Ok(out
+            .lines()
+            .filter(|l| !l.trim().is_empty())
+            .filter_map(|line| {
+                let mut p = line.split('\u{1f}');
+                Some(TagInfo {
+                    name: p.next()?.to_string(),
+                    short_hash: p.next().unwrap_or("").to_string(),
+                    subject: p.next().unwrap_or("").to_string(),
+                })
+            })
+            .collect())
+    })
+    .await
+}
+
 #[tauri::command]
 pub async fn delete_tag(path: String, name: String) -> Result<(), String> {
     spawn_git(move || {

@@ -19,6 +19,7 @@ import { ReflogDialog } from "@/components/reflog-dialog";
 import { WorktreeDialog } from "@/components/worktree-dialog";
 import { StashDialog } from "@/components/stash-dialog";
 import { RemotesDialog } from "@/components/remotes-dialog";
+import { TagsDialog } from "@/components/tags-dialog";
 import { ClipboardHistoryDialog } from "@/components/clipboard-history-dialog";
 import { WorkContextsDialog } from "@/components/work-contexts-dialog";
 import { ScreencastOverlay } from "@/components/screencast-overlay";
@@ -207,6 +208,7 @@ function RootComponent() {
       <WorktreeDialog />
       <StashDialog />
       <RemotesDialog />
+      <TagsDialog />
       <Toaster />
       {RouterDevtools && (
         <Suspense fallback={null}>
