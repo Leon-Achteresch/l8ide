@@ -24,6 +24,7 @@ import { useBlameSettings } from "@/lib/blame-layer";
 import { useFocusTimer } from "@/lib/focus-timer";
 import { useReflog } from "@/lib/reflog-store";
 import { useWorktrees } from "@/lib/worktree-store";
+import { useStashStore } from "@/lib/stash-store";
 import { runBuildTask, runTestTask } from "@/lib/tasks";
 import { useNavHistory } from "@/lib/nav-history";
 import { open } from "@tauri-apps/plugin-dialog";
@@ -91,6 +92,7 @@ export function AppHotkeys() {
     "blame.toggle": () => useBlameSettings.getState().toggle(),
     "git.reflog": () => useReflog.getState().setOpen(true),
     "git.worktrees": () => useWorktrees.getState().setOpen(true),
+    "git.stashes": () => useStashStore.getState().setOpen(true),
     "history.local": () => {
       const path = useWorkspaceStore.getState().activeFile;
       if (path && !isPageTab(path)) useLocalHistoryDialog.getState().openFor(path);

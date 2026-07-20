@@ -162,6 +162,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+K",
   },
   {
+    id: "git.stashes",
+    label: "Git-Stashes verwalten",
+    group: "Navigation",
+    hotkey: "Mod+Alt+S",
+  },
+  {
     id: "git.worktrees",
     label: "Git-Worktrees verwalten/wechseln",
     group: "Navigation",

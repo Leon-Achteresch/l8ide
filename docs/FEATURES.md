@@ -342,7 +342,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Git Blame**: ⌘⌥U blendet Autor, Alter und Commit-Summary der Cursorzeile dezent inline ein (GitLens-Stil, folgt dem Cursor, debounced, refresht bei Änderungen/Git-Events — `blame-layer.ts`, Backend `repo_blame`); **File History** in Timeline ✓
 
-* [ ] **Stashes, Tags, Submodule, Worktrees** (Basis-Support)
+* [~] **Stashes** ✓ (⌘⌥S: Liste mit Branch/Datum, Stashen mit Nachricht + optional untracked, apply/pop/drop — `stash-store.ts`), **Worktrees** ✓ (⌘⌥O); Tags/Submodule-UI offen (Backends vorhanden)
 
 * [ ] **Multi-Repo-Support**: Mehrere Repositories im Workspace
 
