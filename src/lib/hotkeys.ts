@@ -66,6 +66,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+L",
   },
   {
+    id: "http.run",
+    label: "HTTP-Anfrage an Cursor ausführen (.http-Datei)",
+    group: "Ausführen",
+    hotkey: "Mod+Alt+Enter",
+  },
+  {
     id: "search.structural",
     label: "Strukturelle Suche (Code-Muster mit $-Wildcards)",
     group: "Allgemein",
