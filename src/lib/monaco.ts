@@ -2,6 +2,7 @@ import { loader } from "@monaco-editor/react";
 import { registerAiInlineCompletions } from "@/lib/ai/inline-completions";
 import { registerAutoImports } from "@/lib/auto-imports";
 import { registerPostfixCompletions } from "@/lib/postfix";
+import { registerAiQuickFix } from "@/lib/ai/ai-quickfix";
 import { registerDebugHover } from "@/lib/debug-hover";
 import { registerUserSnippets } from "@/lib/user-snippets";
 import { initIdeMonacoThemes } from "@/lib/ide-theme";
@@ -72,6 +73,7 @@ registerAutoImports();
 registerPostfixCompletions();
 registerUserSnippets();
 registerDebugHover();
+registerAiQuickFix();
 initIdeMonacoThemes();
 void configureJsonSchemas();
 

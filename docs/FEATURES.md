@@ -510,6 +510,8 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Terminal-Command-Vorschläge und -Erklärungen**
 
+* [x] **KI-Quick-Fix**: Auf einer Zeile mit Fehler/Warnung bietet die Code-Action-Palette (⌘.) „✨ KI: Fehler beheben" — schickt Diagnose + ±8 Zeilen Kontext ans Modell und ersetzt die Zeile durch die korrigierte Fassung (undo-fähig; `ai-quickfix.ts`)
+
 * [ ] **AI-gestützte Rename-Vorschläge**
 
 * [x] **Sprachmodell-Auswahl**: OpenRouter-Modelle wählbar (`ai-settings.ts`), Modell-Benchmarks unter `scripts/ai-bench*`
