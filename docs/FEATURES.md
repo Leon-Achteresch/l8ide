@@ -348,6 +348,8 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **GitHub-Integration** (Extension von MS): PRs erstellen/reviewen/mergen, Issues, Codespaces
 
+* [x] **Remote-Verwaltung**: ⌘⌥E listet Git-Remotes mit editierbarer URL (Inline-Speichern) und Anlegen neuer Remotes (`remotes-store.ts`); Entfernen offen (Backend fehlt)
+
 * [ ] **SCM-Provider-API**: Andere VCS via Extensions (SVN, Mercurial, Perforce)
 
 * [ ] **Incoming/Outgoing Changes-Ansicht**

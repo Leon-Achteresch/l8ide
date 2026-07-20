@@ -162,6 +162,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+K",
   },
   {
+    id: "git.remotes",
+    label: "Git-Remotes verwalten",
+    group: "Navigation",
+    hotkey: "Mod+Alt+E",
+  },
+  {
     id: "git.stashes",
     label: "Git-Stashes verwalten",
     group: "Navigation",

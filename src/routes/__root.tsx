@@ -18,6 +18,7 @@ import { HttpClientPanel } from "@/components/http-client-panel";
 import { ReflogDialog } from "@/components/reflog-dialog";
 import { WorktreeDialog } from "@/components/worktree-dialog";
 import { StashDialog } from "@/components/stash-dialog";
+import { RemotesDialog } from "@/components/remotes-dialog";
 import { ClipboardHistoryDialog } from "@/components/clipboard-history-dialog";
 import { WorkContextsDialog } from "@/components/work-contexts-dialog";
 import { ScreencastOverlay } from "@/components/screencast-overlay";
@@ -205,6 +206,7 @@ function RootComponent() {
       <ReflogDialog />
       <WorktreeDialog />
       <StashDialog />
+      <RemotesDialog />
       <Toaster />
       {RouterDevtools && (
         <Suspense fallback={null}>
