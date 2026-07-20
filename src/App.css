@@ -206,6 +206,22 @@
 }
 
 .git-gutter { width: 3px !important; margin-left: 3px; cursor: pointer; }
+
+@keyframes ai-shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.ai-gradient-text {
+  background: linear-gradient(90deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: ai-shimmer 2.5s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-gradient-text { animation: none; }
+}
 .git-gutter-add { border-left: 3px solid #22c55e; }
 .git-gutter-modify { border-left: 3px solid #3b82f6; }
 .git-gutter-delete { border-left: 3px solid #ef4444; }

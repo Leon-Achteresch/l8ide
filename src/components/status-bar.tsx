@@ -29,8 +29,12 @@ import {
   GitBranch,
   Info,
   Radio,
+  Sparkles,
   TriangleAlert,
 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useChatStore } from "@/lib/chat-store";
+import { SPRING_PANEL } from "@/lib/ease";
 import { useEffect, useState } from "react";
 import { scanTodos, type TodoCounts } from "@/lib/project-health";
 import { useSearchStore } from "@/lib/search-store";
@@ -44,6 +48,30 @@ const KIND_META: Record<
   warning: { icon: TriangleAlert, className: "text-amber-500" },
   info: { icon: Info, className: "text-sky-500" },
 };
+
+function AiActivity() {
+  const busy = useChatStore((s) => s.busy);
+  const setOpen = useChatStore((s) => s.setOpen);
+  return (
+    <AnimatePresence initial={false}>
+      {busy && (
+        <motion.button
+          type="button"
+          initial={{ opacity: 0, width: 0 }}
+          animate={{ opacity: 1, width: "auto" }}
+          exit={{ opacity: 0, width: 0 }}
+          transition={SPRING_PANEL}
+          onClick={() => setOpen(true)}
+          title="KI-Chat öffnen"
+          className="inline-flex items-center gap-1 overflow-hidden whitespace-nowrap rounded-md px-1.5 transition-colors hover:bg-foreground/8"
+        >
+          <Sparkles className="size-3 shrink-0 text-violet-500" strokeWidth={2} />
+          <span className="ai-gradient-text font-medium">Agent arbeitet…</span>
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
+}
 
 function DevPorts() {
   const ports = usePortsStore((s) => s.ports);
@@ -367,6 +395,7 @@ export function StatusBar() {
         </Item>
         <DevPorts />
         <ProjectHealth />
+        <AiActivity />
       </div>
       {showEditor && (
         <div className="flex items-stretch gap-1">
