@@ -770,7 +770,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Komponenten-Explorer**: Alle UI-Komponenten des Projekts als Galerie mit Props-Playground (Storybook-nativ)
 
-* [ ] **Design-Token-Sync**: Farben/Spacing aus Figma/Tokens-Datei mit Inline-Vorschau und Abweichungs-Warnung
+* [~] **Design-Token-Übersicht**: ⌘⌥T sammelt alle CSS-Custom-Properties des Projekts, zeigt Farben als Swatch-Galerie (mit `var()`-Auflösung) und übrige Tokens als Tabelle (`design-tokens-core.ts`, Test `test:tokens`); Figma-Sync und Abweichungs-Warnung fehlen
 
 * [ ] **Visuelles CSS-Editing**: Box-Model/Flex/Grid-Manipulation mit Live-Rückschreibung in die Quelle
 

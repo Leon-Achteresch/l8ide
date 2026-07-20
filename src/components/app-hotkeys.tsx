@@ -79,6 +79,8 @@ export function AppHotkeys() {
       useWorkspaceStore.getState().openFile(pageTab("/project-graph")),
     "deps.dashboard": () =>
       useWorkspaceStore.getState().openFile(pageTab("/dependencies")),
+    "design.tokens": () =>
+      useWorkspaceStore.getState().openFile(pageTab("/design-tokens")),
     "processes.dashboard": () =>
       useWorkspaceStore.getState().openFile(pageTab("/processes")),
     "file.deps": () => {

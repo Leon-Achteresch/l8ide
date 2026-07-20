@@ -84,6 +84,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+J",
   },
   {
+    id: "design.tokens",
+    label: "Design-Tokens öffnen (CSS-Variablen)",
+    group: "Navigation",
+    hotkey: "Mod+Alt+T",
+  },
+  {
     id: "deps.dashboard",
     label: "Abhängigkeiten-Dashboard öffnen",
     group: "Navigation",

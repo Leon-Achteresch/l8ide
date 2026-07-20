@@ -21,6 +21,7 @@ export const PAGES: Record<string, string> = {
   "/project-graph": "Projekt-Graph",
   "/dependencies": "Abhängigkeiten",
   "/processes": "Dev-Prozesse",
+  "/design-tokens": "Design-Tokens",
 };
 
 export function isPageTab(tab: string) {
