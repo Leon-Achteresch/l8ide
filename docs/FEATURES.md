@@ -752,7 +752,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Adaptive UI**: Layout wechselt automatisch nach Kontext (Debugging-Layout, Review-Layout, Schreib-Layout)
 
-* [ ] **Befehls-Vorhersage**: Häufige Aktionsfolgen lernen und als Ein-Klick-Makro anbieten
+* [~] **Befehls-Vorhersage**: Nutzungshäufigkeit aller Befehle wird lokal getrackt; bei leerer Suche zeigt die Command-Palette oben eine „Häufig genutzt"-Gruppe (Top 5, Stern-Icon) — deine meistgenutzten Aktionen sind sofort da (`command-registry.ts`); Aktionsfolgen-Makros fehlen
 
 * [x] **Notizen/Scratchpads pro Projekt**: ⌘⌥N öffnet die Projekt-Notizen als Markdown-Tab (Rich-Editor via Milkdown); liegen im App-Data außerhalb des Repos, überleben Branch-Wechsel (`project-notes.ts`)
 

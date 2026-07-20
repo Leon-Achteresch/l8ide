@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Star } from "lucide-react";
 import { formatForDisplay } from "@tanstack/react-hotkeys";
 import { create } from "zustand";
 import {
@@ -18,7 +19,7 @@ import {
   NUMPAD_ADD_HOTKEY,
   useHotkeySettings,
 } from "@/lib/hotkeys";
-import { runCommand } from "@/lib/command-registry";
+import { runCommand, topCommands } from "@/lib/command-registry";
 import { runEditorAction } from "@/lib/editor-actions";
 import { cn } from "@/lib/utils";
 
@@ -62,6 +63,19 @@ export function CommandPalette() {
   const open = useCommandPalette((s) => s.open);
   const setOpen = useCommandPalette((s) => s.setOpen);
   const overrides = useHotkeySettings((s) => s.overrides);
+  const [query, setQuery] = useState("");
+
+  const frequent = useMemo(() => {
+    if (!open) return [];
+    const top = topCommands(5);
+    return top
+      .map((id) => COMMANDS.find((c) => c.id === id))
+      .filter((c): c is (typeof COMMANDS)[number] => Boolean(c) && c!.id !== "command.palette");
+  }, [open]);
+
+  useEffect(() => {
+    if (open) setQuery("");
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -92,11 +106,41 @@ export function CommandPalette() {
           onMouseDown={(e) => e.stopPropagation()}
         >
           <Command loop>
-            <CommandInput placeholder="Befehl eingeben…" autoFocus />
+            <CommandInput
+              placeholder="Befehl eingeben…"
+              autoFocus
+              value={query}
+              onValueChange={setQuery}
+            />
             <CommandList>
               <CommandEmpty>
                 <span className="text-muted-foreground">Keine Ergebnisse</span>
               </CommandEmpty>
+              {query.trim() === "" && frequent.length > 0 && (
+                <CommandGroup heading="Häufig genutzt">
+                  {frequent.map((command) => {
+                    const binding = effectiveHotkey(command, overrides);
+                    return (
+                      <CommandItem
+                        key={`freq:${command.id}`}
+                        value={`★ ${command.label}`}
+                        onSelect={() => {
+                          setOpen(false);
+                          runCommand(command.id);
+                        }}
+                      >
+                        <Star className="size-3.5 shrink-0 text-amber-500" />
+                        <span className="truncate">{command.label}</span>
+                        {binding && (
+                          <Kbd className="ml-auto h-4 px-1 text-[10px]">
+                            {displayHotkey(binding)}
+                          </Kbd>
+                        )}
+                      </CommandItem>
+                    );
+                  })}
+                </CommandGroup>
+              )}
               {GROUPS.map((group) => (
                 <CommandGroup key={group} heading={group}>
                   {COMMANDS.filter(
