@@ -6,6 +6,10 @@ function escapeRegExp(s: string): string {
 
 const META = /\$\$\$|\$[A-Za-z_][A-Za-z0-9_]*/g;
 
+export function patternMetavars(pattern: string): string[] {
+  return [...pattern.matchAll(META)].map((m) => m[0]);
+}
+
 export function patternToRegex(pattern: string): RegExp {
   const literalToRegex = (literal: string) =>
     escapeRegExp(literal)
@@ -16,11 +20,36 @@ export function patternToRegex(pattern: string): RegExp {
   let last = 0;
   for (const m of pattern.matchAll(META)) {
     out += literalToRegex(pattern.slice(last, m.index));
-    out += m[0] === "$$$" ? "[\\s\\S]*?" : "[\\w$.]+";
+    out += m[0] === "$$$" ? "([\\s\\S]*?)" : "([\\w$.]+)";
     last = m.index + m[0].length;
   }
   out += literalToRegex(pattern.slice(last));
   return new RegExp(out, "g");
+}
+
+export function structuralReplace(
+  source: string,
+  pattern: string,
+  replacement: string,
+): { output: string; count: number } {
+  const trimmedPattern = pattern.trim();
+  if (!trimmedPattern) return { output: source, count: 0 };
+  const vars = patternMetavars(trimmedPattern);
+  const re = patternToRegex(trimmedPattern);
+  let count = 0;
+  const output = source.replace(re, (...args) => {
+    const groups = args.slice(1, 1 + vars.length) as string[];
+    if (!args[0]) return args[0] as string;
+    count++;
+    const binding = new Map<string, string>();
+    vars.forEach((v, i) => {
+      if (v !== "$$$" && !binding.has(v)) binding.set(v, groups[i] ?? "");
+    });
+    return replacement.replace(META, (token) =>
+      token === "$$$" ? "" : (binding.get(token) ?? token),
+    );
+  });
+  return { output, count };
 }
 
 export function searchStructural(

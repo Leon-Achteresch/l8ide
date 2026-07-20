@@ -1,7 +1,14 @@
 import { invoke } from "@tauri-apps/api/core";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import { create } from "zustand";
-import { searchStructural, type StructMatch } from "@/lib/struct-search-core";
+import {
+  searchStructural,
+  structuralReplace,
+  type StructMatch,
+} from "@/lib/struct-search-core";
+import { monacoUriForPath } from "@/lib/monaco-uri";
+import { useRefactorPreview, type FileEdit } from "@/lib/refactor-preview";
+import { toast } from "sonner";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
 export type StructFileResult = { path: string; matches: StructMatch[] };
@@ -17,22 +24,57 @@ function literalPrefix(pattern: string): string {
 type StructSearchStore = {
   open: boolean;
   pattern: string;
+  replacement: string;
   results: StructFileResult[];
   running: boolean;
   total: number;
   setOpen: (open: boolean) => void;
   setPattern: (pattern: string) => void;
+  setReplacement: (replacement: string) => void;
   run: () => Promise<void>;
+  previewReplace: () => Promise<void>;
 };
 
 export const useStructSearch = create<StructSearchStore>()((set, get) => ({
   open: false,
   pattern: "",
+  replacement: "",
   results: [],
   running: false,
   total: 0,
   setOpen: (open) => set({ open }),
   setPattern: (pattern) => set({ pattern }),
+  setReplacement: (replacement) => set({ replacement }),
+
+  previewReplace: async () => {
+    const { pattern, replacement, results } = get();
+    if (!pattern.trim() || results.length === 0) return;
+    const { readTextFile } = await import("@tauri-apps/plugin-fs");
+    const edits: FileEdit[] = [];
+    for (const file of results) {
+      const oldText = await readTextFile(file.path).catch(() => null);
+      if (oldText === null) continue;
+      const { output, count } = structuralReplace(oldText, pattern, replacement);
+      if (count === 0 || output === oldText) continue;
+      edits.push({
+        uri: monacoUriForPath(file.path).toString(),
+        path: file.path,
+        isNew: false,
+        oldText,
+        newText: output,
+        changes: [{ span: { start: 0, length: oldText.length }, newText: output }],
+      });
+    }
+    if (edits.length === 0) {
+      toast.info("Keine Änderungen.");
+      return;
+    }
+    set({ open: false });
+    useRefactorPreview.getState().show({
+      title: `Struktur-Replace: ${pattern} → ${replacement} · ${edits.length} Datei(en)`,
+      edits,
+    });
+  },
   run: async () => {
     const pattern = get().pattern.trim();
     const root = useWorkspaceStore.getState().rootPath?.replace(/\/+$/, "");

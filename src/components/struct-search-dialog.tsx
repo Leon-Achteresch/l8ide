@@ -1,4 +1,4 @@
-import { Loader2, SearchCode } from "lucide-react";
+import { FileDiff, Loader2, SearchCode } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +15,8 @@ export function StructSearchDialog() {
   const setOpen = useStructSearch((s) => s.setOpen);
   const pattern = useStructSearch((s) => s.pattern);
   const setPattern = useStructSearch((s) => s.setPattern);
+  const replacement = useStructSearch((s) => s.replacement);
+  const setReplacement = useStructSearch((s) => s.setReplacement);
   const results = useStructSearch((s) => s.results);
   const running = useStructSearch((s) => s.running);
   const total = useStructSearch((s) => s.total);
@@ -41,9 +43,28 @@ export function StructSearchDialog() {
           spellCheck={false}
           className="h-8 font-mono text-xs"
         />
+        <div className="flex gap-1.5">
+          <Input
+            value={replacement}
+            onChange={(e) => setReplacement(e.target.value)}
+            placeholder="Ersetzen (optional), z.B. foo($B, $A)"
+            spellCheck={false}
+            className="h-8 flex-1 font-mono text-xs"
+          />
+          <button
+            type="button"
+            disabled={!replacement.trim() || results.length === 0}
+            onClick={() => void useStructSearch.getState().previewReplace()}
+            className="inline-flex h-8 shrink-0 items-center gap-1 rounded-md bg-foreground/[0.06] px-2.5 text-[11px] font-medium text-foreground transition-colors hover:bg-foreground/10 disabled:pointer-events-none disabled:opacity-40"
+          >
+            <FileDiff className="size-3.5" />
+            Vorschau
+          </button>
+        </div>
         <p className="-mt-1 text-[11px] text-muted-foreground">
           <span className="font-mono">$name</span> = ein Token,{" "}
-          <span className="font-mono">$$$</span> = beliebig viel. ⏎ sucht.
+          <span className="font-mono">$$$</span> = beliebig viel. ⏎ sucht,
+          Metavariablen im Ersetzungsfeld wiederverwenden.
         </p>
         <div className="max-h-80 space-y-2 overflow-y-auto">
           {running ? (
