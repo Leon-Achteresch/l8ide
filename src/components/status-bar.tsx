@@ -36,7 +36,12 @@ import { AnimatePresence, motion } from "motion/react";
 import { useChatStore } from "@/lib/chat-store";
 import { SPRING_PANEL } from "@/lib/ease";
 import { useEffect, useState } from "react";
-import { scanTodos, type TodoCounts } from "@/lib/project-health";
+import {
+  checkNodeEnv,
+  scanTodos,
+  type NodeEnv,
+  type TodoCounts,
+} from "@/lib/project-health";
 import { useSearchStore } from "@/lib/search-store";
 
 const KIND_META: Record<
@@ -134,13 +139,18 @@ function ProjectHealth() {
   const ports = usePortsStore((s) => s.ports);
   const rootPath = useWorkspaceStore((s) => s.rootPath);
   const [todos, setTodos] = useState<TodoCounts | null>(null);
+  const [nodeEnv, setNodeEnv] = useState<NodeEnv | null>(null);
 
   const load = () => {
     if (!rootPath) return;
     setTodos(null);
+    setNodeEnv(null);
     void scanTodos(rootPath)
       .then(setTodos)
       .catch(() => setTodos({ todo: 0, fixme: 0, hack: 0 }));
+    void checkNodeEnv(rootPath)
+      .then(setNodeEnv)
+      .catch(() => setNodeEnv(null));
   };
 
   const openTodoSearch = (query: string) => {
@@ -200,6 +210,13 @@ function ProjectHealth() {
         />
         {(ahead > 0 || behind > 0) && (
           <HealthRow label="Ahead / Behind" value={`↑${ahead} ↓${behind}`} />
+        )}
+        {nodeEnv?.required && (
+          <HealthRow
+            label="Node (erf. / aktiv)"
+            value={`${nodeEnv.required} / ${nodeEnv.running ?? "?"}`}
+            accent={nodeEnv.ok ? "text-emerald-500/70" : "text-amber-500"}
+          />
         )}
         <HealthRow
           label="Dev-Server"

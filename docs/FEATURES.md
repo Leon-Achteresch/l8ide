@@ -688,7 +688,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 ## F. Projekt- & Umgebungsmanagement
 
-* [ ] **Umgebungs-Manager nativ**: Node/Python/Ruby/Java-Versionen pro Projekt erkennen, installieren, umschalten (mise/asdf integriert)
+* [~] **Umgebungs-Manager (Node)**: Geforderte Node-Version (`.nvmrc` bzw. `engines.node`) vs. laufende `node -v` im Health-Panel, Major-Mismatch amber (`checkNodeEnv` in `project-health.ts`); Installieren/Umschalten und weitere Runtimes fehlen
 
 * [~] **Secrets-Management**: Beim Öffnen einer `.env`/`.env.*`-Datei warnt ein Toast, falls sie nicht in `.gitignore` steht (`git check-ignore`-Prüfung, verifiziert), mit „Zu .gitignore"-Aktion (`secrets-guard.ts`); Maskierung/Schema-Validierung/Vault-Sync fehlen
 
