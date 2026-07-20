@@ -81,18 +81,61 @@ export async function checkOutdated(
   }
 }
 
+export type AuditSummary = {
+  critical: number;
+  high: number;
+  moderate: number;
+  low: number;
+  total: number;
+};
+
+export async function runAudit(root: string): Promise<AuditSummary | null> {
+  const res = await invoke<ShellResult>("run_shell", {
+    cwd: root,
+    command: "npm audit --json || true",
+    timeoutMs: 60000,
+  }).catch(() => null);
+  if (!res?.stdout.trim()) return null;
+  try {
+    const json = JSON.parse(res.stdout) as {
+      metadata?: { vulnerabilities?: Record<string, number> };
+    };
+    const v = json.metadata?.vulnerabilities ?? {};
+    return {
+      critical: v.critical ?? 0,
+      high: v.high ?? 0,
+      moderate: v.moderate ?? 0,
+      low: v.low ?? 0,
+      total: v.total ?? 0,
+    };
+  } catch {
+    return null;
+  }
+}
+
 type DepDashboardStore = {
   deps: Dependency[];
   loading: boolean;
   checking: boolean;
+  auditing: boolean;
+  audit: AuditSummary | null;
   load: () => Promise<void>;
   runOutdated: () => Promise<void>;
+  runSecurityAudit: () => Promise<void>;
 };
 
 export const useDepDashboard = create<DepDashboardStore>()((set) => ({
   deps: [],
   loading: false,
   checking: false,
+  auditing: false,
+  audit: null,
+  runSecurityAudit: async () => {
+    const root = useWorkspaceStore.getState().rootPath?.replace(/\/+$/, "");
+    if (!root) return;
+    set({ auditing: true });
+    set({ audit: await runAudit(root), auditing: false });
+  },
   load: async () => {
     const root = useWorkspaceStore.getState().rootPath?.replace(/\/+$/, "");
     if (!root) return;

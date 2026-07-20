@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Loader2, Package, RefreshCw } from "lucide-react";
+import { Loader2, Package, RefreshCw, ShieldAlert } from "lucide-react";
 import { useDepDashboard } from "@/lib/dep-dashboard";
 import { cn } from "@/lib/utils";
 
@@ -7,6 +7,8 @@ export function DepDashboardPage() {
   const deps = useDepDashboard((s) => s.deps);
   const loading = useDepDashboard((s) => s.loading);
   const checking = useDepDashboard((s) => s.checking);
+  const auditing = useDepDashboard((s) => s.auditing);
+  const audit = useDepDashboard((s) => s.audit);
 
   useEffect(() => {
     void useDepDashboard.getState().load();
@@ -30,9 +32,22 @@ export function DepDashboardPage() {
           </span>
           <button
             type="button"
+            onClick={() => void useDepDashboard.getState().runSecurityAudit()}
+            disabled={auditing || loading}
+            className="ml-auto inline-flex h-7 items-center gap-1.5 rounded-md bg-foreground/[0.06] px-2.5 text-[11px] font-medium text-foreground transition-colors hover:bg-foreground/10 disabled:opacity-40"
+          >
+            {auditing ? (
+              <Loader2 className="size-3 animate-spin" />
+            ) : (
+              <ShieldAlert className="size-3" />
+            )}
+            Sicherheit prüfen
+          </button>
+          <button
+            type="button"
             onClick={() => void useDepDashboard.getState().runOutdated()}
             disabled={checking || loading}
-            className="ml-auto inline-flex h-7 items-center gap-1.5 rounded-md bg-foreground/[0.06] px-2.5 text-[11px] font-medium text-foreground transition-colors hover:bg-foreground/10 disabled:opacity-40"
+            className="inline-flex h-7 items-center gap-1.5 rounded-md bg-foreground/[0.06] px-2.5 text-[11px] font-medium text-foreground transition-colors hover:bg-foreground/10 disabled:opacity-40"
           >
             {checking ? (
               <Loader2 className="size-3 animate-spin" />
@@ -42,6 +57,34 @@ export function DepDashboardPage() {
             Auf Updates prüfen
           </button>
         </div>
+        {audit && (
+          <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg bg-foreground/[0.03] px-3 py-2 text-[11px]">
+            <ShieldAlert
+              className={cn(
+                "size-3.5",
+                audit.total === 0 ? "text-emerald-500" : "text-amber-500",
+              )}
+            />
+            {audit.total === 0 ? (
+              <span className="text-emerald-500">Keine bekannten Schwachstellen</span>
+            ) : (
+              <>
+                {audit.critical > 0 && (
+                  <span className="text-red-500">{audit.critical} kritisch</span>
+                )}
+                {audit.high > 0 && (
+                  <span className="text-red-400">{audit.high} hoch</span>
+                )}
+                {audit.moderate > 0 && (
+                  <span className="text-amber-500">{audit.moderate} mittel</span>
+                )}
+                {audit.low > 0 && (
+                  <span className="text-muted-foreground">{audit.low} niedrig</span>
+                )}
+              </>
+            )}
+          </div>
+        )}
         {loading ? (
           <p className="mt-4 text-xs text-muted-foreground">Lädt…</p>
         ) : (

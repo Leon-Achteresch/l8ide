@@ -730,7 +730,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 ## I. Qualität & Sicherheit
 
-* [ ] **Security-Scanning nativ**: SAST + Dependency-Audit + Secret-Detection im Problems-Panel
+* [~] **Security-Scanning**: „Sicherheit prüfen" im Dependency-Dashboard führt `npm audit` aus und zeigt Schwachstellen nach Schweregrad (kritisch/hoch/mittel/niedrig, grün bei keinen — verifiziert gegen echte npm-audit-JSON); Secret-Detection via `.env`-Gitignore-Warnung (`secrets-guard.ts`); SAST fehlt
 
 * [ ] **Mutation-Testing-Integration**: Schwache Tests direkt im Editor markiert
 
