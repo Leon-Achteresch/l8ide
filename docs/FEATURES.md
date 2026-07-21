@@ -360,7 +360,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Incoming/Outgoing Changes-Ansicht**
 
-* [~] **Git-Verlauf / Source Control**: ⌘⌥L öffnet die Commit-Liste (100 neueste, mit Tags-Badges) als Tab; Rechtsklick pro Commit: Hash kopieren, Cherry-Pick, Revert, Tag anlegen (`git-history-page.tsx`, Backends `repo_log_page`/`git_cherry_pick`/`git_revert_commit`); grafische Graph-Linien fehlen
+* [x] **Git-Verlauf / Source Control**: ⌘⌥L öffnet die Commit-Liste (100 neueste, mit Tags-Badges) als Tab; Rechtsklick pro Commit: Hash kopieren, Cherry-Pick, Revert, Tag anlegen (`git-history-page.tsx`, Backends `repo_log_page`/`git_cherry_pick`/`git_revert_commit`); **grafische Graph-Linien** als SVG-Overlay (Railroad-Lane-Zuweisung mit Merge-Fan-out und Konvergenz-Diagonalen, 8-Farben-Palette pro Branch — reiner Kern `git-graph-core.ts`, Test `test:gitgraph`, gegen echte Repo-Historie verifiziert)
 
 * [x] **Zu .gitignore hinzufügen**: Dateien/Ordner per Kontextmenü ignorieren
 
