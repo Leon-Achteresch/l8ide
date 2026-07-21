@@ -9,6 +9,7 @@ import { pathFromMonacoUri } from "@/lib/monaco-uri";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
 const RUN_TEST = "l8.runTest";
+const RUN_RESULTS = "l8.runTestResults";
 const LANGS = [
   "javascript",
   "typescript",
@@ -18,7 +19,7 @@ const LANGS = [
 
 const toolCache = new Map<string, TestTool>();
 
-async function detectTool(root: string): Promise<TestTool> {
+export async function detectTool(root: string): Promise<TestTool> {
   const cached = toolCache.get(root);
   if (cached) return cached;
   let tool: TestTool = "npm";
@@ -60,6 +61,12 @@ export function registerTestLens(m: typeof monacoNs) {
     );
   });
 
+  m.editor.registerCommand(RUN_RESULTS, (_accessor, absFile: string) => {
+    void import("@/lib/test-results").then((mod) =>
+      mod.runFileWithResults(absFile),
+    );
+  });
+
   m.languages.registerCodeLensProvider(LANGS, {
     provideCodeLenses(model) {
       const path = pathFromMonacoUri(model.uri);
@@ -76,6 +83,14 @@ export function registerTestLens(m: typeof monacoNs) {
             id: RUN_TEST,
             title: "▶ Alle Tests der Datei",
             arguments: [rel],
+          },
+        },
+        {
+          range: new m.Range(1, 1, 1, 1),
+          command: {
+            id: RUN_RESULTS,
+            title: "✓ Mit Ergebnissen",
+            arguments: [path],
           },
         },
       ];

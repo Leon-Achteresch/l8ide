@@ -238,6 +238,19 @@
   font-size: 0.85em;
 }
 
+.l8-test-pass {
+  color: #10b981;
+  font-weight: 600;
+}
+.l8-test-fail {
+  color: #f43f5e;
+  font-weight: 600;
+}
+.l8-test-skip {
+  color: var(--muted-foreground);
+  opacity: 0.7;
+}
+
 .l8-inline-value {
   color: #0ea5e9;
   opacity: 0.75;
