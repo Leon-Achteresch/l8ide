@@ -207,6 +207,18 @@
 
 .git-gutter { width: 3px !important; margin-left: 3px; cursor: pointer; }
 
+@keyframes l8-all-clear-pop {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+.l8-all-clear {
+  animation: l8-all-clear-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .l8-all-clear { animation: none; }
+}
+
 .l8-bookmark::before {
   content: "";
   position: absolute;

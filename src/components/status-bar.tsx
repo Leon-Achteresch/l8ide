@@ -37,7 +37,7 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import { useChatStore } from "@/lib/chat-store";
 import { SPRING_PANEL } from "@/lib/ease";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   checkNodeEnv,
   scanTodos,
@@ -391,6 +391,17 @@ export function StatusBar() {
   const activeFile = useWorkspaceStore((s) => s.activeFile);
   const status = useEditorStatus();
   const showEditor = Boolean(status.editor && activeFile);
+  const [allClear, setAllClear] = useState(false);
+  const prevErrors = useRef(total.errors);
+  useEffect(() => {
+    if (prevErrors.current > 0 && total.errors === 0) {
+      setAllClear(true);
+      const t = setTimeout(() => setAllClear(false), 900);
+      prevErrors.current = total.errors;
+      return () => clearTimeout(t);
+    }
+    prevErrors.current = total.errors;
+  }, [total.errors]);
 
   const openScm = () => {
     const ws = useWorkspaceStore.getState();
@@ -429,11 +440,19 @@ export function StatusBar() {
             <span className="truncate">{branch}</span>
           </Item>
         )}
-        <Item onClick={toggleProblems} title="Probleme anzeigen">
-          <CircleX
-            className={cn("size-3", total.errors > 0 && "text-red-500")}
-            strokeWidth={2}
-          />
+        <Item
+          onClick={toggleProblems}
+          title="Probleme anzeigen"
+          className={cn(allClear && "l8-all-clear text-emerald-500")}
+        >
+          {allClear ? (
+            <CircleCheck className="size-3 text-emerald-500" strokeWidth={2} />
+          ) : (
+            <CircleX
+              className={cn("size-3", total.errors > 0 && "text-red-500")}
+              strokeWidth={2}
+            />
+          )}
           {total.errors}
           <TriangleAlert
             className={cn("size-3", total.warnings > 0 && "text-amber-500")}

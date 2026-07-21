@@ -556,6 +556,8 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Statusbar**: Branch (öffnet SCM), Fehler-/Warnungszähler (öffnet Problems), Zeile/Spalte + Selektion (Go to Line), Selektions-Statistik (Zeichen · Wörter · Zeilen bei Auswahl, `selection-stats.ts` mit Test `test:selstats`), Einrückung (Tabs/Spaces-Toggle), EOL (LF/CRLF-Toggle), Sprache (`status-bar.tsx`, `status-store.ts`); Dev-Server-Ports (lsof-Polling 5s, node/bun/vite/…, Klick öffnet im eingebauten Browser — `ports.rs`, `ports-store.ts`); Encoding fehlt noch
 
+* [x] **Erfolgs-Moment**: Wenn die Fehlerzahl von >0 auf 0 fällt, pulst das Diagnostics-Item in der Statusbar kurz grün mit Häkchen (scale-Pop, `prefers-reduced-motion`-safe) — „alles behoben" als dezente Belohnung (Design-Leitfaden)
+
 * [x] **Notifications**: Toast-Benachrichtigungen via Sonner
 
 * [x] **Notifications-Center**: Glocke in der Statusbar sammelt alle Toasts (zentraler Capture, max. 100), Ungelesen-Punkt, Popover mit Verlauf/Zeit, „Alle löschen"; Do-not-disturb unterdrückt Toasts außer Fehlern, Center sammelt weiter (`notifications.ts`)
