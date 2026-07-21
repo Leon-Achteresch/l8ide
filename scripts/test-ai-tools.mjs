@@ -29,10 +29,10 @@ function mockFs(initial = {}) {
 }
 
 // Toolset ist klein und aufgabenscharf (Bench: klein schlägt groß)
-assert.equal(TOOLS.length, 6, "erwarte genau 6 Tools");
+assert.equal(TOOLS.length, 7, "erwarte genau 7 Tools");
 assert.deepEqual(
   TOOLS.map((t) => t.function.name).sort(),
-  ["create_file", "edit_file", "list_files", "read_file", "run_command", "search"],
+  ["create_file", "edit_file", "get_diagnostics", "list_files", "read_file", "run_command", "search"],
 );
 for (const t of TOOLS) {
   assert.equal(t.type, "function");

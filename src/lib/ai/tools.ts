@@ -7,6 +7,7 @@ export interface WorkspaceFs {
   exists(path: string): Promise<boolean>;
   search(query: string): Promise<string>;
   exec?(command: string): Promise<string>;
+  diagnostics?(): Promise<string>;
 }
 
 export type ToolDef = {
@@ -93,6 +94,16 @@ export const TOOLS: ToolDef[] = [
   {
     type: "function",
     function: {
+      name: "get_diagnostics",
+      description:
+        "Liefert die aktuellen Fehler und Warnungen (Typfehler, Syntax, Lint) im Projekt " +
+        "als 'pfad:zeile: Meldung'. Nach Änderungen prüfen, ob Probleme behoben sind.",
+      parameters: { type: "object", properties: {}, required: [] },
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "run_command",
       description:
         "Führt ein Shell-Kommando im Projekt-Root aus (Timeout 60s) und liefert Exit-Code, " +
@@ -172,6 +183,11 @@ export async function executeTool(
         if (!command) return "FEHLER: 'command' fehlt.";
         if (!fs.exec) return "FEHLER: run_command ist hier nicht verfügbar.";
         return await fs.exec(command);
+      }
+      case "get_diagnostics": {
+        if (!fs.diagnostics)
+          return "FEHLER: get_diagnostics ist hier nicht verfügbar.";
+        return await fs.diagnostics();
       }
       default:
         return `FEHLER: unbekanntes Tool '${name}'.`;

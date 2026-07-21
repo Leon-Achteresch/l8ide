@@ -2,6 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { exists, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
 import type { WorkspaceFs } from "./tools.ts";
 import { useAgentEdits } from "@/lib/agent-edits";
+import { useMarkersStore } from "@/lib/markers-store";
 import { isPathTrusted } from "@/lib/workspace-trust";
 import { getMonacoInstance } from "@/lib/monaco-instance";
 import { monacoUriForPath } from "@/lib/monaco-uri";
@@ -71,6 +72,22 @@ export const workspaceFs: WorkspaceFs = {
     if (res.stdout.trim()) parts.push(`stdout:\n${res.stdout.trim()}`);
     if (res.stderr.trim()) parts.push(`stderr:\n${res.stderr.trim()}`);
     return parts.join("\n\n");
+  },
+  async diagnostics() {
+    const root = requireRoot();
+    const { byPath } = useMarkersStore.getState();
+    const sev: Record<number, string> = { 8: "error", 4: "warning", 2: "info" };
+    const lines: string[] = [];
+    for (const [path, markers] of Object.entries(byPath)) {
+      const rel = toRel(root, path);
+      for (const m of markers.slice(0, 30)) {
+        lines.push(
+          `${rel}:${m.startLineNumber}: ${sev[m.severity] ?? "?"}: ${m.message}`,
+        );
+      }
+    }
+    if (lines.length === 0) return "Keine Diagnosen (keine Fehler/Warnungen).";
+    return lines.slice(0, 200).join("\n");
   },
   async search(query) {
     const root = requireRoot();
