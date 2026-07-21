@@ -30,6 +30,17 @@ assert.equal(decoded.payload.sub, "42");
 assert.throws(() => runTransform("jwt.decode", "notajwt"));
 assert.throws(() => runTransform("nope", "x"));
 
-assert.ok(TRANSFORMS.length >= 8);
+// case conversions round-trip across styles
+assert.equal(runTransform("case.camel", "my_variable_name"), "myVariableName");
+assert.equal(runTransform("case.camel", "my-variable-name"), "myVariableName");
+assert.equal(runTransform("case.pascal", "my variable"), "MyVariable");
+assert.equal(runTransform("case.snake", "myVariableName"), "my_variable_name");
+assert.equal(runTransform("case.kebab", "MyVariableName"), "my-variable-name");
+assert.equal(runTransform("case.constant", "myVar"), "MY_VAR");
+// digits stay attached
+assert.equal(runTransform("case.snake", "item2Name"), "item2_name");
+assert.equal(runTransform("case.camel", "HTTP_SERVER"), "httpServer");
+
+assert.ok(TRANSFORMS.length >= 13);
 
 console.log("test-text-transforms: ok");
