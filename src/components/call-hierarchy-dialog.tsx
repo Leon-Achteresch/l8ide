@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronRight, PhoneIncoming } from "lucide-react";
+import { ChevronRight, PhoneIncoming, PhoneOutgoing } from "lucide-react";
 import { motion } from "motion/react";
 import {
   Dialog,
@@ -8,8 +8,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  loadIncomingCalls,
+  loadCalls,
   useCallHierarchy,
+  type Direction,
 } from "@/lib/call-hierarchy";
 import { getMonacoInstance } from "@/lib/monaco-instance";
 import { openFileAt } from "@/lib/monaco-navigation";
@@ -40,7 +41,15 @@ function jump(fileUri: string, line: number, column: number) {
   openFileAt(toPath(fileUri), { line, column });
 }
 
-function CallNode({ node, depth }: { node: CallHierarchyNode; depth: number }) {
+function CallNode({
+  node,
+  depth,
+  direction,
+}: {
+  node: CallHierarchyNode;
+  depth: number;
+  direction: Direction;
+}) {
   const [children, setChildren] = useState<CallHierarchyNode[] | null>(null);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -56,7 +65,7 @@ function CallNode({ node, depth }: { node: CallHierarchyNode; depth: number }) {
     const model = m?.editor.getModels()[0];
     if (!model) return;
     setLoading(true);
-    setChildren(await loadIncomingCalls(model, node.file, node.offset));
+    setChildren(await loadCalls(model, node.file, node.offset, direction));
     setLoading(false);
   };
 
@@ -108,6 +117,7 @@ function CallNode({ node, depth }: { node: CallHierarchyNode; depth: number }) {
                 key={`${c.file}:${c.offset}:${i}`}
                 node={c}
                 depth={depth + 1}
+                direction={direction}
               />
             ))
           ) : (
@@ -115,7 +125,7 @@ function CallNode({ node, depth }: { node: CallHierarchyNode; depth: number }) {
               className="py-1 text-[11px] text-muted-foreground"
               style={{ paddingLeft: (depth + 1) * 14 + 18 }}
             >
-              Keine Aufrufer.
+              {direction === "incoming" ? "Keine Aufrufer." : "Keine Aufrufe."}
             </p>
           )}
         </div>
@@ -133,19 +143,32 @@ export function CallHierarchyDialog() {
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-sm">
-            <PhoneIncoming className="size-4 text-muted-foreground" />
-            Eingehende Aufrufe ·{" "}
-            <span className="font-mono">{root.name}</span>
+            {root.direction === "incoming" ? (
+              <PhoneIncoming className="size-4 text-muted-foreground" />
+            ) : (
+              <PhoneOutgoing className="size-4 text-muted-foreground" />
+            )}
+            {root.direction === "incoming"
+              ? "Eingehende Aufrufe"
+              : "Ausgehende Aufrufe"}{" "}
+            · <span className="font-mono">{root.name}</span>
           </DialogTitle>
         </DialogHeader>
         <div className="max-h-80 overflow-y-auto">
           {root.calls.length === 0 ? (
             <p className="py-3 text-xs text-muted-foreground">
-              Keine Aufrufer gefunden.
+              {root.direction === "incoming"
+                ? "Keine Aufrufer gefunden."
+                : "Keine Aufrufe gefunden."}
             </p>
           ) : (
             root.calls.map((c, i) => (
-              <CallNode key={`${c.file}:${c.offset}:${i}`} node={c} depth={0} />
+              <CallNode
+                key={`${c.file}:${c.offset}:${i}`}
+                node={c}
+                depth={0}
+                direction={root.direction}
+              />
             ))
           )}
         </div>

@@ -59,6 +59,13 @@ export type RefactorWorker = {
     root: Omit<CallHierarchyNode, "offset"> | null;
     calls: CallHierarchyNode[];
   }>;
+  getOutgoingCalls(
+    fileName: string,
+    offset: number,
+  ): Promise<{
+    root: Omit<CallHierarchyNode, "offset"> | null;
+    calls: CallHierarchyNode[];
+  }>;
   getImportCompletions(
     fileName: string,
     offset: number,

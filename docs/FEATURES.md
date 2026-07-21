@@ -86,7 +86,7 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 
 * [x] **Navigationshistorie**: Zurück/Vorwärts durch Cursor-Positionen (Ctrl+-/Ctrl+Shift+-, auch Befehlspalette); koalesziert nahe Positionen, dateiübergreifend (`nav-history.ts`, `nav-history-core.ts`)
 
-* [~] **Call Hierarchy**: Eingehende Aufrufe als lazy expandierender Baum (Rechtsklick → „Eingehende Aufrufe anzeigen", max. 5 Ebenen, Klick springt zur Stelle; Worker `getIncomingCalls` mit Zeilenauflösung — `call-hierarchy.ts`, `call-hierarchy-dialog.tsx`); ausgehende Aufrufe fehlen
+* [x] **Call Hierarchy**: Eingehende **und ausgehende** Aufrufe als lazy expandierender Baum (Rechtsklick → „Eingehende/Ausgehende Aufrufe anzeigen", Klick springt zur Stelle; Worker `getIncomingCalls`/`getOutgoingCalls` mit Zeilenauflösung — `call-hierarchy.ts`)
 
 * [ ] **Type Hierarchy**: Vererbungshierarchie
 
