@@ -34,6 +34,7 @@
     "test:onsave": "node scripts/test-on-save-transforms.mjs",
     "test:selstats": "node scripts/test-selection-stats.mjs",
     "test:tokest": "node scripts/test-token-estimate.mjs",
+    "test:envparse": "node scripts/test-env-parse.mjs",
     "test:editengine": "node scripts/test-edit-engine.mjs",
     "test:aitools": "node scripts/test-ai-tools.mjs",
     "test:aiagent": "node scripts/test-ai-agent.mjs",

@@ -698,7 +698,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [~] **Umgebungs-Manager (Node)**: Geforderte Node-Version (`.nvmrc` bzw. `engines.node`) vs. laufende `node -v` im Health-Panel, Major-Mismatch amber (`checkNodeEnv` in `project-health.ts`); Installieren/Umschalten und weitere Runtimes fehlen
 
-* [~] **Secrets-Management**: Beim Öffnen einer `.env`/`.env.*`-Datei warnt ein Toast, falls sie nicht in `.gitignore` steht (`git check-ignore`-Prüfung, verifiziert), mit „Zu .gitignore"-Aktion (`secrets-guard.ts`); Maskierung/Schema-Validierung/Vault-Sync fehlen
+* [~] **Secrets-Management**: `.env`-Dateien öffnen in einer maskierten Tabelle (Werte als Punkte, pro Zeile enthüllen/bearbeiten, schreibt zurück; Text-Ansicht umschaltbar — `env-editor.tsx`, `env-parse.ts` mit Test `test:envparse`); Warnung bei fehlendem `.gitignore`-Eintrag (`git check-ignore`, `secrets-guard.ts`); Schema-Validierung/Vault-Sync fehlen
 
 * [~] **Dependency-Dashboard**: ⌘⌥Y — alle deps/devDeps mit deklarierter und tatsächlich installierter Version (aus node_modules, „fehlt" rot), „Auf Updates prüfen" (npm outdated) markiert veraltete mit Ziel-Version (`dep-dashboard.ts`); Vulnerabilities/Lizenzen/Update-PRs fehlen
 

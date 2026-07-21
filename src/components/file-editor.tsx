@@ -27,6 +27,7 @@ import { useWorkspaceStore } from "@/lib/workspace-store";
 import { revealInEditor, takePendingReveal } from "@/lib/monaco-navigation";
 import { monacoUriForPath, pathFromMonacoUri } from "@/lib/monaco-uri";
 import { useNavHistory } from "@/lib/nav-history";
+import { EnvEditor } from "@/components/env-editor";
 import { MarkdownRichEditor } from "@/components/markdown-rich-editor";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import {
@@ -55,12 +56,17 @@ function ImageViewer({ path }: { path: string }) {
   );
 }
 
+const ENV_RE = /(^|\/)\.env(\.[\w.-]+)?$/;
+
 export function FileEditor({ path }: { path: string }) {
   if (IMAGE_EXTENSIONS.test(path)) {
     return <ImageViewer path={path} />;
   }
   if (MARKDOWN_EXTENSIONS.test(path)) {
     return <MarkdownEditor path={path} />;
+  }
+  if (ENV_RE.test(path)) {
+    return <EnvEditor path={path} />;
   }
   return <TextEditor path={path} />;
 }
@@ -104,7 +110,7 @@ function MarkdownEditor({ path }: { path: string }) {
   );
 }
 
-function TextEditor({
+export function TextEditor({
   path,
   onEditor,
 }: {
