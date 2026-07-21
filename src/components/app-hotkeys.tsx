@@ -29,6 +29,7 @@ import { useWorktrees } from "@/lib/worktree-store";
 import { useStashStore } from "@/lib/stash-store";
 import { useRemotes } from "@/lib/remotes-store";
 import { useTags } from "@/lib/tags-store";
+import { useSubmodules } from "@/lib/submodule-store";
 import { runBuildTask, runTestTask } from "@/lib/tasks";
 import { useNavHistory } from "@/lib/nav-history";
 import { open } from "@tauri-apps/plugin-dialog";
@@ -115,6 +116,7 @@ export function AppHotkeys() {
     "git.stashes": () => useStashStore.getState().setOpen(true),
     "git.remotes": () => useRemotes.getState().setOpen(true),
     "git.tags": () => useTags.getState().setOpen(true),
+    "git.submodules": () => useSubmodules.getState().setOpen(true),
     "git.history": () =>
       useWorkspaceStore.getState().openFile(pageTab("/git-history")),
     "repo.insights": () =>

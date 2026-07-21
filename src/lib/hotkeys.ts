@@ -180,6 +180,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+L",
   },
   {
+    id: "git.submodules",
+    label: "Git-Submodule verwalten",
+    group: "Navigation",
+    hotkey: "Mod+Alt+.",
+  },
+  {
     id: "git.tags",
     label: "Git-Tags verwalten",
     group: "Navigation",
