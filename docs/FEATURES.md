@@ -430,7 +430,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 ## 7. Tasks & Build
 
-* [~] **Task-System** (`tasks.json`): liest `.vscode/tasks.json` bzw. `.l8ide/tasks.json` (JSONC), ⇧⌘X öffnet eine cmdk-Palette aller Tasks; Ausführung im Terminal mit `command`/`args`/`cwd` (`options.cwd`), Variablensubstitution (`${workspaceFolder}` etc., geteilt mit launch.json), Trust-Gate wie bei package.json-Scripts (`tasks-json-core.ts` + `tasks-json.ts`, Test `test:tasksjson`, Kommandobau inkl. cwd/quoted-args gegen echte Shell verifiziert); Compound Tasks (`dependsOn`, Reihenfolge) und Problem-Matcher fehlen
+* [~] **Task-System** (`tasks.json`): liest `.vscode/tasks.json` bzw. `.l8ide/tasks.json` (JSONC), ⇧⌘X öffnet eine cmdk-Palette aller Tasks; Ausführung im Terminal mit `command`/`args`/`cwd` (`options.cwd`), Variablensubstitution (`${workspaceFolder}` etc., geteilt mit launch.json), Trust-Gate wie bei package.json-Scripts. **Compound Tasks**: `dependsOn` (String oder Liste), `dependsOrder: sequence` verkettet mit `&&`, sonst parallel (Hintergrund + `wait`); reine Orchestrator-Tasks ohne eigenes `command` erlaubt, Zyklen-Guard (`tasks-json-core.ts` + `tasks-json.ts`, Test `test:tasksjson`, Kommandobau inkl. cwd/quoted-args und Compound-Sequence gegen echte Shell verifiziert); Problem-Matcher/echte Parallel-Terminals fehlen
 
 * [x] **Task-Auto-Detection (npm)**: package.json-Scripts mit Paketmanager-Erkennung (bun/pnpm/yarn/npm, `run-scripts.ts`); TypeScript/Gulp/Grunt fehlen
 

@@ -1,7 +1,11 @@
 import { exists, readTextFile } from "@tauri-apps/plugin-fs";
 import { toast } from "sonner";
 import { create } from "zustand";
-import { buildTaskCommand, parseTasks, type Task } from "@/lib/tasks-json-core";
+import {
+  parseTasks,
+  resolveTaskCommands,
+  type Task,
+} from "@/lib/tasks-json-core";
 import { isPathTrusted } from "@/lib/workspace-trust";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
@@ -42,10 +46,17 @@ export async function runTask(task: Task): Promise<void> {
     toast.error("Workspace ist nicht vertrauenswürdig — Tasks sind deaktiviert.");
     return;
   }
-  const command = buildTaskCommand(task, {
+  const byLabel = new Map(
+    useTaskPalette.getState().tasks.map((t) => [t.label, t]),
+  );
+  const command = resolveTaskCommands(task, byLabel, {
     workspaceFolder: root,
     file: ws.activeFile,
   });
+  if (!command) {
+    toast.info("Task hat kein Kommando.");
+    return;
+  }
   const { runInTerminal } = await import("@/lib/terminal");
   await runInTerminal(command);
 }
