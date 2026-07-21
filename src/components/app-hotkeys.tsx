@@ -34,6 +34,7 @@ import { runBuildTask, runTestTask } from "@/lib/tasks";
 import { useTransformPalette } from "@/components/transform-palette";
 import { useRegexTester } from "@/components/regex-tester-dialog";
 import { upsertToc } from "@/lib/markdown-toc";
+import { curlToHttp } from "@/lib/curl-to-http";
 import { toast } from "sonner";
 import { useScriptPalette } from "@/components/script-palette";
 import { useNavHistory } from "@/lib/nav-history";
@@ -165,6 +166,27 @@ export function AppHotkeys() {
     "editor.save": () => void formatAndSaveActive(),
     "transform.selection": () => useTransformPalette.getState().setOpen(true),
     "regex.tester": () => useRegexTester.getState().setOpen(true),
+    "curl.import": async () => {
+      const clip = await navigator.clipboard.readText().catch(() => "");
+      if (!/^\s*curl\b/.test(clip)) {
+        toast.info("Kein curl-Befehl in der Zwischenablage.");
+        return;
+      }
+      try {
+        const http = curlToHttp(clip);
+        const ed = focusedEditor();
+        const sel = ed?.getSelection();
+        if (ed && sel) {
+          ed.executeEdits("curl", [{ range: sel, text: `${http}\n` }]);
+          toast.success("cURL als .http eingefügt");
+        } else {
+          await navigator.clipboard.writeText(http);
+          toast.success("cURL umgewandelt (in Zwischenablage)");
+        }
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : String(e));
+      }
+    },
     "markdown.toc": () => {
       const ed = focusedEditor();
       const model = ed?.getModel();

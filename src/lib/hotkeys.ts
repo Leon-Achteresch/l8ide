@@ -270,6 +270,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+S",
   },
   {
+    id: "curl.import",
+    label: "cURL aus Zwischenablage als .http einfügen",
+    group: "Ausführen",
+    hotkey: "Mod+Alt+5",
+  },
+  {
     id: "regex.tester",
     label: "Regex-Tester öffnen",
     group: "Editor",

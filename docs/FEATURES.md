@@ -656,7 +656,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Log-Punkte mit UI-Stream**: Strukturierte Logpoint-Ausgaben als filterbare Tabelle statt Konsolen-Text
 
-* [~] **HTTP-Client nativ**: `.http`/`.rest`-Dateien, ⌘⌥Enter führt die Anfrage am Cursor aus (mehrere per `###` getrennt, `@name`, Header, Body); Response im schwebenden Panel mit Status-Ampel, Zeit, Headern und JSON-Pretty-Print. **Environments**: `{{variablen}}` aus `.l8ide/http-env.json`, Umgebung im Panel-Header wählbar (persistiert), Warnung bei nicht gesetzten Variablen (`http-parse.ts` mit Test `test:httpparse`); Auth-Flows/Codegen fehlen
+* [~] **HTTP-Client nativ**: `.http`/`.rest`-Dateien, ⌘⌥Enter führt die Anfrage am Cursor aus (mehrere per `###` getrennt, `@name`, Header, Body); Response im schwebenden Panel mit Status-Ampel, Zeit, Headern und JSON-Pretty-Print. **Environments**: `{{variablen}}` aus `.l8ide/http-env.json`, Umgebung im Panel-Header wählbar (persistiert), Warnung bei nicht gesetzten Variablen (`http-parse.ts` mit Test `test:httpparse`). **cURL-Import**: ⌘⌥5 wandelt einen `curl`-Befehl aus der Zwischenablage in eine `.http`-Anfrage am Cursor um (Header, -d/-X, -u→Basic-Auth, Zeilenumbrüche — `curl-to-http.ts`, Test `test:curl`); Auth-Flows/Codegen fehlen
 
 * [ ] **Datenbank-Client nativ**: Verbindungen, Schema-Browser, Query-Editor mit Completion gegen echtes Schema, ER-Diagramme
 
