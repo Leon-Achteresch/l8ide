@@ -42,6 +42,15 @@ assert.equal(runTransform("case.snake", "item2Name"), "item2_name");
 assert.equal(runTransform("case.camel", "HTTP_SERVER"), "httpServer");
 
 assert.equal(runTransform("json.tots", JSON.stringify({a:1})).includes("interface Root"), true);
-assert.ok(TRANSFORMS.length >= 14);
+
+// line operations
+assert.equal(runTransform("lines.sort", "banana\napple\ncherry"), "apple\nbanana\ncherry");
+assert.equal(runTransform("lines.sortDesc", "a\nb\nc"), "c\nb\na");
+// numeric-aware sort
+assert.equal(runTransform("lines.sort", "item10\nitem2\nitem1"), "item1\nitem2\nitem10");
+assert.equal(runTransform("lines.unique", "a\nb\na\nc\nb"), "a\nb\nc");
+assert.equal(runTransform("lines.reverse", "1\n2\n3"), "3\n2\n1");
+
+assert.ok(TRANSFORMS.length >= 18);
 
 console.log("test-text-transforms: ok");

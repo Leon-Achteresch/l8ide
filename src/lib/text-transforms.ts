@@ -51,7 +51,35 @@ export function toConstant(s: string): string {
   return splitWords(s).join("_").toUpperCase();
 }
 
+function lines(s: string): string[] {
+  return s.split("\n");
+}
+
+export function sortLines(s: string, desc = false): string {
+  const sorted = lines(s).sort((a, b) =>
+    a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }),
+  );
+  return (desc ? sorted.reverse() : sorted).join("\n");
+}
+export function uniqueLines(s: string): string {
+  const seen = new Set<string>();
+  return lines(s)
+    .filter((l) => (seen.has(l) ? false : (seen.add(l), true)))
+    .join("\n");
+}
+export function reverseLines(s: string): string {
+  return lines(s).reverse().join("\n");
+}
+
 export const TRANSFORMS: Transform[] = [
+  { id: "lines.sort", label: "Zeilen sortieren (A→Z)", apply: (s) => sortLines(s) },
+  {
+    id: "lines.sortDesc",
+    label: "Zeilen sortieren (Z→A)",
+    apply: (s) => sortLines(s, true),
+  },
+  { id: "lines.unique", label: "Doppelte Zeilen entfernen", apply: uniqueLines },
+  { id: "lines.reverse", label: "Zeilen umkehren", apply: reverseLines },
   { id: "case.camel", label: "camelCase", apply: toCamel },
   { id: "case.pascal", label: "PascalCase", apply: toPascal },
   { id: "case.snake", label: "snake_case", apply: toSnake },
