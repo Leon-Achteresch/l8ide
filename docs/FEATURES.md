@@ -320,7 +320,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Markdown-Vorschau**: Split-View mit Editor
 
-* [~] **Markdown (erweitert)**: Live gescrollt-synchronisierte Vorschau ✓ (Milkdown-Split); **Inhaltsverzeichnis-Generator** (⌘⌥3, idempotent zwischen `<!-- toc -->`-Markern — `markdown-toc.ts`, Test `test:mdtoc`); **Linkvalidierung** (relative Links/Bilder, die ins Leere zeigen, als Warnung im Problems-Panel, 700ms-debounced, Code-Fences/Inline-Code ausgenommen — `markdown-links-core.ts`, Test `test:mdlinks`); Pfad-Completions/Mermaid fehlen
+* [~] **Markdown (erweitert)**: Live gescrollt-synchronisierte Vorschau ✓ (Milkdown-Split); **Inhaltsverzeichnis-Generator** (⌘⌥3, idempotent zwischen `<!-- toc -->`-Markern — `markdown-toc.ts`, Test `test:mdtoc`); **Linkvalidierung** (relative Links/Bilder, die ins Leere zeigen, als Warnung im Problems-Panel, 700ms-debounced, Code-Fences/Inline-Code ausgenommen — `markdown-links-core.ts`, Test `test:mdlinks`); **Pfad-Completions** (in `](…)` schlägt die Completion Workspace-Dateien als relative Pfade vor — `markdown-path-completions.ts`, Test `test:mdpath`); Mermaid fehlt
 
 * [x] **JSON Schema-Validierung**: Schema Store mit Completions
 

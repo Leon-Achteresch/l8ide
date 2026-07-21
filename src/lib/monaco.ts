@@ -3,6 +3,7 @@ import { registerAiInlineCompletions } from "@/lib/ai/inline-completions";
 import { registerAutoImports } from "@/lib/auto-imports";
 import { registerPostfixCompletions } from "@/lib/postfix";
 import { registerAiQuickFix } from "@/lib/ai/ai-quickfix";
+import { registerMarkdownPathCompletions } from "@/lib/markdown-path-completions";
 import { registerDebugHover } from "@/lib/debug-hover";
 import { registerUserSnippets } from "@/lib/user-snippets";
 import { initIdeMonacoThemes } from "@/lib/ide-theme";
@@ -74,6 +75,7 @@ registerPostfixCompletions();
 registerUserSnippets();
 registerDebugHover();
 registerAiQuickFix();
+registerMarkdownPathCompletions();
 initIdeMonacoThemes();
 void configureJsonSchemas();
 
