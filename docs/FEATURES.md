@@ -370,7 +370,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [~] **Node.js/JavaScript-Debugger eingebaut**: Attach an `node --inspect` via V8-Inspector-WebSocket (⌘⌥D, Port 9229); Debug-Island mit Pause/Continue, Step Over/Into/Out, aufklappbarem Call Stack (Klick springt zur Datei), Auto-Sprung zum Top-Frame bei Pause (`debugger.ts`, `debug-island.tsx`); Breakpoints, Variablen, Launch-Configs fehlen (nächste Phasen)
 
-* [~] **Breakpoints**: Standard per Gutter-Klick (rot, persistiert, live-sync); **Conditional per Alt+Klick** (amber, hält nur bei truthy — verifiziert); **Logpoints** (violett, gleicher Dialog — loggt `{ausdruck}`-interpoliert ohne anzuhalten, verifiziert: 3 Logs, 0 Pausen); Hit-Count/Function/Data/Inline fehlen
+* [~] **Breakpoints**: Standard per Gutter-Klick (rot, persistiert, live-sync); **Conditional per Alt+Klick** (amber, hält nur bei truthy — verifiziert); **Logpoints** (violett, gleicher Dialog — loggt `{ausdruck}`-interpoliert ohne anzuhalten, verifiziert: 3 Logs, 0 Pausen); **Hit-Count** (sky-blau, dritter Dialog-Modus — hält ab dem N-ten Treffer via persistentem Global-Counter im V8-`condition`, `hitCountCondition`, Test `test:hitcount`, gegen echten Prozess verifiziert: erste Pause beim 3. Treffer); Function/Data/Inline fehlen
 
 * [ ] **Ausführungssteuerung**: Continue, Step Over/Into/Out, Restart, Stop, Restart Frame
 

@@ -36,10 +36,12 @@ type DebuggerStore = {
   breakpoints: Record<string, number[]>;
   bpConditions: Record<string, string>;
   bpLogpoints: Record<string, string>;
+  bpHitCounts: Record<string, number>;
   conditionTarget: { path: string; line: number } | null;
   setConditionTarget: (t: { path: string; line: number } | null) => void;
   setBreakpointCondition: (path: string, line: number, condition: string) => void;
   setBreakpointLogpoint: (path: string, line: number, message: string) => void;
+  setBreakpointHitCount: (path: string, line: number, count: number) => void;
   watches: string[];
   watchValues: Record<string, string>;
   pauseOnExceptions: "none" | "uncaught" | "all";
@@ -129,6 +131,12 @@ export async function loadProperties(objectId: string): Promise<VarNode[]> {
     }));
 }
 
+export function hitCountCondition(key: string, count: number): string {
+  const k = JSON.stringify(key);
+  const g = "(globalThis.__l8hc||(globalThis.__l8hc={}))";
+  return `(${g}[${k}]=(${g}[${k}]||0)+1)>=${count}`;
+}
+
 export function logpointCondition(message: string): string {
   const tpl = message
     .replace(/\\/g, "\\\\")
@@ -138,9 +146,15 @@ export function logpointCondition(message: string): string {
 }
 
 function sendSetBreakpoint(path: string, line: number) {
-  const { bpConditions, bpLogpoints } = useDebugger.getState();
-  const log = bpLogpoints[bpKey(path, line)];
-  const condition = log ? logpointCondition(log) : bpConditions[bpKey(path, line)];
+  const { bpConditions, bpLogpoints, bpHitCounts } = useDebugger.getState();
+  const key = bpKey(path, line);
+  const log = bpLogpoints[key];
+  const hits = bpHitCounts[key];
+  const condition = log
+    ? logpointCondition(log)
+    : hits
+      ? hitCountCondition(key, hits)
+      : bpConditions[key];
   send(
     "Debugger.setBreakpointByUrl",
     {
@@ -198,6 +212,7 @@ export const useDebugger = create<DebuggerStore>()(
   breakpoints: {},
   bpConditions: {},
   bpLogpoints: {},
+  bpHitCounts: {},
   conditionTarget: null,
   setConditionTarget: (conditionTarget) => set({ conditionTarget }),
 
@@ -206,10 +221,12 @@ export const useDebugger = create<DebuggerStore>()(
     set((s) => {
       const bpConditions = { ...s.bpConditions };
       const bpLogpoints = { ...s.bpLogpoints };
+      const bpHitCounts = { ...s.bpHitCounts };
       delete bpLogpoints[key];
+      delete bpHitCounts[key];
       if (condition.trim()) bpConditions[key] = condition.trim();
       else delete bpConditions[key];
-      return { bpConditions, bpLogpoints };
+      return { bpConditions, bpLogpoints, bpHitCounts };
     });
     const lines = get().breakpoints[path] ?? [];
     if (!lines.includes(line)) {
@@ -254,10 +271,35 @@ export const useDebugger = create<DebuggerStore>()(
     set((s) => {
       const bpConditions = { ...s.bpConditions };
       const bpLogpoints = { ...s.bpLogpoints };
+      const bpHitCounts = { ...s.bpHitCounts };
       delete bpConditions[key];
+      delete bpHitCounts[key];
       if (message.trim()) bpLogpoints[key] = message.trim();
       else delete bpLogpoints[key];
-      return { bpConditions, bpLogpoints };
+      return { bpConditions, bpLogpoints, bpHitCounts };
+    });
+    const lines = get().breakpoints[path] ?? [];
+    if (!lines.includes(line)) {
+      get().toggleBreakpoint(path, line);
+      return;
+    }
+    if (get().state === "running" || get().state === "paused") {
+      sendRemoveBreakpoint(path, line);
+      sendSetBreakpoint(path, line);
+    }
+  },
+
+  setBreakpointHitCount: (path, line, count) => {
+    const key = bpKey(path, line);
+    set((s) => {
+      const bpConditions = { ...s.bpConditions };
+      const bpLogpoints = { ...s.bpLogpoints };
+      const bpHitCounts = { ...s.bpHitCounts };
+      delete bpConditions[key];
+      delete bpLogpoints[key];
+      if (count > 0) bpHitCounts[key] = count;
+      else delete bpHitCounts[key];
+      return { bpConditions, bpLogpoints, bpHitCounts };
     });
     const lines = get().breakpoints[path] ?? [];
     if (!lines.includes(line)) {
@@ -282,11 +324,13 @@ export const useDebugger = create<DebuggerStore>()(
       else breakpoints[path] = lines;
       const bpConditions = { ...s.bpConditions };
       const bpLogpoints = { ...s.bpLogpoints };
+      const bpHitCounts = { ...s.bpHitCounts };
       if (has) {
         delete bpConditions[bpKey(path, line)];
         delete bpLogpoints[bpKey(path, line)];
+        delete bpHitCounts[bpKey(path, line)];
       }
-      return { breakpoints, bpConditions, bpLogpoints };
+      return { breakpoints, bpConditions, bpLogpoints, bpHitCounts };
     });
     if (get().state === "running" || get().state === "paused") {
       if (has) sendRemoveBreakpoint(path, line);
@@ -433,6 +477,7 @@ export const useDebugger = create<DebuggerStore>()(
         breakpoints: s.breakpoints,
         bpConditions: s.bpConditions,
         bpLogpoints: s.bpLogpoints,
+        bpHitCounts: s.bpHitCounts,
         watches: s.watches,
         pauseOnExceptions: s.pauseOnExceptions,
       }),
