@@ -18,6 +18,7 @@ import { attachBreakpointGutter } from "@/lib/breakpoint-gutter";
 import { attachCallHierarchy } from "@/lib/call-hierarchy";
 import { attachA11yLint } from "@/lib/a11y-lint";
 import { attachBookmarks } from "@/lib/bookmarks";
+import { attachMarkdownLinks } from "@/lib/markdown-links";
 import { attachBlameLayer } from "@/lib/blame-layer";
 import { attachExplainLayer } from "@/lib/explain-layer";
 import { attachInlineChat } from "@/lib/inline-chat";
@@ -218,6 +219,7 @@ export function TextEditor({
             attachBlameLayer(editor, monaco, path);
             attachA11yLint(editor, path);
             attachBookmarks(editor, monaco, path);
+            attachMarkdownLinks(editor, path);
             const gutter = attachGitGutter(editor, monaco, path);
             const unsubGutter = useGitStore.subscribe(
               () => void gutter.refresh(),
