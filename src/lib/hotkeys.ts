@@ -198,6 +198,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+V",
   },
   {
+    id: "tests.coverage",
+    label: "Coverage anzeigen/umschalten (coverage-final.json)",
+    group: "Ansicht",
+    hotkey: "Mod+Shift+C",
+  },
+  {
     id: "editor.toggleReadonly",
     label: "Schreibschutz für aktive Datei umschalten (Sitzung)",
     group: "Editor",

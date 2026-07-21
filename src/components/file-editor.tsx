@@ -24,6 +24,7 @@ import { attachMarkdownLinks } from "@/lib/markdown-links";
 import { attachBlameLayer } from "@/lib/blame-layer";
 import { attachInlineValues } from "@/lib/inline-values";
 import { attachTestResults } from "@/lib/test-results";
+import { attachCoverage } from "@/lib/coverage";
 import { attachExplainLayer } from "@/lib/explain-layer";
 import { attachInlineChat } from "@/lib/inline-chat";
 import { trackEditorStatus } from "@/lib/status-store";
@@ -233,6 +234,7 @@ export function TextEditor({
             attachBlameLayer(editor, monaco, path);
             attachInlineValues(editor, monaco, path);
             attachTestResults(editor, monaco, path);
+            attachCoverage(editor, monaco, path);
             attachA11yLint(editor, path);
             attachBookmarks(editor, monaco, path);
             attachMarkdownLinks(editor, path);

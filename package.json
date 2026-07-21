@@ -18,6 +18,7 @@
     "test:launchconfig": "node scripts/test-launch-config.mjs",
     "test:testlens": "node scripts/test-test-lens.mjs",
     "test:testresults": "node scripts/test-test-results.mjs",
+    "test:coverage": "node scripts/test-coverage.mjs",
     "test:preview": "node scripts/test-preview-tabs.mjs",
     "test:refactor": "node scripts/test-text-edits.mjs",
     "test:diffparse": "node scripts/test-diff-parse.mjs",

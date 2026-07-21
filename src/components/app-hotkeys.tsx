@@ -16,6 +16,7 @@ import { openWorkspaceSettings } from "@/lib/workspace-settings";
 import { useDebugger } from "@/lib/debugger";
 import { debugActiveFile } from "@/lib/debug-launcher";
 import { openLaunchPalette } from "@/lib/launch-config";
+import { toggleCoverage } from "@/lib/coverage";
 import { useFileDeps } from "@/lib/file-deps";
 import { useStructSearch } from "@/lib/struct-search";
 import { useHttpClient } from "@/lib/http-client";
@@ -133,6 +134,7 @@ export function AppHotkeys() {
       useWorkspaceStore.getState().openFile(pageTab("/git-sync")),
     "tests.explorer": () =>
       useWorkspaceStore.getState().openFile(pageTab("/tests")),
+    "tests.coverage": () => toggleCoverage(),
     "editor.toggleReadonly": () => {
       const path = useWorkspaceStore.getState().activeFile;
       if (!path || isPageTab(path)) return;
