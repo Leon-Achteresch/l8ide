@@ -60,6 +60,12 @@ function Row({
 export function PrettierSettings() {
   const enabled = usePrettierSettings((s) => s.enabled);
   const formatOnSave = usePrettierSettings((s) => s.formatOnSave);
+  const trimOnSave = usePrettierSettings((s) => s.trimTrailingWhitespaceOnSave);
+  const setTrimOnSave = usePrettierSettings((s) => s.setTrimOnSave);
+  const insertFinalNewline = usePrettierSettings((s) => s.insertFinalNewline);
+  const setInsertFinalNewline = usePrettierSettings(
+    (s) => s.setInsertFinalNewline,
+  );
   const formatOnPaste = usePrettierSettings((s) => s.formatOnPaste);
   const formatOnType = usePrettierSettings((s) => s.formatOnType);
   const editorConfig = usePrettierSettings((s) => s.editorConfig);
@@ -91,6 +97,20 @@ export function PrettierSettings() {
       >
         <Row label="Beim Speichern formatieren (formatOnSave)">
           <Switch checked={formatOnSave} onCheckedChange={setFormatOnSave} />
+        </Row>
+
+        <Row label="Leerzeichen am Zeilenende beim Speichern entfernen">
+          <Switch
+            checked={trimOnSave}
+            onCheckedChange={setTrimOnSave}
+          />
+        </Row>
+
+        <Row label="Abschließenden Zeilenumbruch beim Speichern einfügen">
+          <Switch
+            checked={insertFinalNewline}
+            onCheckedChange={setInsertFinalNewline}
+          />
         </Row>
 
         <Row label="Beim Einfügen formatieren (formatOnPaste)">

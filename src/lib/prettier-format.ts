@@ -1,4 +1,5 @@
 import { saveModel } from "@/lib/editor-actions";
+import { applyOnSaveTransforms } from "@/lib/on-save-transforms";
 import { resolveEditorConfig } from "@/lib/editorconfig";
 import { getMonacoInstance } from "@/lib/monaco-instance";
 import { monacoUriForPath, pathFromMonacoUri } from "@/lib/monaco-uri";
@@ -55,6 +56,8 @@ export type LanguageFormatter = "prettier" | "none";
 type PrettierStore = {
   enabled: boolean;
   formatOnSave: boolean;
+  trimTrailingWhitespaceOnSave: boolean;
+  insertFinalNewline: boolean;
   formatOnPaste: boolean;
   formatOnType: boolean;
   editorConfig: boolean;
@@ -62,6 +65,8 @@ type PrettierStore = {
   options: PrettierOptions;
   setEnabled: (v: boolean) => void;
   setFormatOnSave: (v: boolean) => void;
+  setTrimOnSave: (v: boolean) => void;
+  setInsertFinalNewline: (v: boolean) => void;
   setFormatOnPaste: (v: boolean) => void;
   setFormatOnType: (v: boolean) => void;
   setEditorConfig: (v: boolean) => void;
@@ -78,6 +83,8 @@ export const usePrettierSettings = create<PrettierStore>()(
     (set) => ({
       enabled: true,
       formatOnSave: false,
+      trimTrailingWhitespaceOnSave: false,
+      insertFinalNewline: false,
       formatOnPaste: false,
       formatOnType: false,
       editorConfig: true,
@@ -85,6 +92,8 @@ export const usePrettierSettings = create<PrettierStore>()(
       options: DEFAULT_OPTIONS,
       setEnabled: (enabled) => set({ enabled }),
       setFormatOnSave: (formatOnSave) => set({ formatOnSave }),
+      setTrimOnSave: (trimTrailingWhitespaceOnSave) => set({ trimTrailingWhitespaceOnSave }),
+      setInsertFinalNewline: (insertFinalNewline) => set({ insertFinalNewline }),
       setFormatOnPaste: (formatOnPaste) => set({ formatOnPaste }),
       setFormatOnType: (formatOnType) => set({ formatOnType }),
       setEditorConfig: (editorConfig) => set({ editorConfig }),
@@ -281,11 +290,32 @@ export async function formatModel(model: monaco.editor.ITextModel) {
   }
 }
 
+function applySaveTransforms(model: monaco.editor.ITextModel) {
+  const { trimTrailingWhitespaceOnSave, insertFinalNewline } =
+    usePrettierSettings.getState();
+  if (!trimTrailingWhitespaceOnSave && !insertFinalNewline) return;
+  const src = model.getValue();
+  const out = applyOnSaveTransforms(src, {
+    trim: trimTrailingWhitespaceOnSave,
+    finalNewline: insertFinalNewline,
+  });
+  if (out !== src) {
+    model.pushStackElement();
+    model.pushEditOperations(
+      [],
+      [{ range: model.getFullModelRange(), text: out }],
+      () => null,
+    );
+    model.pushStackElement();
+  }
+}
+
 export async function formatAndSave(model: monaco.editor.ITextModel) {
   const { enabled, formatOnSave } = usePrettierSettings.getState();
   const { organizeImportsOnSave } = useRefactorSettings.getState();
   if (organizeImportsOnSave) await organizeImportsModel(model);
   if (enabled && formatOnSave) await formatModel(model);
+  applySaveTransforms(model);
   saveModel(model);
 }
 

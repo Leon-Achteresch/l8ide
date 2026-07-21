@@ -32,7 +32,7 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 
 * [x] **Sortieren von Zeilen**: Aufsteigend/absteigend über die Befehlspalette
 
-* [x] **Whitespace-Handling**: Render Whitespace vorhanden; nachgestellte Leerzeichen entfernen über die Befehlspalette (`trimTrailingWhitespace`)
+* [x] **Whitespace-Handling**: Render Whitespace; nachgestellte Leerzeichen per Befehlspalette oder automatisch beim Speichern (Einstellung); zusätzlich abschließenden Zeilenumbruch beim Speichern einfügen (`on-save-transforms.ts`, Test `test:onsave`)
 
 * [x] **Emmet**: Integrierte Abkürzungs-Expansion für HTML/CSS (z.B. `ul>li*5`)
 
