@@ -374,7 +374,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Ausführungssteuerung**: Continue, Step Over/Into/Out, Restart, Stop, Restart Frame
 
-* [~] **Variablen-Ansicht**: Variablen des Top-Frames bei Pause in der Debug-Island — **lokaler, Block- und Closure-Scope** gemergt (module/global ausgeblendet; Objekte lazy expandierbar bis Tiefe 4, **Wert-Klick kopiert** — via `Runtime.getProperties`, gegen echte Closure verifiziert); Wertänderung zur Laufzeit fehlt
+* [x] **Variablen-Ansicht**: Variablen des Top-Frames bei Pause in der Debug-Island — lokaler, Block- und Closure-Scope gemergt (module/global ausgeblendet), Objekte lazy expandierbar bis Tiefe 4, **Wert-Klick kopiert, Doppelklick ändert den Wert zur Laufzeit** (`Debugger.setVariableValue` — gegen echten Prozess verifiziert: x 5→99)
 
 * [x] **Watch-Ausdrücke**: Auge-Button in der Debug-Island — Ausdrücke hinzufügen/entfernen (persistiert), Werte bei jedem Halt automatisch neu ausgewertet (side-effect-frei)
 

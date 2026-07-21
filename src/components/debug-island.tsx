@@ -17,6 +17,7 @@ import { SPRING_LAYOUT } from "@/lib/ease";
 import {
   jumpToFrame,
   loadProperties,
+  setVariable,
   useDebugger,
   type VarNode as VarNodeData,
 } from "@/lib/debugger";
@@ -36,6 +37,16 @@ function relLabel(url: string): string {
 function VarRow({ node, depth }: { node: VarNodeData; depth: number }) {
   const [children, setChildren] = useState<VarNodeData[] | null>(null);
   const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(node.value);
+  const editable = depth === 0 && node.scope !== undefined && !node.objectId;
+
+  const commit = async () => {
+    setEditing(false);
+    if (draft === node.value) return;
+    const ok = await setVariable(node.scope!, node.name, draft);
+    if (ok) toast.success(`${node.name} gesetzt`);
+  };
 
   const expand = async () => {
     if (open) {
@@ -68,18 +79,42 @@ function VarRow({ node, depth }: { node: VarNodeData; depth: number }) {
           <span className="w-3 shrink-0" />
         )}
         <span className="shrink-0 text-sky-300/90">{node.name}</span>
-        <button
-          type="button"
-          title="Wert kopieren"
-          onClick={() =>
-            void navigator.clipboard
-              .writeText(node.value)
-              .then(() => toast.success("Wert kopiert"))
-          }
-          className="min-w-0 truncate text-left text-background/80 hover:text-background hover:underline"
-        >
-          {node.value}
-        </button>
+        {editing ? (
+          <input
+            autoFocus
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") void commit();
+              if (e.key === "Escape") setEditing(false);
+            }}
+            onBlur={() => void commit()}
+            className="min-w-0 flex-1 rounded bg-background/20 px-1 font-mono text-background outline-none"
+          />
+        ) : (
+          <button
+            type="button"
+            title={
+              editable
+                ? "Klick kopiert · Doppelklick bearbeitet"
+                : "Wert kopieren"
+            }
+            onClick={() =>
+              void navigator.clipboard
+                .writeText(node.value)
+                .then(() => toast.success("Wert kopiert"))
+            }
+            onDoubleClick={() => {
+              if (editable) {
+                setDraft(node.value);
+                setEditing(true);
+              }
+            }}
+            className="min-w-0 truncate text-left text-background/80 hover:text-background hover:underline"
+          >
+            {node.value}
+          </button>
+        )}
       </div>
       {open &&
         children?.map((c, i) => (

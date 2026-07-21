@@ -17,6 +17,7 @@ export type VarNode = {
   name: string;
   value: string;
   objectId?: string;
+  scope?: number;
 };
 
 type ShellResult = {
@@ -364,14 +365,23 @@ export const useDebugger = create<DebuggerStore>()(
           variables: [],
           topCallFrameId: topRaw?.callFrameId ?? null,
         });
-        const scopes = (topRaw?.scopeChain ?? []).filter(
-          (s) =>
-            (s.type === "local" || s.type === "block" || s.type === "closure") &&
-            s.object?.objectId,
-        );
+        const chain = topRaw?.scopeChain ?? [];
+        const scopes = chain
+          .map((s, index) => ({ s, index }))
+          .filter(
+            ({ s }) =>
+              (s.type === "local" ||
+                s.type === "block" ||
+                s.type === "closure") &&
+              s.object?.objectId,
+          );
         if (scopes.length > 0) {
           void Promise.all(
-            scopes.map((s) => loadProperties(s.object!.objectId!)),
+            scopes.map(({ s, index }) =>
+              loadProperties(s.object!.objectId!).then((vars) =>
+                vars.map((v) => ({ ...v, scope: index })),
+              ),
+            ),
           ).then((lists) => {
             const seen = new Set<string>();
             const variables = lists
@@ -442,6 +452,28 @@ async function refreshWatches() {
   if (useDebugger.getState().state === "paused") {
     useDebugger.setState({ watchValues: Object.fromEntries(entries) });
   }
+}
+
+export async function setVariable(
+  scope: number,
+  name: string,
+  input: string,
+): Promise<boolean> {
+  const { state, topCallFrameId } = useDebugger.getState();
+  if (state !== "paused" || !topCallFrameId) return false;
+  let newValue: Record<string, unknown>;
+  try {
+    newValue = { value: JSON.parse(input) };
+  } catch {
+    newValue = { value: input };
+  }
+  await sendAndWait("Debugger.setVariableValue", {
+    scopeNumber: scope,
+    variableName: name,
+    newValue,
+    callFrameId: topCallFrameId,
+  });
+  return true;
 }
 
 export async function evaluateOnTopFrame(
