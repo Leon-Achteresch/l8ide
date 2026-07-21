@@ -199,9 +199,15 @@ export const COMMANDS: Command[] = [
   },
   {
     id: "tests.coverage",
-    label: "Coverage anzeigen/umschalten (coverage-final.json)",
+    label: "Coverage im Editor anzeigen/umschalten (coverage-final.json)",
     group: "Ansicht",
     hotkey: "Mod+Shift+C",
+  },
+  {
+    id: "tests.coverageView",
+    label: "Coverage-Übersicht öffnen (Prozente pro Datei)",
+    group: "Navigation",
+    hotkey: "Mod+Shift+U",
   },
   {
     id: "editor.toggleReadonly",

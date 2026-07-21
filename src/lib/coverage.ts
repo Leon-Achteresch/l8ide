@@ -41,6 +41,32 @@ export async function loadCoverage(): Promise<void> {
   );
 }
 
+type ShellResult = { code: number | null; stdout: string; stderr: string };
+
+export async function runCoverage(): Promise<void> {
+  const root = useWorkspaceStore.getState().rootPath?.replace(/\/+$/, "");
+  if (!root) return;
+  const { detectTool } = await import("@/lib/test-lens");
+  const tool = await detectTool(root);
+  if (tool === "npm") {
+    toast.info("Kein vitest/jest erkannt — Coverage manuell erzeugen.");
+    return;
+  }
+  const command =
+    tool === "vitest"
+      ? "npx vitest run --coverage --coverage.provider=v8 --coverage.reporter=json"
+      : "npx jest --coverage --coverageReporters=json";
+  const { invoke } = await import("@tauri-apps/api/core");
+  toast.loading("Coverage-Lauf…", { id: "cov-run" });
+  try {
+    await invoke<ShellResult>("run_shell", { cwd: root, command, timeoutMs: 300000 });
+    toast.dismiss("cov-run");
+    await loadCoverage();
+  } catch {
+    toast.error("Coverage-Lauf fehlgeschlagen.", { id: "cov-run" });
+  }
+}
+
 export function toggleCoverage(): void {
   const s = useCoverage.getState();
   if (Object.keys(s.byPath).length === 0) {

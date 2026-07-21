@@ -135,6 +135,8 @@ export function AppHotkeys() {
     "tests.explorer": () =>
       useWorkspaceStore.getState().openFile(pageTab("/tests")),
     "tests.coverage": () => toggleCoverage(),
+    "tests.coverageView": () =>
+      useWorkspaceStore.getState().openFile(pageTab("/coverage")),
     "editor.toggleReadonly": () => {
       const path = useWorkspaceStore.getState().activeFile;
       if (!path || isPageTab(path)) return;

@@ -25,6 +25,7 @@ export const PAGES: Record<string, string> = {
   "/git-history": "Verlauf",
   "/git-sync": "Ein-/Ausgehend",
   "/tests": "Tests",
+  "/coverage": "Coverage",
   "/welcome": "Willkommen",
   "/insights": "Repo-Insights",
 };

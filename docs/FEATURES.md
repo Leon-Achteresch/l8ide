@@ -452,7 +452,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Test-Ergebnisse-Panel**, Fehler-Peek direkt an der Assertion
 
-* [~] **Coverage-Ansicht nativ**: ⇧⌘C lädt `coverage/coverage-final.json` (bzw. `.nyc_output/…`, Istanbul-Format von vitest/jest/nyc/c8) und färbt im Editor jede ausführbare Zeile — grüner Balken = getroffen, roter Balken + rote Zeilentönung + Minimap-Marker = ungedeckt; Toggle blendet um, Toast zeigt Gesamt-% und Dateizahl (`coverage.ts` + reiner Parser `coverage-core.ts`, Test `test:coverage`, **gegen echte vitest-v8-`coverage-final.json` verifiziert**); zusammenhängende Übersichts-Seite/Coverage-Run-Button fehlen noch
+* [x] **Coverage-Ansicht nativ**: ⇧⌘C lädt `coverage/coverage-final.json` (bzw. `.nyc_output/…`, Istanbul-Format von vitest/jest/nyc/c8) und färbt im Editor jede ausführbare Zeile — grüner Balken = getroffen, roter Balken + rote Zeilentönung + Minimap-Marker = ungedeckt; Toggle blendet um (`coverage.ts` + reiner Parser `coverage-core.ts`, Test `test:coverage`, **gegen echte vitest-v8-`coverage-final.json` verifiziert**). **Übersichtsseite** ⇧⌘U: alle Dateien nach Coverage-% sortiert (schlechteste zuerst) mit Farbbalken und Gesamt-%, Klick öffnet die Datei; **Ein-Klick-Coverage-Lauf** startet `vitest/jest --coverage` und lädt das Ergebnis (`coverage-page.tsx`, Kommandoform gegen echten vitest-v8-Lauf verifiziert)
 
 * [ ] **Continuous Run**: Tests bei Änderung automatisch
 
