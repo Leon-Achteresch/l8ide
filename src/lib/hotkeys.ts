@@ -180,6 +180,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+L",
   },
   {
+    id: "git.sync",
+    label: "Ein-/Ausgehende Änderungen öffnen (Incoming/Outgoing)",
+    group: "Navigation",
+    hotkey: "Mod+Alt+A",
+  },
+  {
     id: "git.submodules",
     label: "Git-Submodule verwalten",
     group: "Navigation",

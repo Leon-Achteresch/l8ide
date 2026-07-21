@@ -211,9 +211,15 @@ fn fetch_commits(
     }
     let arg_refs: Vec<&str> = args.iter().map(|s| s.as_str()).collect();
     let log = run_git(repo, &arg_refs)?;
+    Ok(parse_commit_log(&log, sep, tag_map))
+}
 
-    let commits = log
-        .split('\0')
+fn parse_commit_log(
+    log: &str,
+    sep: &str,
+    tag_map: &HashMap<String, Vec<String>>,
+) -> Vec<Commit> {
+    log.split('\0')
         .filter(|chunk| !chunk.is_empty())
         .filter_map(|record| {
             let mut parts = record.splitn(8, sep);
@@ -243,9 +249,37 @@ fn fetch_commits(
                 author_avatar: None,
             })
         })
-        .collect();
+        .collect()
+}
 
-    Ok(commits)
+fn fetch_commits_range(
+    repo: &PathBuf,
+    range: &str,
+    limit: usize,
+    tag_map: &HashMap<String, Vec<String>>,
+) -> Result<Vec<Commit>, String> {
+    if range.starts_with('-') {
+        return Err("Ungültiger Commit-Bereich.".into());
+    }
+    if run_git(repo, &["rev-parse", "-q", "--verify", "HEAD"]).is_err() {
+        return Ok(vec![]);
+    }
+    let sep = "\x1f";
+    let format = format!("%H{sep}%h{sep}%an{sep}%ae{sep}%cI{sep}%P{sep}%s{sep}%b");
+    let max_count = format!("--max-count={limit}");
+    let pretty = format!("--pretty=format:{format}");
+    let args = [
+        "log",
+        "-z",
+        &max_count,
+        "--date-order",
+        &pretty,
+        range,
+    ];
+    match run_git(repo, &args) {
+        Ok(log) => Ok(parse_commit_log(&log, sep, tag_map)),
+        Err(_) => Ok(vec![]),
+    }
 }
 
 fn is_commit_meta_token(s: &str) -> bool {
@@ -474,6 +508,20 @@ pub async fn repo_log_page(
         let capped = limit.clamp(1, 500);
         let hide_t3 = hide_t3_checkpoints.unwrap_or(true);
         fetch_commits(&repo, skip, capped, &tag_map, hide_t3)
+    }).await
+}
+
+#[tauri::command]
+pub async fn repo_range_log(
+    path: String,
+    range: String,
+    limit: usize,
+) -> Result<Vec<Commit>, String> {
+    spawn_git(move || {
+        let repo = PathBuf::from(&path);
+        let tag_map = tags_by_target(&repo);
+        let capped = limit.clamp(1, 500);
+        fetch_commits_range(&repo, &range, capped, &tag_map)
     }).await
 }
 

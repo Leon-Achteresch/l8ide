@@ -126,6 +126,8 @@ export function AppHotkeys() {
     "git.submodules": () => useSubmodules.getState().setOpen(true),
     "git.history": () =>
       useWorkspaceStore.getState().openFile(pageTab("/git-history")),
+    "git.sync": () =>
+      useWorkspaceStore.getState().openFile(pageTab("/git-sync")),
     "repo.insights": () =>
       useWorkspaceStore.getState().openFile(pageTab("/insights")),
     "history.local": () => {

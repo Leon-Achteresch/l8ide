@@ -23,6 +23,7 @@ export const PAGES: Record<string, string> = {
   "/processes": "Dev-Prozesse",
   "/design-tokens": "Design-Tokens",
   "/git-history": "Verlauf",
+  "/git-sync": "Ein-/Ausgehend",
   "/welcome": "Willkommen",
   "/insights": "Repo-Insights",
 };

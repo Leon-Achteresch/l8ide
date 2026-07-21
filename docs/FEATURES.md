@@ -358,7 +358,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **SCM-Provider-API**: Andere VCS via Extensions (SVN, Mercurial, Perforce)
 
-* [ ] **Incoming/Outgoing Changes-Ansicht**
+* [x] **Incoming/Outgoing Changes-Ansicht**: ⌘⌥A öffnet eine Seite mit zwei Abschnitten — **Eingehend** (`HEAD..@{upstream}`, Commits die vom Upstream noch reinkommen) und **Ausgehend** (`@{upstream}..HEAD`, lokale Commits voraus), je mit Zähler-Badge, Hash/Subject/Autor/Datum und Empty-States; freundlicher Hinweis wenn kein Upstream konfiguriert (`git-sync-page.tsx`). Neues Range-Log-Backend `repo_range_log` (teilt den Parser mit `repo_log_page` via `parse_commit_log`, `-`-Guard gegen Arg-Injection, No-Upstream → leere Liste — gegen echtes git verifiziert)
 
 * [x] **Git-Verlauf / Source Control**: ⌘⌥L öffnet die Commit-Liste (100 neueste, mit Tags-Badges) als Tab; Rechtsklick pro Commit: Hash kopieren, Cherry-Pick, Revert, Tag anlegen (`git-history-page.tsx`, Backends `repo_log_page`/`git_cherry_pick`/`git_revert_commit`); **grafische Graph-Linien** als SVG-Overlay (Railroad-Lane-Zuweisung mit Merge-Fan-out und Konvergenz-Diagonalen, 8-Farben-Palette pro Branch — reiner Kern `git-graph-core.ts`, Test `test:gitgraph`, gegen echte Repo-Historie verifiziert)
 

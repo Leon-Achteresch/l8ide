@@ -440,6 +440,7 @@ pub fn run() {
             git::repo_contributor_stats,
             git::repo_activity_buckets,
             git::repo_log_page,
+            git::repo_range_log,
             git::git_revert_commit,
             git::git_cherry_pick,
             git::list_tags,
