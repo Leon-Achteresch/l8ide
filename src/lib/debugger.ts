@@ -364,10 +364,19 @@ export const useDebugger = create<DebuggerStore>()(
           variables: [],
           topCallFrameId: topRaw?.callFrameId ?? null,
         });
-        const scopeId = topRaw?.scopeChain?.find((s) => s.type === "local")
-          ?.object?.objectId;
-        if (scopeId) {
-          void loadProperties(scopeId).then((variables) => {
+        const scopes = (topRaw?.scopeChain ?? []).filter(
+          (s) =>
+            (s.type === "local" || s.type === "block" || s.type === "closure") &&
+            s.object?.objectId,
+        );
+        if (scopes.length > 0) {
+          void Promise.all(
+            scopes.map((s) => loadProperties(s.object!.objectId!)),
+          ).then((lists) => {
+            const seen = new Set<string>();
+            const variables = lists
+              .flat()
+              .filter((v) => (seen.has(v.name) ? false : (seen.add(v.name), true)));
             if (useDebugger.getState().state === "paused") set({ variables });
           });
         }

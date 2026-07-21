@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import {
   ArrowDownToDot,
   ArrowUpFromDot,
@@ -67,9 +68,18 @@ function VarRow({ node, depth }: { node: VarNodeData; depth: number }) {
           <span className="w-3 shrink-0" />
         )}
         <span className="shrink-0 text-sky-300/90">{node.name}</span>
-        <span className="min-w-0 truncate text-background/80">
+        <button
+          type="button"
+          title="Wert kopieren"
+          onClick={() =>
+            void navigator.clipboard
+              .writeText(node.value)
+              .then(() => toast.success("Wert kopiert"))
+          }
+          className="min-w-0 truncate text-left text-background/80 hover:text-background hover:underline"
+        >
           {node.value}
-        </span>
+        </button>
       </div>
       {open &&
         children?.map((c, i) => (
