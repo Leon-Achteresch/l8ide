@@ -3,11 +3,13 @@ import { ProjectLogo } from "@/components/project-logo";
 import { Button } from "@/components/ui/button";
 import { basename } from "@/lib/fs-move";
 import { cn } from "@/lib/utils";
-import { ChevronsDownUp, RefreshCw } from "lucide-react";
+import { useWorkspaceStore } from "@/lib/workspace-store";
+import { ChevronsDownUp, EyeOff, RefreshCw } from "lucide-react";
 import { motion } from "motion/react";
 
 export function FileTreeHeader({ rootPath }: { rootPath: string }) {
   const name = basename(rootPath);
+  const hideIgnored = useWorkspaceStore((s) => s.hideIgnored);
 
   return (
     <div className="sticky top-0 z-10 shrink-0 px-3 pb-2 pt-3 backdrop-blur-md">
@@ -29,6 +31,19 @@ export function FileTreeHeader({ rootPath }: { rootPath: string }) {
           </div>
 
           <HeaderAction
+            icon={EyeOff}
+            label={
+              hideIgnored
+                ? "Von Git ignorierte einblenden (aktuell versteckt)"
+                : "Von Git ignorierte ausblenden (aktuell gedimmt)"
+            }
+            active={hideIgnored}
+            onClick={() => {
+              useWorkspaceStore.getState().toggleHideIgnored();
+              refreshTree();
+            }}
+          />
+          <HeaderAction
             icon={ChevronsDownUp}
             label="Alle einklappen"
             onClick={collapseAll}
@@ -48,10 +63,12 @@ function HeaderAction({
   icon: Icon,
   label,
   onClick,
+  active,
 }: {
   icon: typeof ChevronsDownUp;
   label: string;
   onClick: () => void;
+  active?: boolean;
 }) {
   return (
     <Button
@@ -60,6 +77,7 @@ function HeaderAction({
       size="icon-sm"
       className={cn(
         "size-7 rounded-lg text-muted-foreground hover:bg-foreground/[0.06] hover:text-foreground",
+        active && "bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary",
       )}
       onClick={onClick}
       title={label}

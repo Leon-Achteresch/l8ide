@@ -268,7 +268,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **`.gitignore`-Respektierung abschaltbar**: Schalter „.gitignore ignorieren" im Dateifilter-Bereich der Suche (`no_ignore` bis in den ripgrep-Walker durchgereicht)
 
-* [ ] **`.gitignore`-Filter im Explorer** (aktuell nur manuelles Ausblenden)
+* [x] **`.gitignore`-Filter im Explorer**: von Git ignorierte Dateien/Ordner werden im Baum gedimmt (opacity, Hover-Hinweis „von Git ignoriert"); Header-Toggle (EyeOff) blendet sie ganz aus statt zu dimmen (persistiert). Pro Ordner ein `git check-ignore`-Aufruf mit Repo-Cache (Nicht-Repo → Exit 128 gecacht, keine weiteren Aufrufe), shell-sichere Quotierung (`shell-quote.ts`, Test `test:ignorequote` mit Injection-Round-Trip), gegen echtes git verifiziert. Zusätzlich zum bestehenden manuellen Ausblenden
 
 * [x] **Search & Replace projektweit**: Replace All, pro Datei, einzeln
 

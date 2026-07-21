@@ -66,6 +66,8 @@ type WorkspaceStore = {
   setAutoSaveDelay: (ms: number) => void;
   hiddenNames: string[];
   workspaceHidden: Record<string, string[]>;
+  hideIgnored: boolean;
+  toggleHideIgnored: () => void;
   hideName: (name: string, scope: HiddenScope) => void;
   unhideName: (name: string, scope: HiddenScope) => void;
   setSidebarWidth: (width: number) => void;
@@ -170,6 +172,8 @@ export const useWorkspaceStore = create<WorkspaceStore>()(
         set({ autoSaveDelay: Math.max(200, Math.min(10000, ms)) }),
       hiddenNames: [".git"],
       workspaceHidden: {},
+      hideIgnored: false,
+      toggleHideIgnored: () => set((s) => ({ hideIgnored: !s.hideIgnored })),
       hideName: (name, scope) =>
         set((s) => {
           if (scope === "global") {

@@ -10,6 +10,7 @@ import { dlog, installDndDiagnostics } from "@/lib/dnd-log";
 import { fileIcon } from "@/lib/file-icons";
 import { heatOf, useFileHeatmap } from "@/lib/file-heatmap";
 import { nestEntries } from "@/lib/file-nesting";
+import { ignoredNames } from "@/lib/git-ignore-tree";
 import { useCommandHotkeys } from "@/lib/hotkeys";
 import { basename, canMove, dragRoots, parentDir } from "@/lib/fs-move";
 import { cn } from "@/lib/utils";
@@ -82,6 +83,7 @@ type Entry = {
 	name: string;
 	path: string;
 	isDirectory: boolean;
+	ignored?: boolean;
 	nested?: Entry[];
 };
 
@@ -208,19 +210,25 @@ async function compactChain(entry: Entry): Promise<Entry> {
 
 async function listDir(path: string): Promise<Entry[]> {
 	const entries = await readDir(path);
-	const mapped = entries
-		.map((e) => ({
-			name: e.name ?? "",
-			path: `${path}/${e.name}`,
-			isDirectory: e.isDirectory,
-		}))
-		.sort((a, b) =>
-			a.isDirectory === b.isDirectory
-				? a.name.localeCompare(b.name)
-				: a.isDirectory
-					? -1
-					: 1,
-		);
+	const ignored = await ignoredNames(
+		path,
+		entries.map((e) => e.name ?? ""),
+	);
+	const hideIgnored = useWorkspaceStore.getState().hideIgnored;
+	let mapped = entries.map((e) => ({
+		name: e.name ?? "",
+		path: `${path}/${e.name}`,
+		isDirectory: e.isDirectory,
+		ignored: ignored.has(e.name ?? ""),
+	}));
+	if (hideIgnored) mapped = mapped.filter((e) => !e.ignored);
+	mapped.sort((a, b) =>
+		a.isDirectory === b.isDirectory
+			? a.name.localeCompare(b.name)
+			: a.isDirectory
+				? -1
+				: 1,
+	);
 	return nestEntries(await Promise.all(mapped.map(compactChain)));
 }
 
@@ -504,9 +512,11 @@ const TreeNode = memo(function TreeNode({
 								highlighted
 									? "text-foreground"
 									: "text-foreground/85 hover:bg-foreground/[0.04]",
+								entry.ignored && "opacity-45",
 								isDragSource && "opacity-40",
 								isDropTarget && "bg-primary/8 ring-1 ring-primary/25",
 							)}
+							title={entry.ignored ? `${entry.name} · von Git ignoriert` : undefined}
 							style={{ paddingLeft: depth * 14 + 8 }}
 						>
 							{(isActive || isSelected) && (
