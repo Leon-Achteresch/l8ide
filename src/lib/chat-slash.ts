@@ -1,4 +1,5 @@
 import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
+import { renderPrompt, usePromptFiles } from "@/lib/prompt-files";
 
 export type SlashCommand = {
   name: string;
@@ -51,14 +52,26 @@ export type ParsedSlash = {
 };
 
 export function parseSlash(input: string): ParsedSlash | null {
-  const m = /^\/([a-z]+)\s*([\s\S]*)$/.exec(input.trim());
+  const m = /^\/([a-z][\w-]*)\s*([\s\S]*)$/.exec(input.trim());
   if (!m) return null;
-  const cmd = SLASH_COMMANDS.find((c) => c.name === m[1]);
-  if (!cmd) return null;
+  const rest = m[2].trim();
   const activeFile = useWorkspaceStore.getState().activeFile;
-  const attach =
-    cmd.attachActiveFile && activeFile && !isPageTab(activeFile)
-      ? activeFile
-      : null;
-  return { text: cmd.build(m[2].trim()), attachActivePath: attach };
+  const activeUsable = activeFile && !isPageTab(activeFile) ? activeFile : null;
+
+  const cmd = SLASH_COMMANDS.find((c) => c.name === m[1]);
+  if (cmd) {
+    return {
+      text: cmd.build(rest),
+      attachActivePath: cmd.attachActiveFile ? activeUsable : null,
+    };
+  }
+
+  const prompt = usePromptFiles.getState().prompts.find((p) => p.name === m[1]);
+  if (prompt) {
+    return {
+      text: renderPrompt(prompt.body, rest),
+      attachActivePath: prompt.attachActiveFile ? activeUsable : null,
+    };
+  }
+  return null;
 }

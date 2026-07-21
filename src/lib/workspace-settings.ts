@@ -24,6 +24,7 @@ export async function applyWorkspaceSettings(root: string) {
   void import("@/lib/ai/custom-instructions").then((m) =>
     m.loadCustomInstructions(root),
   );
+  void import("@/lib/prompt-files").then((m) => m.loadPromptFiles(root));
   const path = workspaceSettingsPath(root);
   if (!(await exists(path).catch(() => false))) return;
   let json: WorkspaceSettings;

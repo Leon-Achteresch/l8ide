@@ -24,6 +24,7 @@ import { Markdown } from "@/components/chat/markdown";
 import { open } from "@tauri-apps/plugin-dialog";
 import { openAgentEditDiff, useAgentEdits } from "@/lib/agent-edits";
 import { parseSlash, SLASH_COMMANDS } from "@/lib/chat-slash";
+import { usePromptFiles } from "@/lib/prompt-files";
 import { estimateEntriesTokens, formatTokens } from "@/lib/token-estimate";
 import { type ChatEntry, useChatStore } from "@/lib/chat-store";
 import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
@@ -55,6 +56,7 @@ function ChatPanelInner() {
   const setModel = useAiSettings((s) => s.setModel);
 
   const [draft, setDraft] = useState("");
+  const userPrompts = usePromptFiles((s) => s.prompts);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -187,21 +189,23 @@ function ChatPanelInner() {
       <div className="shrink-0 border-t p-2">
         {draft.startsWith("/") && !draft.includes(" ") && (
           <div className="mb-1.5 overflow-hidden rounded-lg bg-foreground/[0.03]">
-            {SLASH_COMMANDS.filter((c) =>
-              c.name.startsWith(draft.slice(1).toLowerCase()),
-            ).map((c) => (
-              <button
-                key={c.name}
-                type="button"
-                onClick={() => setDraft(`/${c.name} `)}
-                className="flex w-full items-baseline gap-2 px-2.5 py-1 text-left text-xs hover:bg-foreground/[0.05]"
-              >
-                <span className="font-mono font-medium text-violet-500">
-                  /{c.name}
-                </span>
-                <span className="text-muted-foreground">{c.description}</span>
-              </button>
-            ))}
+            {[...SLASH_COMMANDS, ...userPrompts]
+              .filter((c) => c.name.startsWith(draft.slice(1).toLowerCase()))
+              .map((c) => (
+                <button
+                  key={c.name}
+                  type="button"
+                  onClick={() => setDraft(`/${c.name} `)}
+                  className="flex w-full items-baseline gap-2 px-2.5 py-1 text-left text-xs hover:bg-foreground/[0.05]"
+                >
+                  <span className="font-mono font-medium text-violet-500">
+                    /{c.name}
+                  </span>
+                  <span className="truncate text-muted-foreground">
+                    {c.description}
+                  </span>
+                </button>
+              ))}
           </div>
         )}
         <AttachmentBar />
