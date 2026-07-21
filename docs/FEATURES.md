@@ -36,7 +36,7 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 
 * [x] **Emmet**: Integrierte Abkürzungs-Expansion für HTML/CSS (z.B. `ul>li*5`)
 
-* [x] **Selektion umwandeln**: ⌘⌥; öffnet eine Palette von Transformationen auf die Auswahl — Case-Konvertierung (camelCase/PascalCase/snake_case/kebab-case/CONSTANT_CASE, stilübergreifend), Base64 en/decode, URL en/decode, JWT dekodieren (Header+Payload), JSON formatieren/minifizieren/escapen (`text-transforms.ts` mit Test `test:transforms`, undo-fähig)
+* [x] **Selektion umwandeln**: ⌘⌥; öffnet eine Palette von Transformationen auf die Auswahl — Case-Konvertierung (camelCase/PascalCase/snake_case/kebab-case/CONSTANT_CASE, stilübergreifend), Base64 en/decode, URL en/decode, JWT dekodieren (Header+Payload), JSON formatieren/minifizieren/escapen, **JSON → TypeScript-Interface** (verschachtelte Objekte als eigene Interfaces, Arrays als `T[]`, null→optional, nicht-Identifier-Keys quotiert — `json-to-ts-core.ts`, Test `test:json2ts`) (`text-transforms.ts` mit Test `test:transforms`, undo-fähig)
 
 * [x] **Column Edit Mode**: entspricht der Box-Selection (Shift+Alt+Drag) mit Multi-Cursor-Bearbeitung
 

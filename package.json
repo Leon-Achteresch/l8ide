@@ -40,6 +40,7 @@
     "test:mdlinks": "node scripts/test-markdown-links.mjs",
     "test:mdpath": "node scripts/test-md-path.mjs",
     "test:regex": "node scripts/test-regex-tester.mjs",
+    "test:json2ts": "node scripts/test-json-to-ts.mjs",
     "test:editengine": "node scripts/test-edit-engine.mjs",
     "test:aitools": "node scripts/test-ai-tools.mjs",
     "test:aiagent": "node scripts/test-ai-agent.mjs",

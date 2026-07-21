@@ -1,3 +1,5 @@
+import { jsonToTs } from "./json-to-ts-core.ts";
+
 export type Transform = {
   id: string;
   label: string;
@@ -82,6 +84,11 @@ export const TRANSFORMS: Transform[] = [
     id: "json.escape",
     label: "Als JSON-String escapen",
     apply: (s) => JSON.stringify(s),
+  },
+  {
+    id: "json.tots",
+    label: "JSON → TypeScript-Interface",
+    apply: (s) => jsonToTs(s, "Root"),
   },
 ];
 

@@ -41,6 +41,7 @@ assert.equal(runTransform("case.constant", "myVar"), "MY_VAR");
 assert.equal(runTransform("case.snake", "item2Name"), "item2_name");
 assert.equal(runTransform("case.camel", "HTTP_SERVER"), "httpServer");
 
-assert.ok(TRANSFORMS.length >= 13);
+assert.equal(runTransform("json.tots", JSON.stringify({a:1})).includes("interface Root"), true);
+assert.ok(TRANSFORMS.length >= 14);
 
 console.log("test-text-transforms: ok");
