@@ -1,6 +1,8 @@
 import { DiffEditor } from "@monaco-editor/react";
+import { Loader2, Sparkles } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { suggestRename } from "@/lib/ai/ai-rename";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -144,10 +146,18 @@ function RenamePromptDialog() {
   const submit = useRenamePrompt((s) => s.submit);
   const cancel = useRenamePrompt((s) => s.cancel);
   const [value, setValue] = useState("");
+  const [suggesting, setSuggesting] = useState(false);
 
   useEffect(() => {
     if (open) setValue(initial);
   }, [open, initial]);
+
+  const suggest = async () => {
+    setSuggesting(true);
+    const name = await suggestRename(value.trim() || initial);
+    setSuggesting(false);
+    if (name) setValue(name);
+  };
 
   return (
     <Dialog
@@ -168,13 +178,28 @@ function RenamePromptDialog() {
             else cancel();
           }}
         >
-          <Input
-            autoFocus
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onFocus={(e) => e.target.select()}
-            className="h-9 font-mono"
-          />
+          <div className="relative">
+            <Input
+              autoFocus
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              onFocus={(e) => e.target.select()}
+              className="h-9 pr-9 font-mono"
+            />
+            <button
+              type="button"
+              title="KI-Namensvorschlag"
+              disabled={suggesting}
+              onClick={() => void suggest()}
+              className="absolute right-1.5 top-1/2 inline-flex size-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-foreground/8 hover:text-violet-500 disabled:opacity-40"
+            >
+              {suggesting ? (
+                <Loader2 className="size-3.5 animate-spin" />
+              ) : (
+                <Sparkles className="size-3.5" />
+              )}
+            </button>
+          </div>
           <DialogFooter className="mt-4">
             <Button type="button" variant="ghost" onClick={cancel}>
               Abbrechen
