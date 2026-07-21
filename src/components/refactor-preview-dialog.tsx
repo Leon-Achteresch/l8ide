@@ -1,4 +1,5 @@
 import { DiffEditor } from "@monaco-editor/react";
+import { DIFF_ENHANCEMENTS } from "@/lib/diff-options";
 import { Loader2, Sparkles } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
@@ -114,6 +115,7 @@ function RefactorPreviewDialog() {
                 modified={active.newText}
                 theme={ideMonacoTheme(resolvedTheme === "dark")}
                 options={{
+                  ...DIFF_ENHANCEMENTS,
                   readOnly: true,
                   renderSideBySide: true,
                   minimap: { enabled: false },

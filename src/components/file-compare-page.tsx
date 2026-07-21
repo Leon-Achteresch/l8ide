@@ -1,4 +1,5 @@
 import { DiffEditor } from "@monaco-editor/react";
+import { DIFF_ENHANCEMENTS } from "@/lib/diff-options";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
@@ -68,6 +69,7 @@ export function FileComparePage({ route }: { route: string }) {
           modified={right}
           theme={ideMonacoTheme(resolvedTheme === "dark")}
           options={{
+            ...DIFF_ENHANCEMENTS,
             readOnly: true,
             renderSideBySide: sideBySide,
             minimap: { enabled: false },

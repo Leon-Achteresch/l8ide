@@ -1,4 +1,5 @@
 import { DiffEditor } from "@monaco-editor/react";
+import { DIFF_ENHANCEMENTS } from "@/lib/diff-options";
 import { invoke } from "@tauri-apps/api/core";
 import { readTextFile } from "@tauri-apps/plugin-fs";
 import { useTheme } from "next-themes";
@@ -75,6 +76,7 @@ export function GitDiffPage({ route }: { route: string }) {
           modified={modified}
           theme={ideMonacoTheme(resolvedTheme === "dark")}
           options={{
+            ...DIFF_ENHANCEMENTS,
             readOnly: true,
             renderSideBySide: sideBySide,
             minimap: { enabled: false },

@@ -526,7 +526,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 ## 12. Diff, Merge & Review
 
-* [ ] **Diff-Editor**: Side-by-Side/Inline, Moved-Code-Detection, Wortebene-Highlighting, Collapse Unchanged Regions
+* [x] **Diff-Editor**: Side-by-Side/Inline umschaltbar (bestand); zusätzlich jetzt **Collapse Unchanged Regions** (`hideUnchangedRegions`, 3 Kontextzeilen), **Moved-Code-Detection** (`experimental.showMoves`) und **Wortebene-Highlighting** über den `advanced`-Diff-Algorithmus — als geteilte `DIFF_ENHANCEMENTS`-Konstante (`diff-options.ts`) über Git-Diff, Datei-Vergleich und Refactor-Vorschau angewandt (native Monaco-Features, gegen Monacos Typen validiert)
 
 * [ ] **Multi-File-Diff-Editor**: Alle Änderungen in einer scrollbaren Ansicht
 
