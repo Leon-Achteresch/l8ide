@@ -229,7 +229,7 @@ export const COMMANDS: Command[] = [
   },
   {
     id: "blame.toggle",
-    label: "Git-Blame-Zeile ein-/ausblenden",
+    label: "Git-Blame umschalten (aus → Zeile → alle Zeilen)",
     group: "Navigation",
     hotkey: "Mod+Alt+U",
   },

@@ -13,12 +13,20 @@ type BlameEntry = {
   line_no: number;
 };
 
+export type BlameMode = "off" | "line" | "all";
+
 export const useBlameSettings = create<{
-  enabled: boolean;
+  mode: BlameMode;
   toggle: () => void;
 }>()(
   persist(
-    (set) => ({ enabled: false, toggle: () => set((s) => ({ enabled: !s.enabled })) }),
+    (set) => ({
+      mode: "off",
+      toggle: () =>
+        set((s) => ({
+          mode: s.mode === "off" ? "line" : s.mode === "line" ? "all" : "off",
+        })),
+    }),
     { name: "blame-layer" },
   ),
 );
@@ -52,33 +60,46 @@ export function attachBlameLayer(
   }
 
   async function render() {
-    if (!useBlameSettings.getState().enabled) {
+    const mode = useBlameSettings.getState().mode;
+    if (mode === "off") {
       clear();
       return;
     }
     const ok = await ensureLoaded();
-    const pos = editor.getPosition();
-    if (!ok || !pos || disposed) return;
-    const entry = byLine.get(pos.lineNumber);
-    if (!entry || !entry.short_hash) {
-      clear();
-      return;
-    }
     const model = editor.getModel();
-    if (!model) return;
-    const col = model.getLineMaxColumn(pos.lineNumber);
-    collection.set([
-      {
-        range: new monaco.Range(pos.lineNumber, col, pos.lineNumber, col),
+    if (!ok || !model || disposed) return;
+
+    const deco = (line: number, full: boolean) => {
+      const entry = byLine.get(line);
+      if (!entry?.short_hash) return null;
+      const col = model.getLineMaxColumn(line);
+      const content = full
+        ? `    ${entry.author}, ${entry.date} · ${entry.summary}`
+        : `   ${entry.author}, ${entry.date}`;
+      return {
+        range: new monaco.Range(line, col, line, col),
         options: {
-          after: {
-            content: `    ${entry.author}, ${entry.date} · ${entry.summary}`,
-            inlineClassName: "l8-blame",
-          },
+          after: { content, inlineClassName: "l8-blame" },
           showIfCollapsed: true,
         },
-      },
-    ]);
+      };
+    };
+
+    if (mode === "line") {
+      const pos = editor.getPosition();
+      const d = pos && deco(pos.lineNumber, true);
+      collection.set(d ? [d] : []);
+      return;
+    }
+
+    const decos = [];
+    for (const vr of editor.getVisibleRanges()) {
+      for (let l = vr.startLineNumber; l <= vr.endLineNumber; l++) {
+        const d = deco(l, false);
+        if (d) decos.push(d);
+      }
+    }
+    collection.set(decos);
   }
 
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -89,6 +110,9 @@ export function attachBlameLayer(
 
   const subs = [
     editor.onDidChangeCursorPosition(schedule),
+    editor.onDidScrollChange(() => {
+      if (useBlameSettings.getState().mode === "all") schedule();
+    }),
     editor.onDidChangeModelContent(() => {
       loadedFor = "";
       schedule();

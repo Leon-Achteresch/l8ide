@@ -724,7 +724,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Commit-Komposition**: Hunks/Zeilen per Checkbox auf mehrere Commits verteilen (GitButler-artig, virtuelle Branches)
 
-* [~] **Blame-Layer**: Inline-Autor/Alter der aktuellen Zeile, umschaltbar (⌘⌥U), persistiert (`blame-layer.ts`); permanente Alle-Zeilen-Anzeige und Commit-Peek als Ausbau offen
+* [x] **Blame-Layer**: ⌘⌥U zykliert aus → aktuelle Zeile → **alle Zeilen** (Autor/Alter inline; „alle" rendert performant nur den sichtbaren Bereich, aktualisiert beim Scrollen; persistiert — `blame-layer.ts`); Commit-Peek als Ausbau offen
 
 * [ ] **Code-Archäologie**: "Zeig mir jede Version dieser Funktion über die Zeit" als Slider
 
