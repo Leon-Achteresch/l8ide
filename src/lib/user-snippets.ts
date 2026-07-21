@@ -39,10 +39,38 @@ export const useUserSnippets = create<UserSnippetsStore>()(
   ),
 );
 
+let projectSnippets: UserSnippet[] = [];
+
+export async function loadProjectSnippets(root: string) {
+  const { exists, readTextFile } = await import("@tauri-apps/plugin-fs");
+  const path = `${root.replace(/\/+$/, "")}/.l8ide/snippets.json`;
+  if (!(await exists(path).catch(() => false))) {
+    projectSnippets = [];
+    return;
+  }
+  try {
+    const raw = JSON.parse(await readTextFile(path)) as Partial<UserSnippet>[];
+    projectSnippets = raw
+      .filter((s) => s.prefix && s.body)
+      .map((s, i) => ({
+        id: `project-${i}`,
+        name: s.name ?? s.prefix!,
+        prefix: s.prefix!,
+        body: s.body!,
+        language: s.language ?? "*",
+      }));
+  } catch {
+    projectSnippets = [];
+  }
+}
+
 export function registerUserSnippets() {
   monaco.languages.registerCompletionItemProvider("*", {
     provideCompletionItems(model, position) {
-      const { snippets } = useUserSnippets.getState();
+      const snippets = [
+        ...useUserSnippets.getState().snippets,
+        ...projectSnippets,
+      ];
       if (snippets.length === 0) return { suggestions: [] };
       const languageId = model.getLanguageId();
       const word = model.getWordUntilPosition(position);

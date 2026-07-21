@@ -594,7 +594,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Interactive Window / REPL** (Python u.a.)
 
-* [~] **Snippets-Verwaltung**: Global und pro Sprache ✓ (Einstellungen → Snippets); pro Projekt fehlt
+* [x] **Snippets-Verwaltung**: Global und pro Sprache (Einstellungen → Snippets) sowie **pro Projekt** via versionierbare `.l8ide/snippets.json` (Array aus {name, prefix, body, language}, beim Projekt-Öffnen geladen und in die Completion gemischt — `loadProjectSnippets` in `user-snippets.ts`)
 
 ***
 
