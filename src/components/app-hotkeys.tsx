@@ -32,6 +32,7 @@ import { useTags } from "@/lib/tags-store";
 import { useSubmodules } from "@/lib/submodule-store";
 import { runBuildTask, runTestTask } from "@/lib/tasks";
 import { useTransformPalette } from "@/components/transform-palette";
+import { useRegexTester } from "@/components/regex-tester-dialog";
 import { upsertToc } from "@/lib/markdown-toc";
 import { toast } from "sonner";
 import { useScriptPalette } from "@/components/script-palette";
@@ -163,6 +164,7 @@ export function AppHotkeys() {
       setTheme(resolvedTheme === "dark" ? "light" : "dark"),
     "editor.save": () => void formatAndSaveActive(),
     "transform.selection": () => useTransformPalette.getState().setOpen(true),
+    "regex.tester": () => useRegexTester.getState().setOpen(true),
     "markdown.toc": () => {
       const ed = focusedEditor();
       const model = ed?.getModel();

@@ -270,6 +270,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+S",
   },
   {
+    id: "regex.tester",
+    label: "Regex-Tester öffnen",
+    group: "Editor",
+    hotkey: "Mod+Alt+4",
+  },
+  {
     id: "markdown.toc",
     label: "Markdown-Inhaltsverzeichnis einfügen/aktualisieren",
     group: "Editor",

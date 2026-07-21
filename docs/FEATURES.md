@@ -282,6 +282,8 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **In-File-Suche** (Cmd+F) via Monaco
 
+* [x] **Regex-Tester**: ⌘⌥4 öffnet einen Tester — Muster + Flags (g/i/m/s/u) live gegen Testtext, Treffer im Text hervorgehoben, Capture-Groups pro Treffer aufgelistet, ungültige Muster als Fehler (`regex-tester-core.ts`, Test `test:regex`)
+
 ### 2.5 Personalisierung
 
 * [x] **Color Themes**: Hell/Dunkel mit OS-Sync via next-themes

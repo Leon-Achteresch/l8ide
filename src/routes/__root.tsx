@@ -23,6 +23,7 @@ import { TagsDialog } from "@/components/tags-dialog";
 import { SubmoduleDialog } from "@/components/submodule-dialog";
 import { ScriptPalette } from "@/components/script-palette";
 import { TransformPalette } from "@/components/transform-palette";
+import { RegexTesterDialog } from "@/components/regex-tester-dialog";
 import { ClipboardHistoryDialog } from "@/components/clipboard-history-dialog";
 import { WorkContextsDialog } from "@/components/work-contexts-dialog";
 import { ScreencastOverlay } from "@/components/screencast-overlay";
@@ -222,6 +223,7 @@ function RootComponent() {
       <SubmoduleDialog />
       <ScriptPalette />
       <TransformPalette />
+      <RegexTesterDialog />
       <Toaster />
       {RouterDevtools && (
         <Suspense fallback={null}>
