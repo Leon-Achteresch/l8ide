@@ -36,6 +36,8 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 
 * [x] **Emmet**: Integrierte Abkürzungs-Expansion für HTML/CSS (z.B. `ul>li*5`)
 
+* [x] **Selektion umwandeln**: ⌘⌥; öffnet eine Palette von Transformationen auf die Auswahl — Base64 en/decode, URL en/decode, JWT dekodieren (Header+Payload), JSON formatieren/minifizieren/escapen (`text-transforms.ts` mit Test `test:transforms`, undo-fähig)
+
 * [x] **Column Edit Mode**: entspricht der Box-Selection (Shift+Alt+Drag) mit Multi-Cursor-Bearbeitung
 
 * [x] **Undo/Redo mit Cursor-Historie**

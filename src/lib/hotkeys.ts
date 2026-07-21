@@ -270,6 +270,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+S",
   },
   {
+    id: "transform.selection",
+    label: "Selektion umwandeln (Base64/URL/JWT/JSON)",
+    group: "Editor",
+    hotkey: "Mod+Alt+;",
+  },
+  {
     id: "editor.format",
     label: "Dokument formatieren",
     group: "Editor",

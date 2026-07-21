@@ -31,6 +31,7 @@ import { useRemotes } from "@/lib/remotes-store";
 import { useTags } from "@/lib/tags-store";
 import { useSubmodules } from "@/lib/submodule-store";
 import { runBuildTask, runTestTask } from "@/lib/tasks";
+import { useTransformPalette } from "@/components/transform-palette";
 import { useScriptPalette } from "@/components/script-palette";
 import { useNavHistory } from "@/lib/nav-history";
 import { open } from "@tauri-apps/plugin-dialog";
@@ -159,6 +160,7 @@ export function AppHotkeys() {
     "theme.toggle": () =>
       setTheme(resolvedTheme === "dark" ? "light" : "dark"),
     "editor.save": () => void formatAndSaveActive(),
+    "transform.selection": () => useTransformPalette.getState().setOpen(true),
     "editor.format": () => {
       if (textEditorActive) formatActiveEditor();
     },
