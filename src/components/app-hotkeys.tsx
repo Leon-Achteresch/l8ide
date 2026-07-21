@@ -131,6 +131,8 @@ export function AppHotkeys() {
       useWorkspaceStore.getState().openFile(pageTab("/git-history")),
     "git.sync": () =>
       useWorkspaceStore.getState().openFile(pageTab("/git-sync")),
+    "tests.explorer": () =>
+      useWorkspaceStore.getState().openFile(pageTab("/tests")),
     "editor.toggleReadonly": () => {
       const path = useWorkspaceStore.getState().activeFile;
       if (!path || isPageTab(path)) return;

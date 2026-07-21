@@ -8,6 +8,7 @@ import { ProcessDashboardPage } from "@/components/process-dashboard-page";
 import { DesignTokensPage } from "@/components/design-tokens-page";
 import { GitHistoryPage } from "@/components/git-history-page";
 import { GitSyncPage } from "@/components/git-sync-page";
+import { TestExplorerPage } from "@/components/test-explorer-page";
 import { WelcomePage } from "@/components/welcome-page";
 import { RepoInsightsPage } from "@/components/repo-insights-page";
 import { SearchEditorPage } from "@/components/search-editor-page";
@@ -43,6 +44,7 @@ const PAGE_COMPONENTS: Record<string, () => React.JSX.Element> = {
   "/design-tokens": DesignTokensPage,
   "/git-history": GitHistoryPage,
   "/git-sync": GitSyncPage,
+  "/tests": TestExplorerPage,
   "/welcome": WelcomePage,
   "/insights": RepoInsightsPage,
 };

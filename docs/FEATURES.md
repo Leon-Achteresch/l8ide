@@ -446,7 +446,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 ## 8. Testing
 
-* [ ] **Test Explorer nativ**: Baumansicht aller Tests, Run/Debug einzeln oder gebündelt
+* [~] **Test Explorer nativ**: ⌘⌥V öffnet eine Baumansicht aller Testdateien im Projekt (scannt den Datei-Index nach `*.test.*`/`*.spec.*`, parst jede via `findTestCases`), aufklappbar pro Datei mit `describe`/`it`/`test`-Knoten, Test-Zähler und Status-Icons (✓/✗/○ aus dem geteilten Ergebnis-Store); Klick auf einen Test springt zur Zeile, Play-Button führt einzelnen Test (Terminal) bzw. ganze Datei mit Ergebnissen aus (`test-explorer-page.tsx`, Baumbau gegen echte Testdatei verifiziert, 300-Dateien-Cap); Debug einzelner Tests fehlt noch
 
 * [x] **Test-Dekorationen im Editor**: CodeLens „▶ Test"/„▶ Suite" über jedem `it`/`test`/`describe` (auch `.only`/`.skip`/`.each`) und „▶ Alle Tests der Datei" oben — nur in `*.test.*`/`*.spec.*`-Dateien; Klick führt den erkannten Runner (vitest/jest aus package.json, sonst `npm test`) mit `-t <name>`-Filter im Terminal aus (`test-lens.ts` + reiner Kern `test-lens-core.ts`, Test `test:testlens`; String-Literale werden nicht fälschlich als Test erkannt). **Status-Icons**: „✓ Mit Ergebnissen" läuft die Datei mit JSON-Reporter (`vitest --reporter=json` / `jest --json`) headless via `run_shell`, parst pass/fail/skip und rendert ✓/✗/○ inline am Testende (Fehlermeldung im Hover), plus Summary-Toast (`test-results.ts` + Kern `test-results-core.ts`, Test `test:testresults`, **gegen echte vitest-JSON-Ausgabe verifiziert**)
 

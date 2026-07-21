@@ -19,6 +19,19 @@ const LANGS = [
 
 const toolCache = new Map<string, TestTool>();
 
+export async function runTestInTerminal(
+  relFile: string,
+  title?: string,
+): Promise<void> {
+  const root = useWorkspaceStore.getState().rootPath?.replace(/\/+$/, "");
+  if (!root) return;
+  const [tool, term] = await Promise.all([
+    detectTool(root),
+    import("@/lib/terminal"),
+  ]);
+  await term.runInTerminal(buildTestCommand(tool, relFile, title));
+}
+
 export async function detectTool(root: string): Promise<TestTool> {
   const cached = toolCache.get(root);
   if (cached) return cached;
@@ -51,14 +64,7 @@ export function registerTestLens(m: typeof monacoNs) {
   registered = true;
 
   m.editor.registerCommand(RUN_TEST, (_accessor, relFile: string, title?: string) => {
-    const root = useWorkspaceStore.getState().rootPath?.replace(/\/+$/, "");
-    if (!root) return;
-    void Promise.all([
-      detectTool(root),
-      import("@/lib/terminal"),
-    ]).then(([tool, term]) =>
-      term.runInTerminal(buildTestCommand(tool, relFile, title)),
-    );
+    void runTestInTerminal(relFile, title);
   });
 
   m.editor.registerCommand(RUN_RESULTS, (_accessor, absFile: string) => {

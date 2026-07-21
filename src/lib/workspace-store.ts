@@ -24,6 +24,7 @@ export const PAGES: Record<string, string> = {
   "/design-tokens": "Design-Tokens",
   "/git-history": "Verlauf",
   "/git-sync": "Ein-/Ausgehend",
+  "/tests": "Tests",
   "/welcome": "Willkommen",
   "/insights": "Repo-Insights",
 };

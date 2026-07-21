@@ -192,6 +192,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+A",
   },
   {
+    id: "tests.explorer",
+    label: "Test-Explorer öffnen (alle Tests im Projekt)",
+    group: "Navigation",
+    hotkey: "Mod+Alt+V",
+  },
+  {
     id: "editor.toggleReadonly",
     label: "Schreibschutz für aktive Datei umschalten (Sitzung)",
     group: "Editor",
