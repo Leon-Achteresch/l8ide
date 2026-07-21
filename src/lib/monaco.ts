@@ -24,6 +24,7 @@ import { registerRefactorProviders } from "@/lib/ts-refactor";
 import { registerSemanticTokens } from "@/lib/semantic-tokens";
 import { registerTailwind } from "@/lib/tailwind";
 import { registerCssSpecificity } from "@/lib/css-specificity";
+import { registerTestLens } from "@/lib/test-lens";
 
 self.MonacoEnvironment = {
   getWorker(_workerId, label) {
@@ -71,6 +72,7 @@ registerRefactorProviders();
 registerSemanticTokens();
 registerTailwind(monaco);
 registerCssSpecificity(monaco);
+registerTestLens(monaco);
 registerAiInlineCompletions(monaco);
 registerAutoImports();
 registerPostfixCompletions();

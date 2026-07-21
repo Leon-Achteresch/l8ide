@@ -448,7 +448,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Test Explorer nativ**: Baumansicht aller Tests, Run/Debug einzeln oder gebündelt
 
-* [ ] **Test-Dekorationen im Editor**: Run-Buttons an Testfunktionen, Status-Icons
+* [~] **Test-Dekorationen im Editor**: CodeLens „▶ Test"/„▶ Suite" über jedem `it`/`test`/`describe` (auch `.only`/`.skip`/`.each`) und „▶ Alle Tests der Datei" oben — nur in `*.test.*`/`*.spec.*`-Dateien; Klick führt den erkannten Runner (vitest/jest aus package.json, sonst `npm test`) mit `-t <name>`-Filter im Terminal aus (`test-lens.ts` + reiner Kern `test-lens-core.ts`, Test `test:testlens`; String-Literale werden nicht fälschlich als Test erkannt). Status-Icons (pass/fail) benötigen Ergebnis-Parsing (nächster Schritt)
 
 * [ ] **Test-Ergebnisse-Panel**, Fehler-Peek direkt an der Assertion
 
