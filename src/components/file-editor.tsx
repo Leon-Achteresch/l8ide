@@ -180,7 +180,6 @@ function TextEditor({
           options={{
             ...displayOptions,
             fontSize,
-            minimap: { enabled: false },
             glyphMargin: true,
             automaticLayout: true,
             links: true,

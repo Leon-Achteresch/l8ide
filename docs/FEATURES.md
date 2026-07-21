@@ -20,6 +20,8 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 
 * [x] **Auto-Closing**: Automatisches Schließen von Klammern, Anführungszeichen, Tags
 
+* [x] **Linked Editing**: JSX/HTML-Tag-Paare synchron umbenennen (Monaco `linkedEditing`, in den Einstellungen abschaltbar)
+
 * [x] **Auto-Surround**: Auswahl automatisch mit Klammern/Quotes umschließen
 
 * [x] **Auto-Indentation**: Automatische Einrückung basierend auf Sprache
@@ -90,7 +92,7 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 
 * [x] **Sticky Scroll**: Aktuelle Scope-Header bleiben oben kleben (Monaco `stickyScroll`, abschaltbar in den Einstellungen)
 
-* [ ] **Minimap**: Verkleinerte Code-Übersicht mit Highlight-Markern (aktuell deaktiviert)
+* [x] **Minimap**: Verkleinerte Code-Übersicht, in den Einstellungen einschaltbar (Standard aus)
 
 ### 1.4 Refactoring
 
@@ -128,7 +130,7 @@ Umgesetzt via eigenem TypeScript-Worker (`ts.worker.ts`), der die TS-Language-Se
 
 * [x] **Diagnostics-Anzeige (Editor)**: Syntax-Fehler/Warnungen als Squiggles im Editor
 
-* [x] **Diagnostics-Anzeige (Workbench)**: Problems-Panel, Explorer-Badges (Fehler/Warnungen pro Datei + Ordner), Dock-Button mit Zähler; Marker erscheinen in der Overview-Ruler (Minimap ist deaktiviert)
+* [x] **Diagnostics-Anzeige (Workbench)**: Problems-Panel, Explorer-Badges (Fehler/Warnungen pro Datei + Ordner), Dock-Button mit Zähler; Marker erscheinen in der Overview-Ruler und (falls Minimap aktiviert) in dieser
 
 * [x] **Problems-Panel**: Filterbar (Text + Schweregrad), nach Datei gruppiert/einklappbar, Klick springt zur Stelle, Quick-Fix-Zugriff (Cmd+.)
 

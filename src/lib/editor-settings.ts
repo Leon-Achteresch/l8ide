@@ -18,6 +18,8 @@ type EditorSettings = {
   semanticValidation: boolean;
   a11yLint: boolean;
   stickyScroll: boolean;
+  minimap: boolean;
+  linkedEditing: boolean;
   breadcrumbs: boolean;
   setWordWrap: (v: boolean) => void;
   setWordWrapColumn: (v: number) => void;
@@ -31,6 +33,8 @@ type EditorSettings = {
   setSemanticValidation: (v: boolean) => void;
   setA11yLint: (v: boolean) => void;
   setStickyScroll: (v: boolean) => void;
+  setMinimap: (v: boolean) => void;
+  setLinkedEditing: (v: boolean) => void;
   setBreadcrumbs: (v: boolean) => void;
 };
 
@@ -49,6 +53,8 @@ export const useEditorSettings = create<EditorSettings>()(
       semanticValidation: true,
       a11yLint: true,
       stickyScroll: true,
+      minimap: false,
+      linkedEditing: true,
       breadcrumbs: true,
       setWordWrap: (wordWrap) => set({ wordWrap }),
       setWordWrapColumn: (wordWrapColumn) =>
@@ -65,6 +71,8 @@ export const useEditorSettings = create<EditorSettings>()(
       setSemanticValidation: (semanticValidation) => set({ semanticValidation }),
       setA11yLint: (a11yLint) => set({ a11yLint }),
       setStickyScroll: (stickyScroll) => set({ stickyScroll }),
+      setMinimap: (minimap) => set({ minimap }),
+      setLinkedEditing: (linkedEditing) => set({ linkedEditing }),
       setBreadcrumbs: (breadcrumbs) => set({ breadcrumbs }),
     }),
     { name: "editor-settings" },
@@ -87,6 +95,8 @@ export function toMonacoOptions(s: EditorSettings): editor.IEditorOptions {
     renderWhitespace: s.renderWhitespace,
     renderControlCharacters: s.renderControlCharacters,
     stickyScroll: { enabled: s.stickyScroll },
+    minimap: { enabled: s.minimap },
+    linkedEditing: s.linkedEditing,
   };
   (opts as Record<string, unknown>)["semanticHighlighting.enabled"] =
     s.semanticHighlighting;

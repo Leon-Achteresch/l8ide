@@ -360,6 +360,17 @@ function EditorDisplaySettings() {
           <Switch checked={s.a11yLint} onCheckedChange={s.setA11yLint} />
         </DisplayRow>
 
+        <DisplayRow label="Minimap">
+          <Switch checked={s.minimap} onCheckedChange={s.setMinimap} />
+        </DisplayRow>
+
+        <DisplayRow label="Verknüpftes Editieren (Tag-Paare)">
+          <Switch
+            checked={s.linkedEditing}
+            onCheckedChange={s.setLinkedEditing}
+          />
+        </DisplayRow>
+
         <DisplayRow label="Zeilenumbruch (Word Wrap)">
           <Switch checked={s.wordWrap} onCheckedChange={s.setWordWrap} />
         </DisplayRow>
