@@ -16,6 +16,7 @@ import { openWorkspaceSettings } from "@/lib/workspace-settings";
 import { useDebugger } from "@/lib/debugger";
 import { debugActiveFile } from "@/lib/debug-launcher";
 import { openLaunchPalette } from "@/lib/launch-config";
+import { openTaskPalette } from "@/lib/tasks-json";
 import { toggleCoverage } from "@/lib/coverage";
 import { useFileDeps } from "@/lib/file-deps";
 import { useStructSearch } from "@/lib/struct-search";
@@ -94,6 +95,7 @@ export function AppHotkeys() {
     "debug.attach": () => void useDebugger.getState().connect(),
     "debug.file": () => void debugActiveFile(),
     "debug.launch": () => openLaunchPalette(),
+    "task.run": () => openTaskPalette(),
     "search.structural": () => useStructSearch.getState().setOpen(true),
     "http.run": () => {
       const path = useWorkspaceStore.getState().activeFile;

@@ -26,6 +26,7 @@ export async function applyWorkspaceSettings(root: string) {
   );
   void import("@/lib/prompt-files").then((m) => m.loadPromptFiles(root));
   void import("@/lib/launch-config").then((m) => m.loadLaunchConfigs(root));
+  void import("@/lib/tasks-json").then((m) => m.loadTasks(root));
   const path = workspaceSettingsPath(root);
   if (!(await exists(path).catch(() => false))) return;
   let json: WorkspaceSettings;

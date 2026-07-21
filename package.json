@@ -16,6 +16,7 @@
     "test:sysprompt": "node scripts/test-system-prompt.mjs",
     "test:promptfiles": "node scripts/test-prompt-files.mjs",
     "test:launchconfig": "node scripts/test-launch-config.mjs",
+    "test:tasksjson": "node scripts/test-tasks-json.mjs",
     "test:testlens": "node scripts/test-test-lens.mjs",
     "test:testresults": "node scripts/test-test-results.mjs",
     "test:coverage": "node scripts/test-coverage.mjs",

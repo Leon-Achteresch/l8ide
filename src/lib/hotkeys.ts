@@ -126,6 +126,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+6",
   },
   {
+    id: "task.run",
+    label: "Task ausführen (tasks.json)",
+    group: "Tasks",
+    hotkey: "Mod+Shift+X",
+  },
+  {
     id: "debug.attach",
     label: "Debugger: Mit Node verbinden (Port 9229)",
     group: "Debug",
