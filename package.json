@@ -9,6 +9,7 @@
     "test:move": "node scripts/test-move-logic.mjs",
     "test:hitcount": "node scripts/test-hitcount.mjs",
     "test:gitgraph": "node scripts/test-git-graph.mjs",
+    "test:inlinevalues": "node scripts/test-inline-values.mjs",
     "test:preview": "node scripts/test-preview-tabs.mjs",
     "test:refactor": "node scripts/test-text-edits.mjs",
     "test:diffparse": "node scripts/test-diff-parse.mjs",

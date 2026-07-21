@@ -20,6 +20,7 @@ import { attachA11yLint } from "@/lib/a11y-lint";
 import { attachBookmarks } from "@/lib/bookmarks";
 import { attachMarkdownLinks } from "@/lib/markdown-links";
 import { attachBlameLayer } from "@/lib/blame-layer";
+import { attachInlineValues } from "@/lib/inline-values";
 import { attachExplainLayer } from "@/lib/explain-layer";
 import { attachInlineChat } from "@/lib/inline-chat";
 import { trackEditorStatus } from "@/lib/status-store";
@@ -217,6 +218,7 @@ export function TextEditor({
             attachBreakpointGutter(editor, monaco, path);
             attachExplainLayer(editor, monaco, path);
             attachBlameLayer(editor, monaco, path);
+            attachInlineValues(editor, monaco, path);
             attachA11yLint(editor, path);
             attachBookmarks(editor, monaco, path);
             attachMarkdownLinks(editor, path);

@@ -382,7 +382,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Debug Console / REPL (Browser)**: Eingabezeile in der Browser-Konsole führt JS im Seitenkontext aus (Ergebnis/Fehler als Log-Eintrag, ↑/↓-History, Eingaben violett mit ❯-Prompt); Node-Debug-Kontext fehlt
 
-* [ ] **Inline Values**: Variablenwerte direkt im Code während Debugging
+* [x] **Inline Values**: Bei Pause werden die Top-Frame-Locals als dezente Inline-Annotation (`name = wert`, sky-blau) am Zeilenende gerendert, wo der Bezeichner vorkommt — nur im Frame der aktiven Datei, String-Literale werden maskiert (kein Fehl-Match), Werte auf 40 Zeichen gekürzt, bei Scroll/Resume aktualisiert (`inline-values.ts` + reiner Kern `inline-values-core.ts`, Test `test:inlinevalues`, End-to-End gegen echten Node verifiziert: `count = 42` an der Return-Zeile)
 
 * [x] **Hover-Evaluation** während Debug-Session: Bei Pause zeigt der Editor-Hover den Live-Wert des Ausdrucks unterm Cursor (Member-Ketten wie `a.b.c`, side-effect-frei via `throwOnSideEffect`, 500ms-Timeout — `debug-hover.ts`, verifiziert)
 

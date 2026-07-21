@@ -238,6 +238,16 @@
   font-size: 0.85em;
 }
 
+.l8-inline-value {
+  color: #0ea5e9;
+  opacity: 0.75;
+  font-style: italic;
+  font-size: 0.9em;
+  background: color-mix(in oklch, #0ea5e9 12%, transparent);
+  border-radius: 4px;
+  padding: 0 4px;
+}
+
 .l8-breakpoint {
   background: radial-gradient(circle at 50% 50%, #ef4444 0 4.5px, transparent 5.5px);
   cursor: pointer;
