@@ -320,7 +320,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Markdown-Vorschau**: Split-View mit Editor
 
-* [ ] **Markdown (erweitert)**: Live gescrollt-synchronisiert, Linkvalidierung, Pfad-Completions, Mermaid
+* [~] **Markdown (erweitert)**: Live gescrollt-synchronisierte Vorschau ✓ (Milkdown-Split); **Inhaltsverzeichnis-Generator** (⌘⌥3 fügt ein verlinktes TOC ein bzw. aktualisiert es idempotent zwischen `<!-- toc -->`-Markern, unicode-Slugs, Dedup — `markdown-toc.ts`, Test `test:mdtoc`); Linkvalidierung/Pfad-Completions/Mermaid fehlen
 
 * [x] **JSON Schema-Validierung**: Schema Store mit Completions
 

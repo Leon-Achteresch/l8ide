@@ -32,6 +32,8 @@ import { useTags } from "@/lib/tags-store";
 import { useSubmodules } from "@/lib/submodule-store";
 import { runBuildTask, runTestTask } from "@/lib/tasks";
 import { useTransformPalette } from "@/components/transform-palette";
+import { upsertToc } from "@/lib/markdown-toc";
+import { toast } from "sonner";
 import { useScriptPalette } from "@/components/script-palette";
 import { useNavHistory } from "@/lib/nav-history";
 import { open } from "@tauri-apps/plugin-dialog";
@@ -161,6 +163,17 @@ export function AppHotkeys() {
       setTheme(resolvedTheme === "dark" ? "light" : "dark"),
     "editor.save": () => void formatAndSaveActive(),
     "transform.selection": () => useTransformPalette.getState().setOpen(true),
+    "markdown.toc": () => {
+      const ed = focusedEditor();
+      const model = ed?.getModel();
+      if (!ed || !model || !/\.(md|markdown|mdx)$/i.test(model.uri.path)) {
+        toast.info("Nur in Markdown-Dateien.");
+        return;
+      }
+      const next = upsertToc(model.getValue());
+      ed.executeEdits("toc", [{ range: model.getFullModelRange(), text: next }]);
+      toast.success("Inhaltsverzeichnis aktualisiert");
+    },
     "editor.format": () => {
       if (textEditorActive) formatActiveEditor();
     },

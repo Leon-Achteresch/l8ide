@@ -270,6 +270,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+S",
   },
   {
+    id: "markdown.toc",
+    label: "Markdown-Inhaltsverzeichnis einfügen/aktualisieren",
+    group: "Editor",
+    hotkey: "Mod+Alt+3",
+  },
+  {
     id: "transform.selection",
     label: "Selektion umwandeln (Base64/URL/JWT/JSON)",
     group: "Editor",
