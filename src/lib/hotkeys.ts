@@ -240,10 +240,16 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+H",
   },
   {
+    id: "scripts.palette",
+    label: "Script-Palette (package.json-Scripts ausführen)",
+    group: "Tasks",
+    hotkey: "Mod+Shift+R",
+  },
+  {
     id: "task.build",
     label: "Build-Task ausführen (npm run build)",
     group: "Tasks",
-    hotkey: "Mod+Shift+R",
+    hotkey: "Mod+Alt+1",
   },
   {
     id: "task.test",

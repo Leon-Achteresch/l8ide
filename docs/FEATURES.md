@@ -732,7 +732,7 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [ ] **Output-Parser universell**: JSON/Tabellen/Logs im Terminal automatisch als interaktive Tabellen renderbar
 
-* [ ] **Kommando-Palette fürs Terminal**: Projektspezifische Befehle mit Beschreibung, Parametern als Formular
+* [~] **Kommando-Palette fürs Terminal**: ⌘⇧R öffnet eine filterbare Palette aller package.json-Scripts (mit Kommando-Vorschau, erkannter Paketmanager), Enter führt im Terminal aus; Trust-Gate (`script-palette.tsx`); Parameter-Formulare fehlen
 
 * [ ] **Task-Pipelines visuell**: Build-Abhängigkeiten als Graph, Live-Status pro Knoten
 

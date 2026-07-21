@@ -21,6 +21,7 @@ import { StashDialog } from "@/components/stash-dialog";
 import { RemotesDialog } from "@/components/remotes-dialog";
 import { TagsDialog } from "@/components/tags-dialog";
 import { SubmoduleDialog } from "@/components/submodule-dialog";
+import { ScriptPalette } from "@/components/script-palette";
 import { ClipboardHistoryDialog } from "@/components/clipboard-history-dialog";
 import { WorkContextsDialog } from "@/components/work-contexts-dialog";
 import { ScreencastOverlay } from "@/components/screencast-overlay";
@@ -218,6 +219,7 @@ function RootComponent() {
       <RemotesDialog />
       <TagsDialog />
       <SubmoduleDialog />
+      <ScriptPalette />
       <Toaster />
       {RouterDevtools && (
         <Suspense fallback={null}>

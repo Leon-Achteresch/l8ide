@@ -31,6 +31,7 @@ import { useRemotes } from "@/lib/remotes-store";
 import { useTags } from "@/lib/tags-store";
 import { useSubmodules } from "@/lib/submodule-store";
 import { runBuildTask, runTestTask } from "@/lib/tasks";
+import { useScriptPalette } from "@/components/script-palette";
 import { useNavHistory } from "@/lib/nav-history";
 import { open } from "@tauri-apps/plugin-dialog";
 import { useTheme } from "next-themes";
@@ -66,6 +67,7 @@ export function AppHotkeys() {
     "command.palette": () => useCommandPalette.getState().setOpen(true),
     "welcome.open": () =>
       useWorkspaceStore.getState().openFile(pageTab("/welcome")),
+    "scripts.palette": () => useScriptPalette.getState().setOpen(true),
     "task.build": () => void runBuildTask(),
     "task.test": () => void runTestTask(),
     "view.screencast": () => useViewStore.getState().toggleScreencast(),
