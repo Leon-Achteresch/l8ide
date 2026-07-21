@@ -550,7 +550,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 ## 14. Sonstiges
 
-* [x] **Statusbar**: Branch (öffnet SCM), Fehler-/Warnungszähler (öffnet Problems), Zeile/Spalte + Selektion (Go to Line), Einrückung (Tabs/Spaces-Toggle), EOL (LF/CRLF-Toggle), Sprache (`status-bar.tsx`, `status-store.ts`); Dev-Server-Ports (lsof-Polling 5s, node/bun/vite/…, Klick öffnet im eingebauten Browser — `ports.rs`, `ports-store.ts`); Encoding fehlt noch
+* [x] **Statusbar**: Branch (öffnet SCM), Fehler-/Warnungszähler (öffnet Problems), Zeile/Spalte + Selektion (Go to Line), Selektions-Statistik (Zeichen · Wörter · Zeilen bei Auswahl, `selection-stats.ts` mit Test `test:selstats`), Einrückung (Tabs/Spaces-Toggle), EOL (LF/CRLF-Toggle), Sprache (`status-bar.tsx`, `status-store.ts`); Dev-Server-Ports (lsof-Polling 5s, node/bun/vite/…, Klick öffnet im eingebauten Browser — `ports.rs`, `ports-store.ts`); Encoding fehlt noch
 
 * [x] **Notifications**: Toast-Benachrichtigungen via Sonner
 

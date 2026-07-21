@@ -450,7 +450,10 @@ export function StatusBar() {
         <div className="flex items-stretch gap-1">
           <Item onClick={gotoLine} title="Gehe zu Zeile/Spalte">
             Z {status.line}, S {status.column}
-            {status.selectedChars > 0 && ` (${status.selectedChars} markiert)`}
+            {status.selectedChars > 0 &&
+              ` (${status.selectedChars} Z · ${status.selectedWords} W${
+                status.selectedLines > 1 ? ` · ${status.selectedLines} Zl` : ""
+              })`}
             {status.selections > 1 && ` · ${status.selections} Cursor`}
           </Item>
           <Item onClick={toggleIndent} title="Einrückung umschalten">
