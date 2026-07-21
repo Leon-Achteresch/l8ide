@@ -12,6 +12,7 @@
     "test:inlinevalues": "node scripts/test-inline-values.mjs",
     "test:cssspec": "node scripts/test-css-specificity.mjs",
     "test:ignorequote": "node scripts/test-git-ignore-quote.mjs",
+    "test:glob": "node scripts/test-glob-match.mjs",
     "test:preview": "node scripts/test-preview-tabs.mjs",
     "test:refactor": "node scripts/test-text-edits.mjs",
     "test:diffparse": "node scripts/test-diff-parse.mjs",

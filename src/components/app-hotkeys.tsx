@@ -25,6 +25,7 @@ import { toggleBookmarkHere, jumpBookmark } from "@/lib/bookmarks";
 import { getMonacoInstance } from "@/lib/monaco-instance";
 import { useFocusTimer } from "@/lib/focus-timer";
 import { useReflog } from "@/lib/reflog-store";
+import { useReadonly } from "@/lib/readonly-globs";
 import { useWorktrees } from "@/lib/worktree-store";
 import { useStashStore } from "@/lib/stash-store";
 import { useRemotes } from "@/lib/remotes-store";
@@ -128,6 +129,11 @@ export function AppHotkeys() {
       useWorkspaceStore.getState().openFile(pageTab("/git-history")),
     "git.sync": () =>
       useWorkspaceStore.getState().openFile(pageTab("/git-sync")),
+    "editor.toggleReadonly": () => {
+      const path = useWorkspaceStore.getState().activeFile;
+      if (!path || isPageTab(path)) return;
+      useReadonly.getState().toggleSession(path);
+    },
     "repo.insights": () =>
       useWorkspaceStore.getState().openFile(pageTab("/insights")),
     "history.local": () => {

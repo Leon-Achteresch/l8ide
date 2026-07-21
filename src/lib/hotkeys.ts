@@ -186,6 +186,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+A",
   },
   {
+    id: "editor.toggleReadonly",
+    label: "Schreibschutz für aktive Datei umschalten (Sitzung)",
+    group: "Editor",
+    hotkey: "Mod+Alt+2",
+  },
+  {
     id: "git.submodules",
     label: "Git-Submodule verwalten",
     group: "Navigation",

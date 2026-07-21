@@ -12,6 +12,8 @@ import { useEditorZoom } from "@/lib/editor-zoom";
 import { useEditorDisplayOptions } from "@/lib/editor-settings";
 import { ideMonacoTheme } from "@/lib/ide-theme";
 import { formatAndSave, usePrettierSettings } from "@/lib/prettier-format";
+import { matchesAnyGlob } from "@/lib/glob-match";
+import { relForRoot, useReadonly } from "@/lib/readonly-globs";
 import { scheduleBackup, takeBackup } from "@/lib/hot-exit";
 import { checkSecretExposure } from "@/lib/secrets-guard";
 import { attachBreakpointGutter } from "@/lib/breakpoint-gutter";
@@ -128,6 +130,11 @@ export function TextEditor({
   const displayOptions = useEditorDisplayOptions();
   const formatOnPaste = usePrettierSettings((s) => s.formatOnPaste);
   const formatOnType = usePrettierSettings((s) => s.formatOnType);
+  const readonly = useReadonly(
+    (s) =>
+      s.sessionPaths.includes(path) ||
+      matchesAnyGlob(relForRoot(path), s.globs),
+  );
 
   useEffect(() => {
     const editor = editorRef.current;
@@ -195,6 +202,11 @@ export function TextEditor({
             inlineSuggest: { enabled: true },
             formatOnPaste,
             formatOnType,
+            readOnly: readonly,
+            readOnlyMessage: {
+              value:
+                "Schreibgeschützt — „Schreibschutz umschalten“ (Befehlspalette) hebt ihn für diese Sitzung auf",
+            },
           }}
           onMount={(editor) => {
             editorRef.current = editor;

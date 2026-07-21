@@ -250,7 +250,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Vergleich**: Explorer-Kontextmenü „Zum Vergleich auswählen“ + „Mit Ausgewähltem vergleichen“ und „Mit Zwischenablage vergleichen“; öffnet Monaco-DiffEditor (Inline/Nebeneinander) als `/compare/`-Tab (`file-compare.ts`, `file-compare-page.tsx`)
 
-* [ ] **Readonly-Modus pro Datei/Glob**
+* [x] **Readonly-Modus pro Datei/Glob**: `.l8ide/settings.json` → `readonlyGlobs` (z.B. `["dist/**", "**/*.gen.ts", "*.min.js"]`) macht passende Dateien im Editor schreibgeschützt (Monaco `readOnly` + Hover-Meldung beim Tippversuch); ⌘⌥2 schaltet den Schutz für die aktive Datei sitzungsweise um. Eigener Glob-Kern (`*`, `**`, `?`, `{a,b}`, gitignore-artiges Basename-Matching ohne `/`) in `glob-match.ts`, Test `test:glob` mit 18 Fällen; Store `readonly-globs.ts` (Globs persistiert, Sitzungs-Overrides flüchtig)
 
 * [x] **Zu .gitignore hinzufügen**: Kontextmenü schreibt Einträge in `.gitignore`
 

@@ -12,6 +12,7 @@ type WorkspaceSettings = {
   organizeImportsOnSave?: boolean;
   semanticValidation?: boolean;
   hidden?: string[];
+  readonlyGlobs?: string[];
 };
 
 export function workspaceSettingsPath(root: string): string {
@@ -41,6 +42,12 @@ export async function applyWorkspaceSettings(root: string) {
       workspaceHidden: { ...s.workspaceHidden, [root]: hidden },
     }));
   }
+  if (Array.isArray(json.readonlyGlobs)) {
+    const { useReadonly } = await import("@/lib/readonly-globs");
+    useReadonly
+      .getState()
+      .setGlobs(json.readonlyGlobs.filter((g) => typeof g === "string"));
+  }
   if (typeof json.formatOnSave === "boolean")
     usePrettierSettings.getState().setFormatOnSave(json.formatOnSave);
   if (typeof json.organizeImportsOnSave === "boolean")
@@ -57,7 +64,8 @@ const TEMPLATE = `{
   "formatOnSave": false,
   "organizeImportsOnSave": false,
   "semanticValidation": true,
-  "hidden": []
+  "hidden": [],
+  "readonlyGlobs": []
 }
 `;
 
