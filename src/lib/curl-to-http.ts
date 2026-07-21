@@ -1,3 +1,29 @@
+type HttpReqLike = {
+  method: string;
+  url: string;
+  headers: [string, string][];
+  body: string;
+};
+
+function shellQuote(s: string): string {
+  return `'${s.replace(/'/g, `'\\''`)}'`;
+}
+
+export function httpToCurl(req: HttpReqLike): string {
+  const parts = ["curl"];
+  if (req.method && req.method !== "GET") {
+    parts.push("-X", req.method);
+  }
+  for (const [k, v] of req.headers) {
+    parts.push("-H", shellQuote(`${k}: ${v}`));
+  }
+  if (req.body.trim()) {
+    parts.push("--data-raw", shellQuote(req.body));
+  }
+  parts.push(shellQuote(req.url));
+  return parts.join(" ");
+}
+
 function tokenize(cmd: string): string[] {
   const tokens: string[] = [];
   let i = 0;

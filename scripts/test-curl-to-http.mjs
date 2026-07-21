@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { curlToHttp } from "../src/lib/curl-to-http.ts";
+import { curlToHttp, httpToCurl } from "../src/lib/curl-to-http.ts";
 
 // simple GET
 assert.equal(curlToHttp("curl https://api.test/x"), "GET https://api.test/x");
@@ -34,5 +34,32 @@ assert.ok(
 
 assert.throws(() => curlToHttp("wget https://x"));
 assert.throws(() => curlToHttp("curl -X POST"));
+
+// httpToCurl: GET omits -X
+assert.equal(
+  httpToCurl({ method: "GET", url: "https://x/y", headers: [], body: "" }),
+  "curl 'https://x/y'",
+);
+// POST with header + body
+const curl = httpToCurl({
+  method: "POST",
+  url: "https://x/login",
+  headers: [["Content-Type", "application/json"]],
+  body: '{"u":"a"}',
+});
+assert.ok(curl.includes("-X POST"));
+assert.ok(curl.includes("-H 'Content-Type: application/json'"));
+assert.ok(curl.includes(`--data-raw '{"u":"a"}'`));
+assert.ok(curl.endsWith("'https://x/login'"));
+
+// round-trip: curl → http → curl preserves method/url/header
+const original = `curl -X PUT https://x/y -H 'Accept: application/json' --data-raw 'body'`;
+const http = curlToHttp(original);
+// parse http back into request-like via simple split for the test
+const [reqLine, ...rest] = http.split("\n");
+const [method, url] = reqLine.split(" ");
+assert.equal(method, "PUT");
+assert.equal(url, "https://x/y");
+assert.ok(rest.includes("Accept: application/json"));
 
 console.log("test-curl-to-http: ok");

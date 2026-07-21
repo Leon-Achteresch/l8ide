@@ -1,4 +1,6 @@
-import { Loader2, Send, X } from "lucide-react";
+import { Copy, Loader2, Send, X } from "lucide-react";
+import { toast } from "sonner";
+import { httpToCurl } from "@/lib/curl-to-http";
 import { AnimatePresence, motion } from "motion/react";
 import { SPRING_PANEL } from "@/lib/ease";
 import { useHttpClient } from "@/lib/http-client";
@@ -67,6 +69,20 @@ export function HttpClientPanel() {
                   {status.replace(/^HTTP\/[\d.]+\s*/, "")} · {ms}ms
                 </span>
               )
+            )}
+            {request && (
+              <button
+                type="button"
+                title="Als cURL kopieren"
+                onClick={() => {
+                  void navigator.clipboard
+                    .writeText(httpToCurl(request))
+                    .then(() => toast.success("cURL kopiert"));
+                }}
+                className="inline-flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-foreground/8 hover:text-foreground"
+              >
+                <Copy className="size-3.5" />
+              </button>
             )}
             <button
               type="button"
