@@ -328,7 +328,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **HTML/CSS (Basis)**: Tag-Completion und CSS-Worker via Monaco
 
-* [ ] **HTML/CSS (erweitert)**: Color Picker, Specificity-Hover
+* [x] **HTML/CSS (erweitert)**: **Color Picker** über Monacos CSS-Worker (Swatch + Picker für Farbliterale in `.css`) und den Tailwind-Color-Provider (css/scss/less/html/js/ts); **Specificity-Hover** — Hover über eine Selektor-Zeile zeigt die Spezifität `(ID, Klasse, Typ)` je Selektor der Liste und markiert den spezifischsten, inkl. `:is/:not/:has` (Maximum des Arguments) und `:where` (0), funktionale Pseudoklassen wie `:nth-child()` (`css-specificity-core.ts`, Test `test:cssspec` mit 13 Fällen)
 
 * [ ] **Notebooks**: Jupyter-Notebook-UI nativ (Zellen, Kernels, Outputs, Variablen-Explorer via Extension)
 

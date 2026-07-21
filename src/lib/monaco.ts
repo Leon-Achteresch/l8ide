@@ -23,6 +23,7 @@ import tsWorker from "@/lib/ts.worker?worker";
 import { registerRefactorProviders } from "@/lib/ts-refactor";
 import { registerSemanticTokens } from "@/lib/semantic-tokens";
 import { registerTailwind } from "@/lib/tailwind";
+import { registerCssSpecificity } from "@/lib/css-specificity";
 
 self.MonacoEnvironment = {
   getWorker(_workerId, label) {
@@ -69,6 +70,7 @@ registerMonacoNavigation();
 registerRefactorProviders();
 registerSemanticTokens();
 registerTailwind(monaco);
+registerCssSpecificity(monaco);
 registerAiInlineCompletions(monaco);
 registerAutoImports();
 registerPostfixCompletions();
