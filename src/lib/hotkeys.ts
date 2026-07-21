@@ -216,6 +216,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Shift+U",
   },
   {
+    id: "tests.continuous",
+    label: "Continuous Run umschalten (Tests bei Speichern)",
+    group: "Ansicht",
+    hotkey: "Mod+Shift+Y",
+  },
+  {
     id: "editor.toggleReadonly",
     label: "Schreibschutz für aktive Datei umschalten (Sitzung)",
     group: "Editor",

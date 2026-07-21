@@ -29,6 +29,7 @@ import {
   GitBranch,
   Info,
   Radio,
+  RefreshCw,
   Sparkles,
   Timer,
   TimerOff,
@@ -45,6 +46,7 @@ import {
   type TodoCounts,
 } from "@/lib/project-health";
 import { formatRemaining, useFocusTimer } from "@/lib/focus-timer";
+import { useContinuousRun } from "@/lib/continuous-run";
 import { useSearchStore } from "@/lib/search-store";
 
 const KIND_META: Record<
@@ -357,6 +359,21 @@ function NotificationsBell() {
   );
 }
 
+function ContinuousRunItem() {
+  const enabled = useContinuousRun((s) => s.enabled);
+  if (!enabled) return null;
+  return (
+    <Item
+      onClick={() => useContinuousRun.getState().toggle()}
+      title="Continuous Run aktiv — Tests laufen beim Speichern. Klick zum Ausschalten."
+      className="text-emerald-500"
+    >
+      <RefreshCw className="size-3 animate-spin [animation-duration:3s]" strokeWidth={2} />
+      Watch
+    </Item>
+  );
+}
+
 function Item({
   onClick,
   title,
@@ -461,6 +478,7 @@ export function StatusBar() {
           {total.warnings}
         </Item>
         <DevPorts />
+        <ContinuousRunItem />
         <ProjectHealth />
         <FocusTimer />
         <AiActivity />

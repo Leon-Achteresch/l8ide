@@ -18,6 +18,7 @@ import { debugActiveFile } from "@/lib/debug-launcher";
 import { openLaunchPalette } from "@/lib/launch-config";
 import { openTaskPalette } from "@/lib/tasks-json";
 import { toggleCoverage } from "@/lib/coverage";
+import { toggleContinuousRun } from "@/lib/continuous-run";
 import { useFileDeps } from "@/lib/file-deps";
 import { useStructSearch } from "@/lib/struct-search";
 import { useHttpClient } from "@/lib/http-client";
@@ -137,6 +138,7 @@ export function AppHotkeys() {
     "tests.explorer": () =>
       useWorkspaceStore.getState().openFile(pageTab("/tests")),
     "tests.coverage": () => toggleCoverage(),
+    "tests.continuous": () => toggleContinuousRun(),
     "tests.coverageView": () =>
       useWorkspaceStore.getState().openFile(pageTab("/coverage")),
     "editor.toggleReadonly": () => {

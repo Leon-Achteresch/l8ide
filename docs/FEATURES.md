@@ -454,7 +454,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Coverage-Ansicht nativ**: ⇧⌘C lädt `coverage/coverage-final.json` (bzw. `.nyc_output/…`, Istanbul-Format von vitest/jest/nyc/c8) und färbt im Editor jede ausführbare Zeile — grüner Balken = getroffen, roter Balken + rote Zeilentönung + Minimap-Marker = ungedeckt; Toggle blendet um (`coverage.ts` + reiner Parser `coverage-core.ts`, Test `test:coverage`, **gegen echte vitest-v8-`coverage-final.json` verifiziert**). **Übersichtsseite** ⇧⌘U: alle Dateien nach Coverage-% sortiert (schlechteste zuerst) mit Farbbalken und Gesamt-%, Klick öffnet die Datei; **Ein-Klick-Coverage-Lauf** startet `vitest/jest --coverage` und lädt das Ergebnis (`coverage-page.tsx`, Kommandoform gegen echten vitest-v8-Lauf verifiziert)
 
-* [ ] **Continuous Run**: Tests bei Änderung automatisch
+* [x] **Continuous Run**: ⇧⌘Y schaltet einen Watch-Modus (persistiert) — bei jedem Speichern laufen die relevanten Tests automatisch neu: eine gespeicherte Testdatei wird selbst neu ausgeführt, eine gespeicherte Quelldatei löst alle bereits einmal gelaufenen Testdateien aus (300ms entprellt, `run_shell`-JSON-Reporter → Inline-Status). Grüner „⟳ Watch"-Indikator in der Status-Bar bei aktivem Modus; Hook im zentralen `saveModel` (deckt auch Format-on-Save ab). Reiner Kern `continuous-run-core.ts` (`filesToRerun`), Test `test:continuous`
 
 * [ ] **Test-Profile**: Run/Debug/Coverage pro Framework via Extension-API
 
