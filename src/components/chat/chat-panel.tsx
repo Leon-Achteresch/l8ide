@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronDown,
   ChevronRight,
@@ -24,6 +24,7 @@ import { Markdown } from "@/components/chat/markdown";
 import { open } from "@tauri-apps/plugin-dialog";
 import { openAgentEditDiff, useAgentEdits } from "@/lib/agent-edits";
 import { parseSlash, SLASH_COMMANDS } from "@/lib/chat-slash";
+import { estimateEntriesTokens, formatTokens } from "@/lib/token-estimate";
 import { type ChatEntry, useChatStore } from "@/lib/chat-store";
 import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { AI_MODELS, useAiSettings } from "@/lib/ai-settings";
@@ -40,6 +41,10 @@ export function ChatPanel() {
 function ChatPanelInner() {
   const width = useChatStore((s) => s.width);
   const entries = useChatStore((s) => s.entries);
+  const sessionTokens = useMemo(
+    () => estimateEntriesTokens(entries),
+    [entries],
+  );
   const busy = useChatStore((s) => s.busy);
   const setWidth = useChatStore((s) => s.setWidth);
   const setOpen = useChatStore((s) => s.setOpen);
@@ -116,6 +121,14 @@ function ChatPanelInner() {
       <div className="flex h-9 shrink-0 items-center gap-1.5 border-b px-2">
         <Sparkles className="size-4 text-primary" />
         <span className="text-xs font-medium">KI-Chat</span>
+        {sessionTokens > 0 && (
+          <span
+            title="Geschätzte Tokens dieser Sitzung (grobe Näherung)"
+            className="rounded bg-foreground/[0.06] px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground"
+          >
+            ~{formatTokens(sessionTokens)} tok
+          </span>
+        )}
         <NativeSelect
           size="sm"
           value={model}
