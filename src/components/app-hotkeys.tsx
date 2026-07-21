@@ -15,6 +15,7 @@ import { openProjectNotes } from "@/lib/project-notes";
 import { openWorkspaceSettings } from "@/lib/workspace-settings";
 import { useDebugger } from "@/lib/debugger";
 import { debugActiveFile } from "@/lib/debug-launcher";
+import { openLaunchPalette } from "@/lib/launch-config";
 import { useFileDeps } from "@/lib/file-deps";
 import { useStructSearch } from "@/lib/struct-search";
 import { useHttpClient } from "@/lib/http-client";
@@ -91,6 +92,7 @@ export function AppHotkeys() {
     "workspace.settings": () => void openWorkspaceSettings(),
     "debug.attach": () => void useDebugger.getState().connect(),
     "debug.file": () => void debugActiveFile(),
+    "debug.launch": () => openLaunchPalette(),
     "search.structural": () => useStructSearch.getState().setOpen(true),
     "http.run": () => {
       const path = useWorkspaceStore.getState().activeFile;

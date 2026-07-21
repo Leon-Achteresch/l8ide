@@ -32,6 +32,29 @@ async function inspectorReady(port: number): Promise<boolean> {
   }
 }
 
+export async function launchAndAttach(
+  command: string,
+  port = 9229,
+): Promise<boolean> {
+  if (await inspectorReady(port)) {
+    toast.error(
+      `Port ${port} ist schon von einem Inspector belegt — erst trennen/beenden.`,
+    );
+    return false;
+  }
+  const { runInTerminal } = await import("@/lib/terminal");
+  await runInTerminal(command);
+  for (let i = 0; i < 20; i++) {
+    await sleep(500);
+    if (await inspectorReady(port)) {
+      await useDebugger.getState().connect(port);
+      return true;
+    }
+  }
+  toast.error("Inspector wurde nicht erreichbar (Timeout nach 10s).");
+  return false;
+}
+
 export async function debugActiveFile() {
   const ws = useWorkspaceStore.getState();
   const path = ws.activeFile;
@@ -46,22 +69,6 @@ export async function debugActiveFile() {
     );
     return;
   }
-  const port = 9229;
-  if (await inspectorReady(port)) {
-    toast.error(
-      `Port ${port} ist schon von einem Inspector belegt — erst trennen/beenden.`,
-    );
-    return;
-  }
   const rel = path.startsWith(`${root}/`) ? path.slice(root.length + 1) : path;
-  const { runInTerminal } = await import("@/lib/terminal");
-  await runInTerminal(`node --inspect-brk=${port} "${rel}"`);
-  for (let i = 0; i < 20; i++) {
-    await sleep(500);
-    if (await inspectorReady(port)) {
-      await useDebugger.getState().connect(port);
-      return;
-    }
-  }
-  toast.error("Inspector wurde nicht erreichbar (Timeout nach 10s).");
+  await launchAndAttach(`node --inspect-brk=9229 "${rel}"`);
 }

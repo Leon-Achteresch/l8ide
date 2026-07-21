@@ -120,6 +120,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+B",
   },
   {
+    id: "debug.launch",
+    label: "Debugger: launch.json-Konfiguration starten",
+    group: "Debug",
+    hotkey: "Mod+Alt+6",
+  },
+  {
     id: "debug.attach",
     label: "Debugger: Mit Node verbinden (Port 9229)",
     group: "Debug",

@@ -386,7 +386,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Hover-Evaluation** während Debug-Session: Bei Pause zeigt der Editor-Hover den Live-Wert des Ausdrucks unterm Cursor (Member-Ketten wie `a.b.c`, side-effect-frei via `throwOnSideEffect`, 500ms-Timeout — `debug-hover.ts`, verifiziert)
 
-* [ ] **launch.json**: Konfigurationen, Compounds (mehrere Debugger parallel), Variablensubstitution
+* [~] **launch.json**: liest `.vscode/launch.json` bzw. `.l8ide/launch.json` (JSONC mit Kommentaren), ⌘⌥6 öffnet eine cmdk-Palette der Konfigurationen (0 → aktive Datei debuggen, 1 → direkt starten, mehrere → Auswahl); startet `node --inspect-brk` mit `program`/`args`/`cwd`/`env` und attacht automatisch. **Variablensubstitution** `${workspaceFolder}`, `${file}`, `${relativeFile}`, `${fileBasename(NoExtension)}`, `${fileDirname}`, `${env:NAME}` (`launch-config-core.ts` + `launch-config.ts`, Test `test:launchconfig`, Kommandobau gegen echten Node-Inspector verifiziert); Compounds/Attach-Configs fehlen
 
 * [~] **Auto-Attach & Debug-Launcher**: ⌘⌥B startet die aktive .js/.mjs/.cjs-Datei mit `node --inspect-brk` im Terminal und attacht automatisch (Inspector-Polling, Port-Belegt-Schutz — `debug-launcher.ts`); generelles Auto-Attach an beliebige Node-Prozesse fehlt
 

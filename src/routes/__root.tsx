@@ -10,6 +10,7 @@ import { MonacoWorkspace } from "@/components/monaco-workspace";
 import { LocalHistoryDialog } from "@/components/local-history-dialog";
 import { RefactorDialogs } from "@/components/refactor-preview-dialog";
 import { BreakpointConditionDialog } from "@/components/breakpoint-condition-dialog";
+import { LaunchPalette } from "@/components/launch-palette";
 import { CallHierarchyDialog } from "@/components/call-hierarchy-dialog";
 import { DebugIsland } from "@/components/debug-island";
 import { FileDepsDialog } from "@/components/file-deps-dialog";
@@ -212,6 +213,7 @@ function RootComponent() {
       <ScreencastOverlay />
       <DebugIsland />
       <BreakpointConditionDialog />
+      <LaunchPalette />
       <FileDepsDialog />
       <StructSearchDialog />
       <HttpClientPanel />
