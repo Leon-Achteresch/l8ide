@@ -3,6 +3,8 @@ import {
   isCleanCompile,
   isCompileRestart,
   parseProblemLine,
+  parseStylishFile,
+  parseStylishProblem,
   parseTscLine,
   stripAnsi,
 } from "../src/lib/problem-matcher.ts";
@@ -69,5 +71,28 @@ assert.equal(g.line, 42);
 
 assert.equal(parseProblemLine("just some log output"), null);
 assert.equal(parseProblemLine("Building at http://localhost:3000:12:foo"), null);
+
+// ESLint stylish (multi-line): file header + indented problem lines
+assert.equal(parseStylishFile("/app/src/component.tsx"), "/app/src/component.tsx");
+assert.equal(parseStylishFile("src/a.js"), "src/a.js");
+assert.equal(parseStylishFile("  4:2  error  x"), null); // indented → not a header
+assert.equal(parseStylishFile("This sentence ends in code.ts"), null); // prose (spaces)
+assert.equal(parseStylishFile("✖ 3 problems"), null);
+
+const sp = parseStylishProblem("  12:5   error    Missing semicolon      semi");
+assert.deepEqual(sp, {
+  line: 12,
+  column: 5,
+  severity: "error",
+  message: "Missing semicolon (semi)",
+});
+const sp2 = parseStylishProblem("   4:2  warning  Unexpected console statement  no-console");
+assert.equal(sp2.severity, "warning");
+assert.equal(sp2.message, "Unexpected console statement (no-console)");
+assert.equal(parseStylishProblem("not a problem line"), null);
+
+// a rule-less stylish line still parses (message only)
+const sp3 = parseStylishProblem("  1:1  error  Parsing error: Unexpected token");
+assert.equal(sp3.message, "Parsing error: Unexpected token");
 
 console.log("test-problem-matcher: ok");

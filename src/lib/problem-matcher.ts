@@ -65,6 +65,31 @@ export function parseProblemLine(line: string): TaskProblem | null {
   return null;
 }
 
+const STYLISH_FILE =
+  /^(\S+\.(?:[jt]sx?|mjs|cjs|vue|svelte|astro|css|scss|less|json))$/;
+const STYLISH_PROBLEM =
+  /^\s+(\d+):(\d+)\s+(error|warning)\s+(.+?)(?:\s{2,}([\w-]+(?:\/[\w-]+)*))?\s*$/;
+
+export function parseStylishFile(rawLine: string): string | null {
+  if (/^\s/.test(rawLine)) return null;
+  const m = STYLISH_FILE.exec(rawLine.trim());
+  return m ? m[1] : null;
+}
+
+export function parseStylishProblem(
+  rawLine: string,
+): Omit<TaskProblem, "file"> | null {
+  const m = STYLISH_PROBLEM.exec(rawLine);
+  if (!m) return null;
+  const [, l, c, sev, msg, rule] = m;
+  return {
+    line: parseInt(l, 10),
+    column: parseInt(c, 10),
+    severity: sev === "error" ? "error" : "warning",
+    message: rule ? `${msg.trim()} (${rule})` : msg.trim(),
+  };
+}
+
 export function isCompileRestart(line: string): boolean {
   return (
     line.includes("File change detected. Starting incremental compilation") ||

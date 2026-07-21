@@ -3,6 +3,8 @@ import {
   isCleanCompile,
   isCompileRestart,
   parseProblemLine,
+  parseStylishFile,
+  parseStylishProblem,
   stripAnsi,
   type TaskProblem,
 } from "@/lib/problem-matcher";
@@ -13,6 +15,7 @@ const MAX_PROBLEMS = 200;
 type Scanner = {
   partial: string;
   problems: TaskProblem[];
+  currentFile: string | null;
   timer: ReturnType<typeof setTimeout> | undefined;
 };
 
@@ -48,6 +51,7 @@ export function feedTaskProblems(
   const s = scanners.get(pane) ?? {
     partial: "",
     problems: [],
+    currentFile: null,
     timer: undefined,
   };
   scanners.set(pane, s);
@@ -60,12 +64,28 @@ export function feedTaskProblems(
     if (isCompileRestart(line) || isCleanCompile(line)) {
       if (s.problems.length > 0) changed = true;
       s.problems = [];
+      s.currentFile = null;
       continue;
     }
     const problem = parseProblemLine(line);
-    if (problem && s.problems.length < MAX_PROBLEMS) {
-      s.problems.push({ ...problem, file: resolvePath(problem.file, cwd) });
-      changed = true;
+    if (problem) {
+      if (s.problems.length < MAX_PROBLEMS) {
+        s.problems.push({ ...problem, file: resolvePath(problem.file, cwd) });
+        changed = true;
+      }
+      continue;
+    }
+    const stylishFile = parseStylishFile(raw);
+    if (stylishFile) {
+      s.currentFile = stylishFile;
+      continue;
+    }
+    if (s.currentFile) {
+      const sp = parseStylishProblem(raw);
+      if (sp && s.problems.length < MAX_PROBLEMS) {
+        s.problems.push({ ...sp, file: resolvePath(s.currentFile, cwd) });
+        changed = true;
+      }
     }
   }
   if (changed) flushSoon(pane, s);
