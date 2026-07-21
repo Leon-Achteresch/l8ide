@@ -117,6 +117,8 @@ export function AppHotkeys() {
     "git.tags": () => useTags.getState().setOpen(true),
     "git.history": () =>
       useWorkspaceStore.getState().openFile(pageTab("/git-history")),
+    "repo.insights": () =>
+      useWorkspaceStore.getState().openFile(pageTab("/insights")),
     "history.local": () => {
       const path = useWorkspaceStore.getState().activeFile;
       if (path && !isPageTab(path)) useLocalHistoryDialog.getState().openFor(path);

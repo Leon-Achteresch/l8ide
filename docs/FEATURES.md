@@ -632,6 +632,8 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 
 * [x] **Arbeits-Kontexte / Task-Scopes**: ⌘⌥X — Tabs, Splits, Pins und Sidebar-Modus als benannte Kontexte pro Projekt speichern/wechseln/überschreiben (`workspace-contexts.ts`); Breakpoints/Terminalzustände folgen, sobald es sie gibt
 
+* [x] **Repo-Insights**: ⌘⌥7 öffnet eine visuelle Übersicht — Sprachverteilung (Balken mit Sprach-Farben), Commit-Aktivität der letzten 12 Wochen (Balkendiagramm), Top-Beitragende mit Commits/Insertions/Deletions (`repo-insights-page.tsx`, Backends `repo_language_stats`/`repo_contributor_stats`/`repo_activity_buckets`)
+
 * [ ] **Automatische Architektur-Doku**: Live generierte Modul-Übersichten aus dem Code
 
 * [ ] **Frage-basierte Navigation**: "Wo wird der User authentifiziert?" → semantische Suche über Embeddings der Codebase

@@ -168,6 +168,12 @@ export const COMMANDS: Command[] = [
     hotkey: "Mod+Alt+K",
   },
   {
+    id: "repo.insights",
+    label: "Repo-Insights öffnen (Sprachen, Aktivität, Beitragende)",
+    group: "Navigation",
+    hotkey: "Mod+Alt+7",
+  },
+  {
     id: "git.history",
     label: "Git-Verlauf öffnen (Commit-Liste mit Aktionen)",
     group: "Navigation",
