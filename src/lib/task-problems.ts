@@ -2,7 +2,7 @@ import { clearTaskMarkers, setTaskMarkers } from "@/lib/markers-store";
 import {
   isCleanCompile,
   isCompileRestart,
-  parseTscLine,
+  parseProblemLine,
   stripAnsi,
   type TaskProblem,
 } from "@/lib/problem-matcher";
@@ -62,7 +62,7 @@ export function feedTaskProblems(
       s.problems = [];
       continue;
     }
-    const problem = parseTscLine(line);
+    const problem = parseProblemLine(line);
     if (problem && s.problems.length < MAX_PROBLEMS) {
       s.problems.push({ ...problem, file: resolvePath(problem.file, cwd) });
       changed = true;

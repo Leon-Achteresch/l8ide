@@ -30,6 +30,41 @@ export function parseTscLine(line: string): TaskProblem | null {
   };
 }
 
+const ESLINT_COMPACT =
+  /^(.+?):\s+line\s+(\d+),\s+col\s+(\d+),\s+(Error|Warning)\s+-\s+(.+?)(?:\s+\(([\w-]+(?:\/[\w-]+)*)\))?$/i;
+const GENERIC =
+  /^(.+?):(\d+):(\d+):\s+(error|warning|fatal error)\s*:?\s+(.+)$/i;
+
+export function parseProblemLine(line: string): TaskProblem | null {
+  const tsc = parseTscLine(line);
+  if (tsc) return tsc;
+
+  let m = ESLINT_COMPACT.exec(line);
+  if (m) {
+    const [, file, l, c, sev, msg, rule] = m;
+    return {
+      file: file.trim(),
+      line: parseInt(l, 10),
+      column: parseInt(c, 10),
+      severity: sev.toLowerCase() === "error" ? "error" : "warning",
+      message: rule ? `${msg.trim()} (${rule})` : msg.trim(),
+    };
+  }
+
+  m = GENERIC.exec(line);
+  if (m) {
+    const [, file, l, c, sev, msg] = m;
+    return {
+      file: file.trim(),
+      line: parseInt(l, 10),
+      column: parseInt(c, 10),
+      severity: sev.toLowerCase().startsWith("warn") ? "warning" : "error",
+      message: msg.trim(),
+    };
+  }
+  return null;
+}
+
 export function isCompileRestart(line: string): boolean {
   return (
     line.includes("File change detected. Starting incremental compilation") ||
