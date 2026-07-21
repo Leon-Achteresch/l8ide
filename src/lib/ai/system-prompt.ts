@@ -15,6 +15,7 @@ export function buildSystemPrompt(ctx?: {
   rootPath?: string | null;
   activeFile?: string | null;
   openFiles?: string[];
+  customInstructions?: string;
 }): string {
   if (!ctx) return RULES;
   const lines = [RULES, "", "Aktueller Kontext:"];
@@ -22,5 +23,12 @@ export function buildSystemPrompt(ctx?: {
   if (ctx.activeFile) lines.push(`- Aktive Datei: ${ctx.activeFile}`);
   if (ctx.openFiles?.length)
     lines.push(`- Offene Dateien: ${ctx.openFiles.join(", ")}`);
+  if (ctx.customInstructions?.trim()) {
+    lines.push(
+      "",
+      "Projekt-Anweisungen (vom Nutzer, haben Vorrang vor den Standardregeln, außer bei Sicherheit):",
+      ctx.customInstructions.trim(),
+    );
+  }
   return lines.join("\n");
 }

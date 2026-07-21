@@ -21,6 +21,9 @@ export function workspaceSettingsPath(root: string): string {
 
 export async function applyWorkspaceSettings(root: string) {
   void import("@/lib/user-snippets").then((m) => m.loadProjectSnippets(root));
+  void import("@/lib/ai/custom-instructions").then((m) =>
+    m.loadCustomInstructions(root),
+  );
   const path = workspaceSettingsPath(root);
   if (!(await exists(path).catch(() => false))) return;
   let json: WorkspaceSettings;

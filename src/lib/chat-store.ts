@@ -4,6 +4,7 @@ import { persist } from "zustand/middleware";
 import { runAgent, type ChatMessage } from "@/lib/ai/agent";
 import { createOpenRouterLlm } from "@/lib/ai/openrouter";
 import { buildSystemPrompt } from "@/lib/ai/system-prompt";
+import { getCustomInstructions } from "@/lib/ai/custom-instructions";
 import { TOOLS } from "@/lib/ai/tools";
 import { workspaceFs } from "@/lib/ai/workspace-fs";
 import { useAgentEdits } from "@/lib/agent-edits";
@@ -158,6 +159,7 @@ export const useChatStore = create<ChatStore>()(
                 rootPath: ws.rootPath,
                 activeFile: ws.activeFile,
                 openFiles: ws.tabs,
+                customInstructions: getCustomInstructions(),
               }),
             },
             // vorherige Konversation (nur user/assistant-Text) mitgeben

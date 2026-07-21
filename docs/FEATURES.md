@@ -510,7 +510,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Chat-Kontext (Dateien)**: Dateien an die Nachricht anhängen — Chips über dem Input, „Aktive Datei" mit einem Klick, nativer Datei-Picker; Inhalt (≤16k/Datei) geht nur mit dieser einen Nachricht mit (tokeneffizient), Chips bleiben im Verlauf sichtbar; Symbole/Ordner/Bilder fehlen
 
-* [ ] **Custom Instructions** (`.github/copilot-instructions.md`) und Prompt-Files
+* [~] **Custom Instructions**: der AI-Chat lädt beim Projekt-Öffnen automatisch projektspezifische Anweisungen (Priorität: `.l8ide/instructions.md` → `.github/copilot-instructions.md` → `AGENTS.md` → `CLAUDE.md`, erste vorhandene gewinnt) und hängt sie mit Vorrang-Hinweis an den System-Prompt (auf 6000 Zeichen gekappt = tokeneffizient, einmal gecacht — `ai/custom-instructions.ts`, Injektion in `buildSystemPrompt`, Tests `test:sysprompt`); dedizierte wiederverwendbare Prompt-Files fehlen noch
 
 * [ ] **MCP-Support (Model Context Protocol)**: Externe Tools/Server im Agent Mode
 
