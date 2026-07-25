@@ -10,6 +10,7 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
+import { Tag } from "@/components/ui/tag";
 import { useGitStore } from "@/lib/git-store";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
@@ -154,12 +155,9 @@ export function GitHistoryPage() {
                   <span className="min-w-0 flex-1 truncate text-xs text-foreground">
                     {c.subject}
                     {c.tags.map((t) => (
-                      <span
-                        key={t}
-                        className="ml-1.5 rounded bg-amber-500/15 px-1 py-0.5 text-[9px] font-medium text-amber-600 dark:text-amber-400"
-                      >
+                      <Tag key={t} tone="amber" className="ml-1.5">
                         {t}
-                      </span>
+                      </Tag>
                     ))}
                   </span>
                   <span className="shrink-0 text-[10px] text-muted-foreground">

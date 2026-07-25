@@ -5,6 +5,7 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
+import { Tag } from "@/components/ui/tag";
 import { getMonacoInstance } from "@/lib/monaco-instance";
 import { openFileAt } from "@/lib/monaco-navigation";
 import { copyPath, copyRelativePath, copyText, revealInOs } from "@/lib/path-actions";
@@ -294,13 +295,10 @@ export function ProblemsPanel() {
                           />
                           <span className="min-w-0 flex-1 truncate">
                             {marker.message}
-                            {marker.source && (
-                              <span className="ml-1.5 text-muted-foreground">
-                                {marker.source}
-                                {marker.code
-                                  ? `(${typeof marker.code === "object" ? marker.code.value : marker.code})`
-                                  : ""}
-                              </span>
+                            {sourceLabel && (
+                              <Tag className="ml-1.5 align-middle">
+                                {sourceLabel}
+                              </Tag>
                             )}
                           </span>
                           <span className="shrink-0 text-xs text-muted-foreground">
