@@ -11,6 +11,15 @@ import {
   type OutlineNode,
 } from "@/lib/outline";
 import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import { runEditorAction } from "@/lib/editor-actions";
+import { copyText } from "@/lib/path-actions";
 import { cn } from "@/lib/utils";
 
 export function OutlinePanel() {
@@ -97,34 +106,82 @@ function OutlineRow({
   const Icon = kindIcon(node.kind);
   const hasChildren = node.children.length > 0;
 
+  const goTo = () =>
+    openFileAt(path, { line: node.line, column: node.column });
+
+  const goThenRun = (actionId: string) => {
+    goTo();
+    setTimeout(() => runEditorAction(actionId), 150);
+  };
+
   return (
     <>
-      <div
-        className="flex items-center gap-1 rounded-md py-0.5 pr-1 text-sm hover:bg-foreground/[0.06]"
-        style={{ paddingLeft: depth * 12 + 4 }}
-      >
-        {hasChildren ? (
+      <ContextMenu>
+        <ContextMenuTrigger
+          className="flex items-center gap-1 rounded-md py-0.5 pr-1 text-sm hover:bg-foreground/[0.06]"
+          style={{ paddingLeft: depth * 12 + 4 }}
+        >
+          {hasChildren ? (
+            <button
+              type="button"
+              onClick={() => setOpen((o) => !o)}
+              className="flex size-4 shrink-0 items-center justify-center text-muted-foreground"
+            >
+              <ChevronRight
+                className={cn("size-3 transition-transform", open && "rotate-90")}
+              />
+            </button>
+          ) : (
+            <span className="size-4 shrink-0" />
+          )}
           <button
             type="button"
-            onClick={() => setOpen((o) => !o)}
-            className="flex size-4 shrink-0 items-center justify-center text-muted-foreground"
+            onClick={goTo}
+            className="flex min-w-0 flex-1 items-center gap-1.5 text-left"
           >
-            <ChevronRight
-              className={cn("size-3 transition-transform", open && "rotate-90")}
-            />
+            <Icon className="size-3.5 shrink-0 text-muted-foreground" />
+            <span className="truncate">{node.name}</span>
           </button>
-        ) : (
-          <span className="size-4 shrink-0" />
-        )}
-        <button
-          type="button"
-          onClick={() => openFileAt(path, { line: node.line, column: node.column })}
-          className="flex min-w-0 flex-1 items-center gap-1.5 text-left"
-        >
-          <Icon className="size-3.5 shrink-0 text-muted-foreground" />
-          <span className="truncate">{node.name}</span>
-        </button>
-      </div>
+        </ContextMenuTrigger>
+        <ContextMenuContent className="min-w-52">
+          <ContextMenuItem onClick={goTo}>Gehe zu Symbol</ContextMenuItem>
+          <ContextMenuItem
+            onClick={() => goThenRun("editor.action.revealDefinition")}
+          >
+            Gehe zur Definition
+          </ContextMenuItem>
+          <ContextMenuItem
+            onClick={() => goThenRun("editor.action.goToReferences")}
+          >
+            Referenzen anzeigen
+          </ContextMenuItem>
+          <ContextMenuItem
+            onClick={() => goThenRun("editor.action.peekDefinition")}
+          >
+            Definition einblenden
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem onClick={() => goThenRun("editor.action.rename")}>
+            Umbenennen
+          </ContextMenuItem>
+          <ContextMenuItem
+            onClick={() => goThenRun("editor.action.refactor")}
+          >
+            Refactoring…
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem
+            onClick={() => copyText(node.name, "Symbolname kopiert")}
+          >
+            Namen kopieren
+          </ContextMenuItem>
+          {hasChildren && (
+            <ContextMenuItem onClick={() => setOpen((o) => !o)}>
+              {open ? "Einklappen" : "Ausklappen"}
+            </ContextMenuItem>
+          )}
+        </ContextMenuContent>
+      </ContextMenu>
       {open &&
         node.children.map((child, i) => (
           <OutlineRow key={i} node={child} depth={depth + 1} path={path} />

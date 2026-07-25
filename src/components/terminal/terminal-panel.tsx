@@ -55,6 +55,15 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { TerminalFind } from "@/components/terminal/terminal-find";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import { copyText } from "@/lib/path-actions";
 import { cn } from "@/lib/utils";
 
 const EMPTY: IntegrationState = { cwd: null, sticky: null, quickFixes: [], history: [] };
@@ -131,18 +140,77 @@ function PaneView({
     return () => observer.disconnect();
   }, [paneId, visible, active]);
 
+  const term = () => getSession(paneId)?.term;
+
   return (
-    <div
-      ref={ref}
-      onPointerDown={() => {
-        setActivePane(paneId);
-        getSession(paneId)?.term.focus();
-      }}
-      className={cn(
-        "size-full overflow-hidden",
-        active && "ring-1 ring-inset ring-primary/40",
-      )}
-    />
+    <ContextMenu>
+      <ContextMenuTrigger
+        ref={ref}
+        onPointerDown={() => {
+          setActivePane(paneId);
+          getSession(paneId)?.term.focus();
+        }}
+        className={cn(
+          "size-full overflow-hidden",
+          active && "ring-1 ring-inset ring-primary/40",
+        )}
+      />
+      <ContextMenuContent className="min-w-52">
+        <ContextMenuItem
+          disabled={!term()?.hasSelection()}
+          onClick={() => {
+            const sel = term()?.getSelection();
+            if (sel) copyText(sel, "Auswahl kopiert");
+          }}
+        >
+          Kopieren
+          <ContextMenuShortcut>⌘C</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuItem
+          onClick={() =>
+            void navigator.clipboard
+              .readText()
+              .then((text) => text && runCommand(paneId, text))
+          }
+        >
+          Einfügen
+          <ContextMenuShortcut>⌘V</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuItem onClick={() => term()?.selectAll()}>
+          Alles auswählen
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          onClick={() => {
+            term()?.clear();
+            term()?.focus();
+          }}
+        >
+          Leeren
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          onClick={() => useTerminalStore.getState().splitActive()}
+        >
+          Terminal teilen
+        </ContextMenuItem>
+        <ContextMenuItem
+          onClick={() => useTerminalStore.getState().addGroup()}
+        >
+          Neues Terminal
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          variant="destructive"
+          onClick={() => {
+            useTerminalStore.getState().closePane(paneId);
+            disposeSession(paneId);
+          }}
+        >
+          Terminal beenden
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   );
 }
 

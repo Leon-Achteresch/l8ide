@@ -9,6 +9,7 @@
     "core:window:allow-is-fullscreen",
     "core:webview:allow-create-webview-window",
     "opener:default",
+    "opener:allow-open-path",
     "dialog:allow-open",
     "dialog:allow-confirm",
     "fs:allow-read-dir",

@@ -2,7 +2,20 @@ import { ChevronRight, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import { fileIcon } from "@/lib/file-icons";
+import {
+  copyPath,
+  copyRelativePath,
+  openWithDefaultApp,
+  revealInOs,
+} from "@/lib/path-actions";
 import { cn } from "@/lib/utils";
 import {
   isPageTab,
@@ -95,33 +108,87 @@ export function OpenEditors() {
                       tabIcons && !isPageTab(tab)
                         ? fileIcon(labelFor(tab))
                         : null;
+                    const isFile = !isPageTab(tab);
                     return (
-                      <div
-                        key={`${gid}:${tab}`}
-                        className={cn(
-                          "group flex h-6 items-center gap-1.5 rounded-md pl-2 pr-1 text-xs",
-                          isActive
-                            ? "bg-foreground/[0.06] text-foreground"
-                            : "text-foreground/85 hover:bg-foreground/[0.04]",
-                        )}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => activate(gid, tab)}
-                          className="flex min-w-0 flex-1 items-center gap-1.5 text-left"
+                      <ContextMenu key={`${gid}:${tab}`}>
+                        <ContextMenuTrigger
+                          className={cn(
+                            "group flex h-6 items-center gap-1.5 rounded-md pl-2 pr-1 text-xs",
+                            isActive
+                              ? "bg-foreground/[0.06] text-foreground"
+                              : "text-foreground/85 hover:bg-foreground/[0.04]",
+                          )}
                         >
-                          {FileIcon && <FileIcon className="size-3.5 shrink-0" />}
-                          <span className="truncate">{labelFor(tab)}</span>
-                        </button>
-                        <button
-                          type="button"
-                          title="Schließen"
-                          onClick={() => closeOne(gid, tab)}
-                          className="flex size-4.5 shrink-0 items-center justify-center rounded text-muted-foreground opacity-0 transition-opacity hover:bg-foreground/8 hover:text-foreground group-hover:opacity-100"
-                        >
-                          <X className="size-3" />
-                        </button>
-                      </div>
+                          <button
+                            type="button"
+                            onClick={() => activate(gid, tab)}
+                            className="flex min-w-0 flex-1 items-center gap-1.5 text-left"
+                          >
+                            {FileIcon && <FileIcon className="size-3.5 shrink-0" />}
+                            <span className="truncate">{labelFor(tab)}</span>
+                          </button>
+                          <button
+                            type="button"
+                            title="Schließen"
+                            onClick={() => closeOne(gid, tab)}
+                            className="flex size-4.5 shrink-0 items-center justify-center rounded text-muted-foreground opacity-0 transition-opacity hover:bg-foreground/8 hover:text-foreground group-hover:opacity-100"
+                          >
+                            <X className="size-3" />
+                          </button>
+                        </ContextMenuTrigger>
+                        <ContextMenuContent className="min-w-48">
+                          <ContextMenuItem onClick={() => activate(gid, tab)}>
+                            Öffnen
+                          </ContextMenuItem>
+                          <ContextMenuItem onClick={() => closeOne(gid, tab)}>
+                            Schließen
+                          </ContextMenuItem>
+                          <ContextMenuItem
+                            onClick={() => {
+                              const ws = useWorkspaceStore.getState();
+                              if (gid !== ws.activeGroupId) ws.focusGroup(gid);
+                              useWorkspaceStore.getState().closeOthers(tab);
+                            }}
+                          >
+                            Andere schließen
+                          </ContextMenuItem>
+                          <ContextMenuItem
+                            onClick={() => useWorkspaceStore.getState().closeAll()}
+                          >
+                            Alle schließen
+                          </ContextMenuItem>
+                          <ContextMenuSeparator />
+                          <ContextMenuItem
+                            onClick={() =>
+                              useWorkspaceStore.getState().togglePin(tab)
+                            }
+                          >
+                            Anheften / Lösen
+                          </ContextMenuItem>
+                          {isFile && (
+                            <>
+                              <ContextMenuSeparator />
+                              <ContextMenuItem onClick={() => copyPath(tab)}>
+                                Pfad kopieren
+                              </ContextMenuItem>
+                              <ContextMenuItem
+                                onClick={() => copyRelativePath(tab)}
+                              >
+                                Relativen Pfad kopieren
+                              </ContextMenuItem>
+                              <ContextMenuSeparator />
+                              <ContextMenuItem onClick={() => revealInOs(tab)}>
+                                Im Finder zeigen
+                              </ContextMenuItem>
+                              <ContextMenuItem
+                                onClick={() => openWithDefaultApp(tab)}
+                              >
+                                Mit Standardprogramm öffnen
+                              </ContextMenuItem>
+                            </>
+                          )}
+                        </ContextMenuContent>
+                      </ContextMenu>
                     );
                   })}
                 </div>
