@@ -4,9 +4,18 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
+  ContextMenuShortcut,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { fileIcon } from "@/lib/file-icons";
+import {
+  copyPath,
+  copyRelativePath,
+  copyText,
+  openWithDefaultApp,
+  revealInOs,
+} from "@/lib/path-actions";
+import { saveActiveFile } from "@/lib/editor-actions";
 import { cn } from "@/lib/utils";
 import { useViewStore } from "@/lib/view-store";
 import { isPageTab, pageRoute, useWorkspaceStore } from "@/lib/workspace-store";
@@ -46,13 +55,6 @@ export function Tab({
   function act(fn: (s: ReturnType<typeof store>) => void) {
     store().focusGroup(groupId);
     fn(store());
-  }
-
-  function copyRelativePath() {
-    const root = store().rootPath;
-    navigator.clipboard.writeText(
-      root && path.startsWith(`${root}/`) ? path.slice(root.length + 1) : path,
-    );
   }
 
   const PageIcon = isPage ? pageIconFor(pageRoute(path)) : null;
@@ -132,36 +134,77 @@ export function Tab({
           </button>
         )}
       </ContextMenuTrigger>
-      <ContextMenuContent className="min-w-48">
+      <ContextMenuContent className="min-w-52">
         <ContextMenuItem onClick={() => act((s) => s.closeTab(path))}>
-          Close
+          Schließen
+          <ContextMenuShortcut>⌘W</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem onClick={() => act((s) => s.closeOthers(path))}>
-          Close Others
+          Andere schließen
         </ContextMenuItem>
         <ContextMenuItem
           disabled={isLast}
           onClick={() => act((s) => s.closeToRight(path))}
         >
-          Close to the Right
+          Rechts davon schließen
         </ContextMenuItem>
         <ContextMenuItem onClick={() => act((s) => s.closeAll())}>
-          Close All
+          Alle schließen
         </ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuItem onClick={() => act((s) => s.togglePin(path))}>
-          {isPinned ? "Unpin" : "Pin"}
+          {isPinned ? "Lösen" : "Anheften"}
+        </ContextMenuItem>
+        {isPreview && (
+          <ContextMenuItem onClick={() => act((s) => s.promoteTab(path))}>
+            Vorschau behalten
+          </ContextMenuItem>
+        )}
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          onClick={() => {
+            act((s) => s.setActiveFile(path));
+            store().splitGroup("row");
+          }}
+        >
+          Rechts teilen
+        </ContextMenuItem>
+        <ContextMenuItem
+          onClick={() => {
+            act((s) => s.setActiveFile(path));
+            store().splitGroup("col");
+          }}
+        >
+          Nach unten teilen
         </ContextMenuItem>
         {!isPage && (
           <>
             <ContextMenuSeparator />
             <ContextMenuItem
-              onClick={() => navigator.clipboard.writeText(path)}
+              onClick={() => {
+                act((s) => s.setActiveFile(path));
+                saveActiveFile();
+              }}
             >
-              Copy Path
+              Speichern
+              <ContextMenuShortcut>⌘S</ContextMenuShortcut>
             </ContextMenuItem>
-            <ContextMenuItem onClick={copyRelativePath}>
-              Copy Relative Path
+            <ContextMenuSeparator />
+            <ContextMenuItem onClick={() => copyText(name, "Name kopiert")}>
+              Namen kopieren
+            </ContextMenuItem>
+            <ContextMenuItem onClick={() => copyPath(path)}>
+              Pfad kopieren
+            </ContextMenuItem>
+            <ContextMenuItem onClick={() => copyRelativePath(path)}>
+              Relativen Pfad kopieren
+            </ContextMenuItem>
+            <ContextMenuSeparator />
+            <ContextMenuItem onClick={() => revealInOs(path)}>
+              Im Finder zeigen
+            </ContextMenuItem>
+            <ContextMenuItem onClick={() => openWithDefaultApp(path)}>
+              Mit Standardprogramm öffnen
             </ContextMenuItem>
           </>
         )}
