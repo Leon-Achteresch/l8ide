@@ -1,10 +1,12 @@
 import { collapseAll, refreshTree } from "@/components/file-tree";
+import { useFileSearchStore } from "@/components/file-search";
 import { ProjectLogo } from "@/components/project-logo";
 import { Button } from "@/components/ui/button";
+import { Kbd } from "@/components/ui/kbd";
 import { basename } from "@/lib/fs-move";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
-import { ChevronsDownUp, EyeOff, RefreshCw } from "lucide-react";
+import { ChevronsDownUp, EyeOff, RefreshCw, Search } from "lucide-react";
 import { motion } from "motion/react";
 
 export function FileTreeHeader({ rootPath }: { rootPath: string }) {
@@ -12,7 +14,7 @@ export function FileTreeHeader({ rootPath }: { rootPath: string }) {
   const hideIgnored = useWorkspaceStore((s) => s.hideIgnored);
 
   return (
-    <div className="sticky top-0 z-10 shrink-0 px-3 pb-2 pt-3 backdrop-blur-md">
+    <div className="sticky top-0 z-10 shrink-0 space-y-2 px-3 pb-2 pt-3 backdrop-blur-md">
       <div className="flex items-center gap-2">
         <motion.div
           layout
@@ -55,6 +57,23 @@ export function FileTreeHeader({ rootPath }: { rootPath: string }) {
           />
         </motion.div>
       </div>
+
+      <button
+        type="button"
+        onClick={() => useFileSearchStore.getState().setOpen(true)}
+        className="group flex h-7 w-full items-center gap-2 rounded-lg bg-foreground/[0.04] px-2 text-left transition-colors duration-150 hover:bg-foreground/[0.07]"
+      >
+        <Search
+          className="size-3.5 shrink-0 text-muted-foreground"
+          strokeWidth={2}
+        />
+        <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground">
+          Datei suchen…
+        </span>
+        <Kbd className="h-4 shrink-0 px-1 text-[10px] text-muted-foreground/80">
+          ⌘P
+        </Kbd>
+      </button>
     </div>
   );
 }
