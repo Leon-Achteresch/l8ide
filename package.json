@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "test": "node scripts/run-tests.mjs",
+    "check": "tsc --noEmit && node scripts/run-tests.mjs",
     "test:move": "node scripts/test-move-logic.mjs",
     "test:hitcount": "node scripts/test-hitcount.mjs",
     "test:gitgraph": "node scripts/test-git-graph.mjs",
