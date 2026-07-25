@@ -16,7 +16,20 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import { fileIcon } from "@/lib/file-icons";
+import {
+  copyPath,
+  copyRelativePath,
+  openWithDefaultApp,
+  revealInOs,
+} from "@/lib/path-actions";
 import { useGitDiffStore } from "@/lib/git-diff-store";
 import { useGitStore, type StatusEntry } from "@/lib/git-store";
 import { isConflictEntry, useMergeConflictStore } from "@/lib/merge-conflict-store";
@@ -110,10 +123,13 @@ function ChangeRow({
   const unstage = useGitStore((s) => s.unstage);
   const openDiff = useGitDiffStore((s) => s.openDiff);
   const tabIcons = useWorkspaceStore((s) => s.tabIcons);
+  const openFile = useWorkspaceStore((s) => s.openFile);
   const name = baseName(entry.path);
   const FileIcon = tabIcons ? fileIcon(name) : null;
+  const absPath = `${rootPath}/${entry.path}`;
   return (
-    <div className="group flex h-7 items-center gap-1 rounded-md pl-2 pr-1 text-xs hover:bg-foreground/[0.04]">
+    <ContextMenu>
+      <ContextMenuTrigger className="group flex h-7 items-center gap-1 rounded-md pl-2 pr-1 text-xs hover:bg-foreground/[0.04]">
       <button
         type="button"
         onClick={() => openDiff(rootPath, entry.path, staged ? "staged" : "working")}
@@ -153,7 +169,52 @@ function ChangeRow({
       >
         {statusLetter(entry, staged)}
       </span>
-    </div>
+      </ContextMenuTrigger>
+      <ContextMenuContent className="min-w-56">
+        <ContextMenuItem
+          onClick={() =>
+            openDiff(rootPath, entry.path, staged ? "staged" : "working")
+          }
+        >
+          Änderungen anzeigen
+        </ContextMenuItem>
+        <ContextMenuItem onClick={() => openFile(absPath)}>
+          Datei öffnen
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        {staged ? (
+          <ContextMenuItem onClick={() => void unstage([entry.path])}>
+            Aus Staging nehmen
+          </ContextMenuItem>
+        ) : (
+          <ContextMenuItem onClick={() => void stage([entry.path])}>
+            Zum Commit vormerken
+          </ContextMenuItem>
+        )}
+        {!staged && (
+          <ContextMenuItem
+            variant="destructive"
+            onClick={() => confirmDiscard(entry)}
+          >
+            Änderungen verwerfen
+          </ContextMenuItem>
+        )}
+        <ContextMenuSeparator />
+        <ContextMenuItem onClick={() => copyPath(absPath)}>
+          Pfad kopieren
+        </ContextMenuItem>
+        <ContextMenuItem onClick={() => copyRelativePath(absPath)}>
+          Relativen Pfad kopieren
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem onClick={() => revealInOs(absPath)}>
+          Im Finder zeigen
+        </ContextMenuItem>
+        <ContextMenuItem onClick={() => openWithDefaultApp(absPath)}>
+          Mit Standardprogramm öffnen
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   );
 }
 
