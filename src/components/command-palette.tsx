@@ -92,17 +92,17 @@ export function CommandPalette() {
     <>
       <div
         data-overlay
-        className="fixed inset-0 z-40"
+        className="fixed inset-0 z-40 bg-background/20 backdrop-blur-[3px] animate-in fade-in-0 duration-150 motion-reduce:animate-none"
         onMouseDown={() => setOpen(false)}
       />
       <div
         className={cn(
-          "fixed inset-x-0 top-10 z-50 flex justify-center px-4",
-          "animate-in fade-in-0 slide-in-from-top-1 duration-100",
+          "fixed inset-x-0 top-[12vh] z-50 flex justify-center px-4",
+          "animate-in fade-in-0 zoom-in-98 slide-in-from-top-2 duration-150 ease-out motion-reduce:animate-none",
         )}
       >
         <div
-          className="w-full max-w-2xl overflow-hidden rounded-b-lg border-b bg-popover text-popover-foreground shadow-2xl ring-1 ring-foreground/10"
+          className="w-full max-w-2xl overflow-hidden rounded-xl bg-popover/95 text-popover-foreground shadow-pop backdrop-blur-xl"
           onMouseDown={(e) => e.stopPropagation()}
         >
           <Command loop>

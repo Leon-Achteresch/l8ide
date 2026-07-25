@@ -1,6 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import type * as monaco from "monaco-editor";
-import { ChevronRight } from "lucide-react";
+import { Slash } from "lucide-react";
+import { revealInTree } from "@/components/file-tree";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import { copyPath, copyRelativePath, revealInOs } from "@/lib/path-actions";
 import { useEditorSettings } from "@/lib/editor-settings";
 import { revealInEditor } from "@/lib/monaco-navigation";
 import {
@@ -66,34 +75,66 @@ export function Breadcrumbs({
   if (!enabled || isPageTab(path)) return null;
   const segments = segmentsFor(rootPath, path);
 
+  const absFor = (index: number) =>
+    [rootPath, ...segments.slice(0, index + 1)].filter(Boolean).join("/");
+
   return (
-    <div className="flex h-6 shrink-0 items-center gap-0.5 overflow-x-auto whitespace-nowrap border-b px-3 text-xs text-muted-foreground">
-      {segments.map((seg, i) => (
-        <span key={`p${i}`} className="flex items-center gap-0.5">
-          {i > 0 && <ChevronRight className="size-3 shrink-0 opacity-40" />}
-          <span className={cn(i === segments.length - 1 && "text-foreground/75")}>
-            {seg}
-          </span>
-        </span>
-      ))}
-      {chain.map((sym, i) => {
-        const Icon = kindIcon(sym.kind);
-        return (
-          <button
-            key={`s${i}`}
-            type="button"
-            onClick={() =>
-              editor &&
-              revealInEditor(editor, { line: sym.line, column: sym.column })
-            }
-            className="flex shrink-0 items-center gap-0.5 hover:text-foreground"
-          >
-            <ChevronRight className="size-3 opacity-40" />
-            <Icon className="size-3" />
-            <span>{sym.name}</span>
-          </button>
-        );
-      })}
-    </div>
+    <ContextMenu>
+      <ContextMenuTrigger className="flex h-7 shrink-0 items-center gap-0.5 overflow-x-auto whitespace-nowrap px-2.5 text-xs text-muted-foreground">
+        {segments.map((seg, i) => {
+          const isLast = i === segments.length - 1;
+          return (
+            <span key={`p${i}`} className="flex shrink-0 items-center">
+              {i > 0 && <Slash className="size-3 shrink-0 opacity-30" />}
+              <button
+                type="button"
+                onClick={() => revealInTree(absFor(i))}
+                className={cn(
+                  "rounded-md px-1.5 py-0.5 transition-colors duration-150 hover:bg-foreground/[0.06] hover:text-foreground",
+                  isLast && "font-medium text-foreground/80",
+                )}
+              >
+                {seg}
+              </button>
+            </span>
+          );
+        })}
+        {chain.map((sym, i) => {
+          const Icon = kindIcon(sym.kind);
+          return (
+            <span key={`s${i}`} className="flex shrink-0 items-center">
+              <Slash className="size-3 shrink-0 opacity-30" />
+              <button
+                type="button"
+                onClick={() =>
+                  editor &&
+                  revealInEditor(editor, { line: sym.line, column: sym.column })
+                }
+                className="flex items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors duration-150 hover:bg-foreground/[0.06] hover:text-foreground"
+              >
+                <Icon className="size-3" />
+                <span>{sym.name}</span>
+              </button>
+            </span>
+          );
+        })}
+      </ContextMenuTrigger>
+      <ContextMenuContent className="min-w-52">
+        <ContextMenuItem onClick={() => revealInTree(path)}>
+          Im Explorer zeigen
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem onClick={() => copyPath(path)}>
+          Pfad kopieren
+        </ContextMenuItem>
+        <ContextMenuItem onClick={() => copyRelativePath(path)}>
+          Relativen Pfad kopieren
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem onClick={() => revealInOs(path)}>
+          Im Finder zeigen
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   );
 }
