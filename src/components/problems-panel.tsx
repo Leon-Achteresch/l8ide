@@ -1,5 +1,13 @@
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import { getMonacoInstance } from "@/lib/monaco-instance";
 import { openFileAt } from "@/lib/monaco-navigation";
+import { copyPath, copyRelativePath, copyText, revealInOs } from "@/lib/path-actions";
 import {
   useMarkersStore,
   useProblemsPanel,
@@ -190,35 +198,87 @@ export function ProblemsPanel() {
             const isCollapsed = collapsed.has(group.path);
             return (
               <div key={group.path}>
-                <button
-                  onClick={() => toggleCollapse(group.path)}
-                  className="flex w-full items-center gap-1 px-2 py-1 text-left hover:bg-foreground/[0.04]"
-                >
-                  <ChevronRight
-                    className={cn(
-                      "size-3.5 shrink-0 text-muted-foreground transition-transform",
-                      !isCollapsed && "rotate-90",
-                    )}
-                  />
-                  <span className="truncate font-medium">
-                    {basename(group.path)}
-                  </span>
-                  <span className="truncate text-xs text-muted-foreground">
-                    {dirOf(group.path)}
-                  </span>
-                  <span className="ml-auto rounded bg-foreground/8 px-1.5 text-xs text-muted-foreground">
-                    {group.markers.length}
-                  </span>
-                </button>
+                <ContextMenu>
+                  <ContextMenuTrigger
+                    onClick={() => toggleCollapse(group.path)}
+                    className="flex w-full items-center gap-1 px-2 py-1 text-left hover:bg-foreground/[0.04]"
+                  >
+                    <ChevronRight
+                      className={cn(
+                        "size-3.5 shrink-0 text-muted-foreground transition-transform",
+                        !isCollapsed && "rotate-90",
+                      )}
+                    />
+                    <span className="truncate font-medium">
+                      {basename(group.path)}
+                    </span>
+                    <span className="truncate text-xs text-muted-foreground">
+                      {dirOf(group.path)}
+                    </span>
+                    <span className="ml-auto rounded bg-foreground/8 px-1.5 text-xs text-muted-foreground">
+                      {group.markers.length}
+                    </span>
+                  </ContextMenuTrigger>
+                  <ContextMenuContent className="min-w-52">
+                    <ContextMenuItem
+                      onClick={() => openFileAt(group.path, { line: 1, column: 1 })}
+                    >
+                      Datei öffnen
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                      onClick={() =>
+                        copyText(
+                          group.markers
+                            .map(
+                              (m) =>
+                                `${group.path}:${m.startLineNumber}:${m.startColumn} ${m.message}`,
+                            )
+                            .join("\n"),
+                          `${group.markers.length} Probleme kopiert`,
+                        )
+                      }
+                    >
+                      Alle Probleme kopieren
+                    </ContextMenuItem>
+                    <ContextMenuSeparator />
+                    <ContextMenuItem onClick={() => copyPath(group.path)}>
+                      Pfad kopieren
+                    </ContextMenuItem>
+                    <ContextMenuItem onClick={() => copyRelativePath(group.path)}>
+                      Relativen Pfad kopieren
+                    </ContextMenuItem>
+                    <ContextMenuItem onClick={() => revealInOs(group.path)}>
+                      Im Finder zeigen
+                    </ContextMenuItem>
+                    <ContextMenuSeparator />
+                    <ContextMenuItem
+                      onClick={() =>
+                        setCollapsed(new Set(groups.map((g) => g.path)))
+                      }
+                    >
+                      Alle einklappen
+                    </ContextMenuItem>
+                    <ContextMenuItem onClick={() => setCollapsed(new Set())}>
+                      Alle ausklappen
+                    </ContextMenuItem>
+                  </ContextMenuContent>
+                </ContextMenu>
                 {!isCollapsed &&
                   group.markers.map((marker, i) => {
                     const { icon: Icon, color } =
                       SEV[marker.severity as Severity] ?? SEV[2];
+                    const sourceLabel = marker.source
+                      ? `${marker.source}${
+                          marker.code
+                            ? `(${typeof marker.code === "object" ? marker.code.value : marker.code})`
+                            : ""
+                        }`
+                      : "";
                     return (
-                      <div
+                      <ContextMenu
                         key={`${marker.startLineNumber}:${marker.startColumn}:${i}`}
-                        className="group/problem flex items-start gap-2 py-0.5 pl-7 pr-2 hover:bg-foreground/[0.04]"
                       >
+                        <ContextMenuTrigger className="group/problem flex items-start gap-2 py-0.5 pl-7 pr-2 hover:bg-foreground/[0.04]">
                         <button
                           onClick={() =>
                             openFileAt(group.path, {
@@ -254,7 +314,54 @@ export function ProblemsPanel() {
                         >
                           <Wrench className="size-3.5" />
                         </button>
-                      </div>
+                        </ContextMenuTrigger>
+                        <ContextMenuContent className="min-w-52">
+                          <ContextMenuItem
+                            onClick={() =>
+                              openFileAt(group.path, {
+                                line: marker.startLineNumber,
+                                column: marker.startColumn,
+                                endColumn: marker.endColumn,
+                              })
+                            }
+                          >
+                            Gehe zum Problem
+                          </ContextMenuItem>
+                          <ContextMenuItem
+                            onClick={() => runQuickFix(group.path, marker)}
+                          >
+                            Quick Fix…
+                          </ContextMenuItem>
+                          <ContextMenuSeparator />
+                          <ContextMenuItem
+                            onClick={() =>
+                              copyText(marker.message, "Meldung kopiert")
+                            }
+                          >
+                            Meldung kopieren
+                          </ContextMenuItem>
+                          <ContextMenuItem
+                            onClick={() =>
+                              copyText(
+                                `${group.path}:${marker.startLineNumber}:${marker.startColumn} ${marker.message}`,
+                                "Problem kopiert",
+                              )
+                            }
+                          >
+                            Mit Fundstelle kopieren
+                          </ContextMenuItem>
+                          {sourceLabel && (
+                            <>
+                              <ContextMenuSeparator />
+                              <ContextMenuItem
+                                onClick={() => setQuery(sourceLabel)}
+                              >
+                                Nach „{sourceLabel}" filtern
+                              </ContextMenuItem>
+                            </>
+                          )}
+                        </ContextMenuContent>
+                      </ContextMenu>
                     );
                   })}
               </div>
