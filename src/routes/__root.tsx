@@ -1,6 +1,7 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { AppHeader } from "@/components/app-header/app-header";
 import { AppHotkeys } from "@/components/app-hotkeys";
+import { ErrorBoundary } from "@/components/error-boundary";
 import { closeBrowser } from "@/lib/browser";
 import { useBrowserStore } from "@/lib/browser-store";
 import { useChatStore } from "@/lib/chat-store";
@@ -72,9 +73,11 @@ function ChatSlot() {
   const open = useChatStore((s) => s.open);
   if (!open) return null;
   return (
-    <Suspense fallback={null}>
-      <ChatPanel />
-    </Suspense>
+    <ErrorBoundary label="Der KI-Chat">
+      <Suspense fallback={null}>
+        <ChatPanel />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
 
@@ -85,9 +88,11 @@ function BrowserSlot() {
   }, []);
   if (!open) return null;
   return (
-    <Suspense fallback={null}>
-      <BrowserPanel />
-    </Suspense>
+    <ErrorBoundary label="Der Browser">
+      <Suspense fallback={null}>
+        <BrowserPanel />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
 
@@ -127,7 +132,9 @@ function TerminalSlot() {
   const open = useTerminalStore((s) => s.open);
   return (
     <BottomSlot open={open}>
-      <TerminalPanel />
+      <ErrorBoundary label="Das Terminal">
+        <TerminalPanel />
+      </ErrorBoundary>
     </BottomSlot>
   );
 }
@@ -136,7 +143,9 @@ function ProblemsSlot() {
   const open = useProblemsPanel((s) => s.open);
   return (
     <BottomSlot open={open}>
-      <ProblemsPanel />
+      <ErrorBoundary label="Das Problem-Panel">
+        <ProblemsPanel />
+      </ErrorBoundary>
     </BottomSlot>
   );
 }
@@ -175,7 +184,7 @@ function RootComponent() {
   }, []);
 
   return (
-    <>
+    <ErrorBoundary label="Die IDE" variant="app">
       <AppHotkeys />
       <MonacoWorkspace />
       <FileSearch />
@@ -183,18 +192,24 @@ function RootComponent() {
       <div className="flex h-screen w-screen flex-col">
         {!zenMode && <AppHeader />}
         <div className="flex min-h-0 flex-1">
-          {!zenMode && <Sidebar />}
+          {!zenMode && (
+            <ErrorBoundary label="Die Seitenleiste">
+              <Sidebar />
+            </ErrorBoundary>
+          )}
           <div className="flex min-w-0 flex-1 flex-col">
             <WorkspaceTrustBanner />
             <div className="flex min-h-0 min-w-0 flex-1">
               <div className="min-h-0 min-w-0 flex-1">
-                {centeredLayout ? (
-                  <div className="mx-auto flex h-full w-full max-w-[1100px] flex-col">
+                <ErrorBoundary label="Der Editor-Bereich">
+                  {centeredLayout ? (
+                    <div className="mx-auto flex h-full w-full max-w-[1100px] flex-col">
+                      <Outlet />
+                    </div>
+                  ) : (
                     <Outlet />
-                  </div>
-                ) : (
-                  <Outlet />
-                )}
+                  )}
+                </ErrorBoundary>
               </div>
               <BrowserSlot />
               <ChatSlot />
@@ -234,6 +249,6 @@ function RootComponent() {
           <RouterDevtools position="bottom-right" />
         </Suspense>
       )}
-    </>
+    </ErrorBoundary>
   );
 }
