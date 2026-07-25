@@ -134,13 +134,13 @@ export function ProblemsPanel() {
   return (
     <div
       style={{ height }}
-      className="relative flex shrink-0 flex-col border-t bg-background"
+      className="relative flex shrink-0 flex-col border-t border-border/60 bg-background"
     >
       <div
         onPointerDown={startResize}
         className="absolute inset-x-0 -top-1 z-20 h-2 cursor-row-resize"
       />
-      <div className="flex h-9 shrink-0 items-center gap-1 border-b px-2">
+      <div className="flex h-9 shrink-0 items-center gap-1 px-2">
         <span className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           Probleme
         </span>
