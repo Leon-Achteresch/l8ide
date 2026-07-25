@@ -290,6 +290,13 @@ export function collapseAll() {
 	useTreeStore.getState().collapseAll();
 }
 
+export function revealInTree(path: string) {
+	const st = useTreeStore.getState();
+	st.revealPath(path);
+	st.select([path], path);
+	useWorkspaceStore.getState().setSidebarMode("FileTree");
+}
+
 export function refreshTree() {
 	useTreeStore.getState().refresh();
 	refreshFileIndex();
