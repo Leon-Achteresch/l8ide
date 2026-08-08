@@ -391,8 +391,8 @@ function Item({
       onClick={onClick}
       title={title}
       className={cn(
-        "inline-flex h-full items-center gap-1 rounded-md px-1.5 text-muted-foreground transition-colors",
-        onClick && "hover:bg-foreground/8 hover:text-foreground",
+        "inline-flex h-full items-center gap-1.5 rounded-full px-2 text-muted-foreground transition-colors duration-150",
+        onClick && "hover:bg-foreground/[0.07] hover:text-foreground",
         className,
       )}
     >
@@ -449,10 +449,14 @@ export function StatusBar() {
   };
 
   return (
-    <div className="flex h-6 w-full shrink-0 select-none items-stretch justify-between gap-1 px-2 py-0.5 text-[11px]">
+    <div className="flex h-7 w-full shrink-0 select-none items-stretch justify-between gap-1 px-2 py-1 text-[11px]">
       <div className="flex min-w-0 items-stretch gap-1">
         {branch && (
-          <Item onClick={openScm} title="Source Control öffnen">
+          <Item
+            onClick={openScm}
+            title="Source Control öffnen"
+            className="bg-foreground/[0.04] font-medium text-foreground/80"
+          >
             <GitBranch className="size-3" strokeWidth={2} />
             <span className="truncate">{branch}</span>
           </Item>
