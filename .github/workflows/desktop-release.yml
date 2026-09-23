@@ -1,0 +1,200 @@
+name: Desktop release
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, ready_for_review]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desktop-release-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'main' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    name: Checks
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.10
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf xdg-utils
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+      - run: cargo test --locked --manifest-path src-tauri/Cargo.toml
+
+  preview:
+    name: Preview / ${{ matrix.name }}
+    if: github.event_name == 'pull_request'
+    needs: check
+    runs-on: ${{ matrix.platform }}
+    env:
+      NODE_OPTIONS: --max-old-space-size=6144
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS ARM
+            platform: macos-latest
+            target: aarch64-apple-darwin
+            args: --target aarch64-apple-darwin
+          - name: macOS Intel
+            platform: macos-latest
+            target: x86_64-apple-darwin
+            args: --target x86_64-apple-darwin
+          - name: Linux x64
+            platform: ubuntu-22.04
+            target: ''
+            args: ''
+          - name: Windows x64
+            platform: windows-latest
+            target: ''
+            args: ''
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.10
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf xdg-utils
+      - run: bun install --frozen-lockfile
+      - name: Set preview version
+        shell: bash
+        run: node scripts/release-version.mjs "$GITHUB_RUN_NUMBER"
+      - name: Build installers
+        uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f
+        env:
+          APPLE_SIGNING_IDENTITY: ${{ runner.os == 'macOS' && '-' || '' }}
+        with:
+          args: ${{ matrix.args }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: preview-${{ matrix.name }}
+          path: src-tauri/target/**/release/bundle/**
+          if-no-files-found: error
+          retention-days: 7
+
+  prepare-release:
+    name: Prepare release
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: check
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+      id: ${{ steps.release.outputs.id }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: version
+        name: Calculate version
+        run: node scripts/release-version.mjs "$GITHUB_RUN_NUMBER" >> "$GITHUB_OUTPUT"
+      - id: release
+        name: Create or resume draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          if gh release view "$TAG" --json isDraft --jq .isDraft > release-state.txt 2>/dev/null; then
+            test "$(cat release-state.txt)" = true || { echo "Release $TAG is already published" >&2; exit 1; }
+          else
+            gh release create "$TAG" --title "l8ide $TAG" --target "$GITHUB_SHA" --draft --generate-notes
+          fi
+          echo "id=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" --jq .id)" >> "$GITHUB_OUTPUT"
+
+  release-build:
+    name: Release / ${{ matrix.name }}
+    needs: prepare-release
+    runs-on: ${{ matrix.platform }}
+    environment: release
+    env:
+      NODE_OPTIONS: --max-old-space-size=6144
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS ARM
+            platform: macos-latest
+            target: aarch64-apple-darwin
+            args: --target aarch64-apple-darwin
+          - name: macOS Intel
+            platform: macos-latest
+            target: x86_64-apple-darwin
+            args: --target x86_64-apple-darwin
+          - name: Linux x64
+            platform: ubuntu-22.04
+            target: ''
+            args: ''
+          - name: Windows x64
+            platform: windows-latest
+            target: ''
+            args: ''
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.10
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf xdg-utils
+      - run: bun install --frozen-lockfile
+      - name: Set release version
+        shell: bash
+        run: node scripts/release-version.mjs "$GITHUB_RUN_NUMBER"
+      - name: Build and upload signed installers
+        uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          APPLE_SIGNING_IDENTITY: ${{ runner.os == 'macOS' && '-' || '' }}
+        with:
+          releaseId: ${{ needs.prepare-release.outputs.id }}
+          tagName: ${{ needs.prepare-release.outputs.tag }}
+          releaseDraft: true
+          args: --config src-tauri/tauri.release.conf.json ${{ matrix.args }}
+
+  publish:
+    name: Verify and publish
+    needs: [prepare-release, release-build]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - name: Verify all installers and updater signatures
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+        run: |
+          mkdir -p .release-check
+          gh release download "$TAG" --pattern latest.json --dir .release-check
+          gh release view "$TAG" --json assets --jq '.assets[].name' > .release-check/assets.txt
+          node scripts/verify-release.mjs .release-check/latest.json "$TAG" .release-check/assets.txt
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.prepare-release.outputs.tag }}
+        run: gh release edit "$TAG" --draft=false
