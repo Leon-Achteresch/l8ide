@@ -57,3 +57,25 @@ export function openPortInBrowser(port: number) {
     );
   }
 }
+
+let previewGeneration = 0;
+
+export async function snapshotDevPorts(root: string): Promise<Set<number>> {
+  const ports = await invoke<DevPort[]>("list_dev_ports", { cwd: root }).catch(() => [] as DevPort[]);
+  return new Set(ports.map((item) => item.port));
+}
+
+export async function previewNextDevPort(root: string, before: ReadonlySet<number>): Promise<void> {
+  const generation = ++previewGeneration;
+  for (let attempt = 0; attempt < 30; attempt++) {
+    if (generation !== previewGeneration || useWorkspaceStore.getState().rootPath !== root) return;
+    const ports = await invoke<DevPort[]>("list_dev_ports", { cwd: root }).catch(() => [] as DevPort[]);
+    const fresh = ports.find((item) => !before.has(item.port));
+    if (fresh) {
+      usePortsStore.setState({ ports });
+      openPortInBrowser(fresh.port);
+      return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+}

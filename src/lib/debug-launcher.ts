@@ -1,6 +1,8 @@
 import { invoke } from "@tauri-apps/api/core";
+import { exists } from "@tauri-apps/plugin-fs";
 import { toast } from "sonner";
 import { useDebugger } from "@/lib/debugger";
+import { sq } from "@/lib/shell-quote";
 import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
 
 type ShellResult = {
@@ -10,7 +12,16 @@ type ShellResult = {
   timed_out: boolean;
 };
 
-const DEBUGGABLE = /\.(mjs|cjs|js)$/;
+const DEBUGGABLE = /\.(mjs|cjs|js|mts|cts|ts|tsx)$/;
+
+export async function nodeDebugCommand(root: string, program: string): Promise<string> {
+  const tsFile = /\.(mts|cts|ts|tsx)$/i.test(program);
+  const tsxInstalled = tsFile && await exists(`${root}/node_modules/tsx/package.json`).catch(() => false);
+  if (/\.tsx$/i.test(program) && !tsxInstalled) {
+    throw new Error("Für TSX-Debugging muss tsx im Projekt installiert sein.");
+  }
+  return `node --inspect-brk=9229${tsxInstalled ? " --import=tsx" : ""} ${sq(program)}`;
+}
 
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
@@ -43,7 +54,7 @@ export async function launchAndAttach(
     return false;
   }
   const { runInTerminal } = await import("@/lib/terminal");
-  await runInTerminal(command);
+  await runInTerminal(command, { newGroup: true });
   for (let i = 0; i < 20; i++) {
     await sleep(500);
     if (await inspectorReady(port)) {
@@ -64,11 +75,13 @@ export async function debugActiveFile() {
     return;
   }
   if (!DEBUGGABLE.test(path)) {
-    toast.info(
-      "Direkt debugbar sind .js/.mjs/.cjs — TypeScript vorher bauen oder Prozess manuell mit --inspect starten und ⌥⌘D verbinden.",
-    );
+    toast.info("Direkt debugbar sind JavaScript und TypeScript-Dateien.");
     return;
   }
   const rel = path.startsWith(`${root}/`) ? path.slice(root.length + 1) : path;
-  await launchAndAttach(`node --inspect-brk=9229 "${rel}"`);
+  try {
+    await launchAndAttach(await nodeDebugCommand(root, rel));
+  } catch (error) {
+    toast.error(String(error));
+  }
 }

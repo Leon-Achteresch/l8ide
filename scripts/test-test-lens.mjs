@@ -40,6 +40,10 @@ assert.strictEqual(
   "npx jest 'src/a.test.ts'",
 );
 assert.strictEqual(
+  buildTestCommand("bun", "src/a.test.ts", "adds"),
+  "bun test './src/a.test.ts' -t 'adds'",
+);
+assert.strictEqual(
   buildTestCommand("vitest", "src/a.test.ts", "renders ${x}"),
   "npx vitest run 'src/a.test.ts'",
 );

@@ -55,6 +55,39 @@ export function parseTestResults(stdout: string): TestResult[] {
   return results;
 }
 
+function xmlAttribute(tag: string, name: string): string {
+  const match = tag.match(new RegExp(`(?:^|\\s)${name}="([^"]*)"`));
+  return (match?.[1] ?? "").replace(/&(?:amp|lt|gt|quot|apos|#\d+|#x[\da-f]+);/gi, (entity) => {
+    const known: Record<string, string> = { "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"', "&apos;": "'" };
+    if (known[entity]) return known[entity];
+    if (entity.startsWith("&#")) {
+      const hex = entity[2]?.toLowerCase() === "x";
+      const code = Number.parseInt(entity.slice(hex ? 3 : 2, -1), hex ? 16 : 10);
+      if (Number.isInteger(code) && code >= 0 && code <= 0x10ffff) return String.fromCodePoint(code);
+    }
+    return entity;
+  });
+}
+
+export function parseBunJUnit(xml: string): TestResult[] {
+  const results: TestResult[] = [];
+  for (const match of xml.matchAll(/<testcase\b([^>]*?)(?:\/>|>([\s\S]*?)<\/testcase>)/g)) {
+    const title = xmlAttribute(match[1], "name");
+    if (!title) continue;
+    const suite = xmlAttribute(match[1], "classname");
+    const body = match[2] ?? "";
+    const failure = body.match(/<(?:failure|error)\b([^>]*?)(?:\/>|>([\s\S]*?)<\/(?:failure|error)>)/);
+    const skipped = /<skipped\b/.test(body);
+    results.push({
+      title,
+      fullName: suite ? `${suite} › ${title}` : title,
+      status: failure ? "failed" : skipped ? "skipped" : "passed",
+      message: failure ? xmlAttribute(failure[1], "message") || failure[2]?.trim() || undefined : undefined,
+    });
+  }
+  return results;
+}
+
 export function summarize(results: TestResult[]): {
   passed: number;
   failed: number;

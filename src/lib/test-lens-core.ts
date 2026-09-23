@@ -6,7 +6,7 @@ export type TestCase = {
   line: number;
 };
 
-export type TestTool = "vitest" | "jest" | "npm";
+export type TestTool = "vitest" | "jest" | "bun" | "npm";
 
 const TEST_RE =
   /(?:^|[\s;{])(describe|it|test)(?:\.(?:only|skip|concurrent|sequential|each))?\s*\(\s*(['"`])((?:\\.|(?!\2).)*)\2/g;
@@ -40,5 +40,6 @@ export function buildTestCommand(
   const filter = title && !title.includes("${") ? ` -t ${sq(title)}` : "";
   if (tool === "vitest") return `npx vitest run ${file}${filter}`;
   if (tool === "jest") return `npx jest ${file}${filter}`;
+  if (tool === "bun") return `bun test ${sq(relFile.startsWith("./") ? relFile : `./${relFile}`)}${filter}`;
   return title ? `npm test -- ${file}${filter}` : `npm test -- ${file}`;
 }

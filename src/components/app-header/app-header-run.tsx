@@ -82,14 +82,22 @@ export function AppHeaderRun() {
     if (!rootPath || !trusted) return;
     try {
       const command = scriptCommand(selected.manager, selected.script);
+      const script = scripts.find((item) => item.name === selected.script);
+      const opensPreview = /^(dev|start|serve|preview)(:|$)/i.test(selected.script)
+        || /\b(vite|next\s+dev|astro\s+dev|webpack-dev-server)\b/i.test(script?.command ?? "");
+      const { snapshotDevPorts, previewNextDevPort } = opensPreview
+        ? await import("@/lib/ports-store")
+        : { snapshotDevPorts: null, previewNextDevPort: null };
+      const before = snapshotDevPorts ? await snapshotDevPorts(rootPath) : null;
       localStorage.setItem(storageKey(rootPath), JSON.stringify(selected));
       setChoice(selected);
       const { runInTerminal } = await import("@/lib/terminal");
       await runInTerminal(command, { newGroup: true });
+      if (before && previewNextDevPort) void previewNextDevPort(rootPath, before);
     } catch (error) {
       toast.error(String(error));
     }
-  }, [rootPath, trusted]);
+  }, [rootPath, scripts, trusted]);
 
   if (!rootPath) return null;
 

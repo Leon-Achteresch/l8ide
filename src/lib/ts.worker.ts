@@ -5,6 +5,13 @@ import type ts from "typescript";
 const NO_PREFERENCES: ts.UserPreferences = {};
 
 class RefactorTsWorker extends TypeScriptWorker {
+  getScriptFileNames(): string[] {
+    // Package manifests live in the virtual filesystem for module resolution,
+    // but are not TypeScript source files.
+    const host = TypeScriptWorker.prototype as unknown as { getScriptFileNames(): string[] };
+    return host.getScriptFileNames.call(this).filter((name) => !name.endsWith("/package.json"));
+  }
+
   async getApplicableRefactors(
     fileName: string,
     positionOrRange: number | ts.TextRange,

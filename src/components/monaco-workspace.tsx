@@ -31,7 +31,7 @@ export function MonacoWorkspace() {
     if (!rootPath || files.length === 0) return;
     const timer = setTimeout(() => {
       void import("@/lib/monaco-workspace").then((ws) =>
-        ws.syncMonacoWorkspaceModels(files),
+        ws.syncMonacoWorkspaceModels(files, rootPath),
       );
     }, SYNC_DELAY);
     return () => clearTimeout(timer);

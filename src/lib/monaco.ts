@@ -25,6 +25,7 @@ import { registerSemanticTokens } from "@/lib/semantic-tokens";
 import { registerTailwind } from "@/lib/tailwind";
 import { registerCssSpecificity } from "@/lib/css-specificity";
 import { registerTestLens } from "@/lib/test-lens";
+import { registerProjectCodeActions } from "@/lib/project-tools";
 
 self.MonacoEnvironment = {
   getWorker(_workerId, label) {
@@ -73,6 +74,7 @@ registerSemanticTokens();
 registerTailwind(monaco);
 registerCssSpecificity(monaco);
 registerTestLens(monaco);
+registerProjectCodeActions(monaco);
 registerAiInlineCompletions(monaco);
 registerAutoImports();
 registerPostfixCompletions();

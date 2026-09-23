@@ -1,11 +1,13 @@
 import { useEditorSettings } from "@/lib/editor-settings";
 import { applyWorkspaceSettings } from "@/lib/workspace-settings";
 import { clearEditorConfigCache } from "@/lib/editorconfig";
-import { readDir, readTextFile } from "@tauri-apps/plugin-fs";
+import { readTextFile } from "@tauri-apps/plugin-fs";
 import * as monaco from "monaco-editor";
 import { typescript as ts } from "monaco-editor";
-import { monacoUriForPath } from "@/lib/monaco-uri";
+import { monacoUriForPath, pathFromMonacoUri } from "@/lib/monaco-uri";
 import { parseTsconfigJson } from "@/lib/tsconfig-core";
+import { importedPackages, initialTypePackages, MonacoDeclarations } from "@/lib/monaco-declarations";
+import { useWorkspaceStore } from "@/lib/workspace-store";
 import "@/lib/monaco";
 
 type CompilerOptions = Parameters<
@@ -19,8 +21,41 @@ const MAX_SYNC_FILE_CHARS = 1_000_000;
 
 let configuredRoot: string | null = null;
 let syncGeneration = 0;
-let typeLibs: monaco.IDisposable[] = [];
+let declarations: MonacoDeclarations | null = null;
 let typesLoading: Promise<void> | null = null;
+let configuration: Promise<void> | null = null;
+const watchedModels = new WeakSet<monaco.editor.ITextModel>();
+let importWatcherRegistered = false;
+
+function watchModelImports(model: monaco.editor.ITextModel) {
+  if (watchedModels.has(model)) return;
+  const path = pathFromMonacoUri(model.uri);
+  if (!SOURCE_FILE.test(path)) return;
+  watchedModels.add(model);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const scan = () => {
+    const root = configuredRoot;
+    if (root && (path === root || path.startsWith(`${root}/`))) {
+      void declarations?.add(importedPackages(model.getValue()));
+    }
+  };
+  scan();
+  const changed = model.onDidChangeContent(() => {
+    clearTimeout(timer);
+    timer = setTimeout(scan, 700);
+  });
+  model.onWillDispose(() => {
+    clearTimeout(timer);
+    changed.dispose();
+  });
+}
+
+function watchWorkspaceImports() {
+  if (importWatcherRegistered) return;
+  importWatcherRegistered = true;
+  monaco.editor.onDidCreateModel(watchModelImports);
+  for (const model of monaco.editor.getModels()) watchModelImports(model);
+}
 
 function languageForPath(path: string): string {
   if (/\.(tsx?|mts|cts)$/i.test(path)) return "typescript";
@@ -44,7 +79,7 @@ function defaultCompilerOptions(rootUri: string): CompilerOptions {
   };
 }
 
-type TsConfig = { compilerOptions?: Record<string, unknown>; extends?: string; references?: Array<{ path?: string }> };
+type TsConfig = { compilerOptions?: Record<string, unknown>; extends?: string | string[]; references?: Array<{ path?: string }> };
 
 function resolveRelative(base: string, relative: string): string {
   const parts = [...base.replace(/\\/g, "/").split("/")];
@@ -56,15 +91,23 @@ function resolveRelative(base: string, relative: string): string {
   return parts.join("/");
 }
 
-async function readConfig(path: string, depth = 0): Promise<TsConfig> {
+async function readConfig(path: string, root: string, depth = 0): Promise<TsConfig> {
   if (depth > 5) return {};
   const json = parseTsconfigJson(await readTextFile(path)) as TsConfig;
   let inherited: TsConfig = {};
-  if (json.extends?.startsWith(".")) {
-    const parent = resolveRelative(path.slice(0, path.lastIndexOf("/")), json.extends);
-    try {
-      inherited = await readConfig(/\.json$/i.test(parent) ? parent : `${parent}.json`, depth + 1);
-    } catch { /* optional base config */ }
+  for (const entry of typeof json.extends === "string" ? [json.extends] : json.extends ?? []) {
+    const base = entry.startsWith(".") || entry.startsWith("/")
+      ? path.slice(0, path.lastIndexOf("/"))
+      : `${root}/node_modules`;
+    const parent = entry.startsWith("/") ? entry : resolveRelative(base, entry);
+    const candidates = /\.json$/i.test(parent) ? [parent] : [`${parent}.json`, `${parent}/tsconfig.json`];
+    for (const candidate of candidates) {
+      try {
+        const config = await readConfig(candidate, root, depth + 1);
+        inherited = { ...inherited, ...config, compilerOptions: { ...inherited.compilerOptions, ...config.compilerOptions } };
+        break;
+      } catch { /* try the next package layout */ }
+    }
   }
   return {
     ...inherited,
@@ -75,19 +118,21 @@ async function readConfig(path: string, depth = 0): Promise<TsConfig> {
 
 function enumOption<T extends object>(values: T, value: unknown): number | undefined {
   if (typeof value !== "string") return undefined;
-  return (values as Record<string, number>)[value.toUpperCase()];
+  const normalized = value.toLowerCase().replace(/[-_]/g, "");
+  return Object.entries(values).find(([key, item]) =>
+    typeof item === "number" && key.toLowerCase().replace(/[-_]/g, "") === normalized)?.[1] as number | undefined;
 }
 
 async function loadCompilerOptions(rootPath: string): Promise<CompilerOptions> {
   const rootUri = monacoUriForPath(rootPath).toString();
   try {
-    let config = await readConfig(`${rootPath}/tsconfig.json`);
+    let config = await readConfig(`${rootPath}/tsconfig.json`, rootPath);
     const refs = config.references?.filter((ref) => typeof ref.path === "string") ?? [];
     const app = refs.find((ref) => /app|web|client/i.test(ref.path ?? "")) ?? refs[0];
     if (app?.path) {
       const path = resolveRelative(rootPath, app.path);
       try {
-        const referenced = await readConfig(/\.json$/i.test(path) ? path : `${path}/tsconfig.json`);
+        const referenced = await readConfig(/\.json$/i.test(path) ? path : `${path}/tsconfig.json`, rootPath);
         config = { ...config, compilerOptions: { ...config.compilerOptions, ...referenced.compilerOptions } };
       } catch { /* use root config */ }
     }
@@ -99,7 +144,7 @@ async function loadCompilerOptions(rootPath: string): Promise<CompilerOptions> {
       ? Object.fromEntries(Object.entries(raw.paths).filter((entry): entry is [string, string[]] => Array.isArray(entry[1]) && entry[1].every((value) => typeof value === "string")))
       : undefined;
     const options: Record<string, unknown> = { ...defaultCompilerOptions(rootUri), baseUrl, paths };
-    for (const key of ["strict", "allowJs", "checkJs", "noEmit", "esModuleInterop", "isolatedModules", "skipLibCheck", "allowSyntheticDefaultImports", "resolveJsonModule", "noImplicitAny", "strictNullChecks", "allowImportingTsExtensions"]) {
+    for (const key of ["strict", "allowJs", "checkJs", "noEmit", "esModuleInterop", "isolatedModules", "skipLibCheck", "allowSyntheticDefaultImports", "resolveJsonModule", "noImplicitAny", "strictNullChecks", "allowImportingTsExtensions", "noUncheckedIndexedAccess", "exactOptionalPropertyTypes", "verbatimModuleSyntax", "allowArbitraryExtensions", "useDefineForClassFields", "forceConsistentCasingInFileNames"]) {
       if (typeof raw[key] === "boolean") options[key] = raw[key];
     }
     for (const [key, values] of [["target", ts.ScriptTarget], ["module", ts.ModuleKind], ["moduleResolution", ts.ModuleResolutionKind], ["jsx", ts.JsxEmit]] as const) {
@@ -114,10 +159,6 @@ async function loadCompilerOptions(rootPath: string): Promise<CompilerOptions> {
   }
 }
 
-const MODULE_RESOLUTION_CODES = [
-  2307, 2792, 7016, 2688, 2503, 2602, 7026, 2580, 2582, 2583, 2584, 2591,
-];
-
 function applyCompilerOptions(options: CompilerOptions) {
   const semantic = useEditorSettings.getState().semanticValidation;
   for (const defaults of [ts.typescriptDefaults, ts.javascriptDefaults]) {
@@ -125,7 +166,6 @@ function applyCompilerOptions(options: CompilerOptions) {
     defaults.setDiagnosticsOptions({
       noSemanticValidation: !semantic,
       noSyntaxValidation: false,
-      diagnosticCodesToIgnore: MODULE_RESOLUTION_CODES,
     });
     defaults.setEagerModelSync(true);
   }
@@ -144,46 +184,16 @@ function watchSemanticSetting() {
       defaults.setDiagnosticsOptions({
         noSemanticValidation: !s.semanticValidation,
         noSyntaxValidation: false,
-        diagnosticCodesToIgnore: MODULE_RESOLUTION_CODES,
       });
     }
   });
 }
 
-async function syncReactDeclarations(rootPath: string, generation: number) {
-  const packages = ["@types/react", "@types/react-dom", "@types/prop-types", "@types/scheduler", "csstype"];
-  const files: string[] = [];
-  async function visit(directory: string, depth: number) {
-    if (files.length >= 350 || depth > 5) return;
-    const entries = await readDir(directory).catch(() => []);
-    for (const entry of entries) {
-      if (files.length >= 350) break;
-      if (entry.name === "node_modules" || entry.name === "ts5.0") continue;
-      const path = `${directory}/${entry.name}`;
-      if (entry.isDirectory) await visit(path, depth + 1);
-      else if (entry.isFile && /\.d\.(ts|mts|cts)$/i.test(entry.name)) files.push(path);
-    }
-  }
-  await Promise.all(packages.map((name) => visit(`${rootPath}/node_modules/${name}`, 0)));
-  let index = 0;
-  await Promise.all(Array.from({ length: Math.min(8, files.length) }, async () => {
-    while (index < files.length && generation === syncGeneration) {
-      const path = files[index++]!;
-      try {
-        const content = await readTextFile(path);
-        if (content.length > MAX_SYNC_FILE_CHARS || generation !== syncGeneration) continue;
-        const uri = monacoUriForPath(path).toString();
-        typeLibs.push(ts.typescriptDefaults.addExtraLib(content, uri));
-        typeLibs.push(ts.javascriptDefaults.addExtraLib(content, uri));
-      } catch { /* optional declaration */ }
-    }
-  }));
-}
-
-export async function configureMonacoWorkspace(rootPath: string) {
+export function configureMonacoWorkspace(rootPath: string): Promise<void> {
+  if (configuredRoot === rootPath && configuration) return configuration;
   if (configuredRoot !== rootPath) {
-    for (const lib of typeLibs) lib.dispose();
-    typeLibs = [];
+    declarations?.dispose();
+    declarations = new MonacoDeclarations(rootPath);
     typesLoading = null;
     for (const model of monaco.editor.getModels()) {
       model.dispose();
@@ -193,19 +203,31 @@ export async function configureMonacoWorkspace(rootPath: string) {
     syncGeneration++;
   }
 
-  await applyWorkspaceSettings(rootPath).catch(() => {});
-  const options = await loadCompilerOptions(rootPath);
-  applyCompilerOptions(options);
-  watchSemanticSetting();
-  typesLoading ??= syncReactDeclarations(rootPath, syncGeneration);
-  await typesLoading;
+  const generation = syncGeneration;
+  configuration = (async () => {
+    await applyWorkspaceSettings(rootPath).catch(() => {});
+    const options = await loadCompilerOptions(rootPath);
+    if (generation !== syncGeneration) return;
+    applyCompilerOptions(options);
+    watchSemanticSetting();
+    watchWorkspaceImports();
+    typesLoading ??= initialTypePackages(rootPath, options.types).then((packages) =>
+      generation === syncGeneration ? declarations?.add(packages) : undefined,
+    );
+    await typesLoading;
+  })();
+  return configuration;
 }
 
-export async function syncMonacoWorkspaceModels(files: string[]) {
+export async function syncMonacoWorkspaceModels(files: string[], rootPath: string) {
+  if (useWorkspaceStore.getState().rootPath !== rootPath) return;
+  await configureMonacoWorkspace(rootPath);
   const generation = syncGeneration;
+  if (configuredRoot !== rootPath || useWorkspaceStore.getState().rootPath !== rootPath) return;
   const sources = files
     .filter((f) => SOURCE_FILE.test(f))
     .slice(0, MAX_SYNC_FILES);
+  const imported = new Set<string>();
 
   let index = 0;
   async function worker() {
@@ -213,11 +235,16 @@ export async function syncMonacoWorkspaceModels(files: string[]) {
       if (generation !== syncGeneration) return;
       const path = sources[index++]!;
       const uri = monacoUriForPath(path);
-      if (monaco.editor.getModel(uri)) continue;
+      const existing = monaco.editor.getModel(uri);
+      if (existing) {
+        for (const name of importedPackages(existing.getValue())) imported.add(name);
+        continue;
+      }
       try {
         const content = await readTextFile(path);
         if (generation !== syncGeneration) return;
         if (content.length > MAX_SYNC_FILE_CHARS) continue;
+        for (const name of importedPackages(content)) imported.add(name);
         if (monaco.editor.getModel(uri)) continue;
         monaco.editor.createModel(content, languageForPath(path), uri);
       } catch {
@@ -231,4 +258,7 @@ export async function syncMonacoWorkspaceModels(files: string[]) {
       worker(),
     ),
   );
+  if (generation === syncGeneration && imported.size > 0) {
+    await declarations?.add(imported);
+  }
 }

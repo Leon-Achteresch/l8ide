@@ -7,6 +7,7 @@ import {
 } from "@/lib/test-lens-core";
 import { pathFromMonacoUri } from "@/lib/monaco-uri";
 import { useWorkspaceStore } from "@/lib/workspace-store";
+import { exists } from "@tauri-apps/plugin-fs";
 
 const RUN_TEST = "l8.runTest";
 const RUN_RESULTS = "l8.runTestResults";
@@ -29,7 +30,7 @@ export async function runTestInTerminal(
     detectTool(root),
     import("@/lib/terminal"),
   ]);
-  await term.runInTerminal(buildTestCommand(tool, relFile, title));
+  await term.runInTerminal(buildTestCommand(tool, relFile, title), { newGroup: true });
 }
 
 export async function detectTool(root: string): Promise<TestTool> {
@@ -45,6 +46,8 @@ export async function detectTool(root: string): Promise<TestTool> {
     const deps = { ...pkg.dependencies, ...pkg.devDependencies };
     if (deps.vitest) tool = "vitest";
     else if (deps.jest) tool = "jest";
+    else if (await exists(`${root}/bun.lock`).catch(() => false)
+      || await exists(`${root}/bun.lockb`).catch(() => false)) tool = "bun";
   } catch {
     tool = "npm";
   }

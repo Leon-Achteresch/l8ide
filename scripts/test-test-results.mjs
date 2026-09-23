@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import {
   extractJson,
+  parseBunJUnit,
   parseTestResults,
   summarize,
 } from "../src/lib/test-results-core.ts";
@@ -39,5 +40,9 @@ assert.deepStrictEqual(summarize(results), { passed: 1, failed: 1, skipped: 1 })
 
 assert.deepStrictEqual(parseTestResults("no json here"), []);
 assert.deepStrictEqual(parseTestResults("{ broken"), []);
+
+assert.deepStrictEqual(parseBunJUnit(`<testsuite><testcase name="works" classname="suite" /><testcase name="fails &amp; retries" classname="suite"><failure type="AssertionError" /></testcase><testcase name="later"><skipped /></testcase></testsuite>`).map((r) => [r.title, r.status]), [
+  ["works", "passed"], ["fails & retries", "failed"], ["later", "skipped"],
+]);
 
 console.log("test-results: OK");

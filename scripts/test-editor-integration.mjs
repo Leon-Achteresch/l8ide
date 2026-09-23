@@ -1,7 +1,35 @@
 import assert from "node:assert/strict";
 import { parseTsconfigJson } from "../src/lib/tsconfig-core.ts";
-import { parseBiomeDiagnostics, parseEslintDiagnostics } from "../src/lib/project-diagnostics-core.ts";
+import { parseBiomeDiagnostics, parseBiomeFindings, parseEslintDiagnostics, parseEslintFindings } from "../src/lib/project-diagnostics-core.ts";
 import { preferredScript, scriptCommand } from "../src/lib/run-scripts.ts";
+import { importedPackages, packageNameFromSpecifier, typePackageName } from "../src/lib/monaco-declarations-core.ts";
+import { TypeScriptWorker } from "../node_modules/monaco-editor/esm/vs/language/typescript/tsWorker.js";
+import { typescript as ts } from "../node_modules/monaco-editor/esm/vs/language/typescript/lib/typescriptServices.js";
+
+assert.deepEqual(importedPackages(`import React from "react"; import("@tanstack/react-query"); require("./local"); export * from "pkg/subpath"; /// <reference types="node" />`), ["react", "@tanstack/react-query", "pkg", "node"]);
+assert.equal(packageNameFromSpecifier("https://example.test/a"), null);
+assert.equal(typePackageName("@scope/name"), "@types/scope__name");
+
+const fileName = "file:///workspace/src/App.tsx";
+const model = {
+  uri: { toString: () => fileName, path: "/workspace/src/App.tsx" },
+  version: 1,
+  getValue: () => 'import { value } from "example"; value;',
+};
+const declarations = {
+  "file:///workspace/node_modules/example/package.json": { content: '{"name":"example","types":"index.d.ts"}', version: 1 },
+  "file:///workspace/node_modules/example/index.d.ts": { content: "export const value: number;", version: 1 },
+};
+const worker = new TypeScriptWorker({ getMirrorModels: () => [model] }, {
+  compilerOptions: { moduleResolution: ts.ModuleResolutionKind.NodeJs, module: ts.ModuleKind.ESNext },
+  extraLibs: declarations,
+});
+assert.deepEqual(await worker.getSemanticDiagnostics(fileName), []);
+const unresolved = new TypeScriptWorker({ getMirrorModels: () => [model] }, {
+  compilerOptions: { moduleResolution: ts.ModuleResolutionKind.NodeJs, module: ts.ModuleKind.ESNext },
+  extraLibs: {},
+});
+assert.ok((await unresolved.getSemanticDiagnostics(fileName)).some((diagnostic) => diagnostic.code === 2307));
 
 const config = parseTsconfigJson(`{
   // URLs and comment-like text inside strings must survive.
@@ -30,6 +58,24 @@ assert.equal(biome[0].startLineNumber, 4);
 assert.equal(biome[0].startColumn, 3);
 assert.equal(biome[0].endColumn, 5);
 assert.equal(biome[0].severity, 8);
+
+const eslintFixes = parseEslintFindings(JSON.stringify([{ messages: [{
+  message: "Missing semicolon", severity: 2, line: 1, column: 16,
+  fix: { range: [15, 15], text: ";" },
+  suggestions: [{ desc: "Remove declaration", fix: { range: [0, 15], text: "" } }],
+}] }]), "const value = 1\n");
+assert.deepEqual(eslintFixes[0].fixes[0].range, {
+  startLineNumber: 1, startColumn: 16, endLineNumber: 1, endColumn: 16,
+});
+assert.equal(eslintFixes[0].fixes[1].title, "Remove declaration");
+
+const biomeFixes = parseBiomeFindings(JSON.stringify({ diagnostics: [{
+  message: "Use strict equality", severity: "ERROR",
+  location: { range: { start: { line: 1, column: 4 }, end: { line: 1, column: 6 } } },
+  suggestions: [{ range: { start: { line: 1, column: 5 }, end: { line: 1, column: 5 } }, text: "=" }],
+}] }));
+assert.equal(biomeFixes[0].fixes[0].range.startColumn, 6);
+assert.equal(biomeFixes[0].fixes[0].text, "=");
 
 const scripts = [{ name: "build", command: "vite build" }, { name: "dev", command: "vite" }];
 assert.equal(preferredScript(scripts), "dev");

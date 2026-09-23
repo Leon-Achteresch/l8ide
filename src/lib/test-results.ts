@@ -1,9 +1,11 @@
 import { invoke } from "@tauri-apps/api/core";
+import { readTextFile, remove } from "@tauri-apps/plugin-fs";
 import type * as monacoNs from "monaco-editor";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { findTestCases } from "@/lib/test-lens-core";
 import {
+  parseBunJUnit,
   parseTestResults,
   summarize,
   type TestResult,
@@ -32,13 +34,18 @@ export async function runFileWithResults(path: string): Promise<void> {
   const { detectTool } = await import("@/lib/test-lens");
   const tool = await detectTool(root);
   if (tool === "npm") {
-    toast.info("Kein JSON-fähiger Runner (vitest/jest) erkannt.");
+    toast.info("Kein unterstützter Test-Runner (Bun, Vitest oder Jest) erkannt.");
     return;
   }
+  const bunReport = tool === "bun"
+    ? `${root}/.l8ide-test-${Date.now()}-${Math.random().toString(36).slice(2)}.xml`
+    : null;
   const command =
     tool === "vitest"
       ? `npx vitest run ${sq(rel)} --reporter=json`
-      : `npx jest ${sq(rel)} --json`;
+      : tool === "jest"
+        ? `npx jest ${sq(rel)} --json`
+        : `bun test ${sq(rel.startsWith("./") ? rel : `./${rel}`)} --reporter=junit --reporter-outfile=${sq(bunReport!)}`;
 
   useTestResults.setState((s) => ({ running: { ...s.running, [path]: true } }));
   toast.loading("Tests laufen…", { id: `test-${path}` });
@@ -48,7 +55,9 @@ export async function runFileWithResults(path: string): Promise<void> {
       command,
       timeoutMs: 120000,
     });
-    const results = parseTestResults(res.stdout);
+    const results = bunReport
+      ? parseBunJUnit(await readTextFile(bunReport).catch(() => ""))
+      : parseTestResults(res.stdout);
     useTestResults.setState((s) => ({ byPath: { ...s.byPath, [path]: results } }));
     if (results.length === 0) {
       toast.error("Keine Testergebnisse erhalten.", { id: `test-${path}` });
@@ -61,6 +70,7 @@ export async function runFileWithResults(path: string): Promise<void> {
   } catch {
     toast.error("Testlauf fehlgeschlagen.", { id: `test-${path}` });
   } finally {
+    if (bunReport) await remove(bunReport).catch(() => {});
     useTestResults.setState((s) => ({
       running: { ...s.running, [path]: false },
     }));

@@ -1,7 +1,7 @@
 import { exists, readTextFile } from "@tauri-apps/plugin-fs";
 import { toast } from "sonner";
 import { create } from "zustand";
-import { launchAndAttach } from "@/lib/debug-launcher";
+import { launchAndAttach, nodeDebugCommand } from "@/lib/debug-launcher";
 import {
   parseLaunchConfigs,
   substituteVars,
@@ -54,8 +54,7 @@ export async function runLaunchConfig(config: LaunchConfig): Promise<void> {
   const parts = [
     `cd ${sq(cwd)} &&`,
     envPrefix,
-    "node --inspect-brk=9229",
-    sq(program),
+    await nodeDebugCommand(root, program),
     ...args,
   ].filter(Boolean);
   await launchAndAttach(parts.join(" "));
