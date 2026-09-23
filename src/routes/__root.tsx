@@ -35,6 +35,9 @@ import { WorkspaceTrustBanner } from "@/components/workspace-trust-banner";
 import { useProblemsPanel } from "@/lib/markers-store";
 import { pageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { useTerminalStore } from "@/lib/terminal-store";
+import { wslPath } from "@/lib/wsl-path";
+import { invoke } from "@tauri-apps/api/core";
+import { toast } from "sonner";
 import { useUiZoom } from "@/lib/ui-zoom";
 import { useViewStore } from "@/lib/view-store";
 import { SPRING_PANEL } from "@/lib/ease";
@@ -147,6 +150,20 @@ function RootComponent() {
   const uiZoom = useUiZoom((z) => z.zoom);
   const zenMode = useViewStore((s) => s.zenMode);
   const centeredLayout = useViewStore((s) => s.centeredLayout);
+  const rootPath = useWorkspaceStore((s) => s.rootPath);
+  useEffect(() => {
+    const wsl = rootPath && wslPath(rootPath);
+    if (!wsl) return;
+    let active = true;
+    void invoke("wsl_open_folder", { distribution: wsl.distribution, linuxPath: wsl.linuxPath })
+      .then(async () => {
+        if (!active) return;
+        const { refreshTree } = await import("@/components/file-tree");
+        if (active) refreshTree();
+      })
+      .catch((error) => { if (active) toast.error(`WSL-Verzeichnis nicht erreichbar: ${String(error)}`); });
+    return () => { active = false; };
+  }, [rootPath]);
   useEffect(() => {
     document.documentElement.style.zoom = String(uiZoom);
   }, [uiZoom]);

@@ -19,7 +19,7 @@ function sleep(ms: number) {
 async function inspectorReady(port: number): Promise<boolean> {
   try {
     const res = await invoke<ShellResult>("run_shell", {
-      cwd: "/",
+      cwd: useWorkspaceStore.getState().rootPath ?? "/",
       command: `curl -s --max-time 1 http://127.0.0.1:${port}/json/list`,
       timeoutMs: 3000,
     });

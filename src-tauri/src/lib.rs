@@ -6,6 +6,7 @@ mod ports;
 pub mod git;
 mod git_cmd;
 mod terminal;
+mod wsl;
 
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
@@ -177,7 +178,7 @@ fn search_in_files(root: String, options: SearchOptions) -> Result<SearchRespons
                 if !matches.is_empty() {
                     total.fetch_add(matches.len(), Ordering::Relaxed);
                     results.lock().unwrap().push(FileMatches {
-                        path: entry.path().to_string_lossy().into_owned(),
+                        path: entry.path().to_string_lossy().replace('\\', "/"),
                         matches,
                     });
                 }
@@ -487,6 +488,9 @@ pub fn run() {
             terminal::pty_cwd,
             terminal::pty_profiles,
             terminal::pty_kill,
+            wsl::wsl_status,
+            wsl::wsl_home,
+            wsl::wsl_open_folder,
             browser::browser_open,
             browser::browser_set_bounds,
             browser::browser_show,

@@ -857,19 +857,19 @@ export function FileTree({ rootPath }: { rootPath: string }) {
 	useEffect(() => {
 		setChildren(null);
 		useTreeStore.getState().reset();
-		listDir(rootPath).then(setChildren);
+		listDir(rootPath).then(setChildren).catch(() => setChildren([]));
 	}, [rootPath]);
 
 	const rootTick = useTreeStore((s) => s.refreshTicks[rootPath] ?? 0);
 	useEffect(() => {
 		if (rootTick === 0) return;
-		listDir(rootPath).then(setChildren);
+		listDir(rootPath).then(setChildren).catch(() => setChildren([]));
 	}, [rootTick, rootPath]);
 
 	const refreshEpoch = useTreeStore((s) => s.refreshEpoch);
 	useEffect(() => {
 		if (refreshEpoch === 0) return;
-		listDir(rootPath).then(setChildren);
+		listDir(rootPath).then(setChildren).catch(() => setChildren([]));
 	}, [refreshEpoch, rootPath]);
 
 	useCommandHotkeys(
