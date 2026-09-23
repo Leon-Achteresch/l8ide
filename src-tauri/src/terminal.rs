@@ -418,6 +418,7 @@ pub fn pty_ack(state: State<PtyState>, id: u32, bytes: i64) {
     }
 }
 
+#[cfg(unix)]
 fn process_group_leader(state: &State<PtyState>, id: u32) -> Option<u32> {
     let sessions = state.0.lock().unwrap();
     sessions.get(&id)?.master.process_group_leader().map(|p| p as u32)
@@ -453,6 +454,7 @@ pub fn pty_process(state: State<PtyState>, id: u32) -> Option<String> {
 
 #[tauri::command]
 pub fn pty_cwd(state: State<PtyState>, id: u32) -> Option<String> {
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
     let pid = process_group_leader(&state, id)?;
     #[cfg(target_os = "linux")]
     {
@@ -475,7 +477,7 @@ pub fn pty_cwd(state: State<PtyState>, id: u32) -> Option<String> {
     }
     #[cfg(not(any(target_os = "linux", target_os = "macos")))]
     {
-        let _ = pid;
+        let _ = (state, id);
         None
     }
 }
