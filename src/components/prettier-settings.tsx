@@ -11,6 +11,7 @@ import {
   type PrettierOptions,
   usePrettierSettings,
 } from "@/lib/prettier-format";
+import { useProjectToolSettings } from "@/lib/project-tools";
 
 type NumberField = { key: keyof PrettierOptions; label: string; min: number; max: number };
 type BoolField = { key: keyof PrettierOptions; label: string };
@@ -58,6 +59,10 @@ function Row({
 }
 
 export function PrettierSettings() {
+  const biomeLint = useProjectToolSettings((s) => s.biomeLint);
+  const eslintLint = useProjectToolSettings((s) => s.eslintLint);
+  const setBiomeLint = useProjectToolSettings((s) => s.setBiomeLint);
+  const setEslintLint = useProjectToolSettings((s) => s.setEslintLint);
   const enabled = usePrettierSettings((s) => s.enabled);
   const formatOnSave = usePrettierSettings((s) => s.formatOnSave);
   const trimOnSave = usePrettierSettings((s) => s.trimTrailingWhitespaceOnSave);
@@ -84,9 +89,9 @@ export function PrettierSettings() {
     <div className="mt-8 max-w-sm">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium">Prettier</p>
+          <p className="text-sm font-medium">Formatter und Linter</p>
           <p className="text-xs text-muted-foreground">
-            Nativer Code-Formatter (Shift+Alt+F)
+            Formatieren mit Shift+Alt+F · Projektwerkzeuge aus node_modules
           </p>
         </div>
         <Switch checked={enabled} onCheckedChange={setEnabled} />
@@ -124,6 +129,16 @@ export function PrettierSettings() {
         <Row label=".editorconfig berücksichtigen">
           <Switch checked={editorConfig} onCheckedChange={setEditorConfig} />
         </Row>
+
+        <div className="pt-3">
+          <Row label="ESLint: Änderungen live prüfen">
+            <Switch checked={eslintLint} onCheckedChange={setEslintLint} />
+          </Row>
+          <Row label="Biome: gespeicherte Dateien prüfen">
+            <Switch checked={biomeLint} onCheckedChange={setBiomeLint} />
+          </Row>
+          <p className="text-xs text-muted-foreground">Die Werkzeuge müssen im geöffneten Projekt installiert sein.</p>
+        </div>
 
         {NUMBER_FIELDS.map((f) => (
           <Row key={f.key} label={f.label}>
@@ -187,6 +202,9 @@ export function PrettierSettings() {
                   }
                 >
                   <NativeSelectOption value="prettier">Prettier</NativeSelectOption>
+                  <NativeSelectOption value="prettier-project">Prettier (Projekt)</NativeSelectOption>
+                  {["typescript", "javascript", "json", "jsonc", "css", "html"].includes(lang) &&
+                    <NativeSelectOption value="biome">Biome (Projekt)</NativeSelectOption>}
                   <NativeSelectOption value="none">Kein</NativeSelectOption>
                 </NativeSelect>
               </Row>

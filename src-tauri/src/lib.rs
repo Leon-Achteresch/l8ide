@@ -3,6 +3,7 @@ mod console_sink;
 mod exec;
 mod favicon;
 mod ports;
+mod project_tools;
 pub mod git;
 mod git_cmd;
 mod terminal;
@@ -498,6 +499,7 @@ pub fn run() {
             browser::browser_show,
             browser::browser_navigate,
             exec::run_shell,
+            project_tools::project_tool,
             ports::list_dev_ports,
             ports::kill_process,
             browser::browser_eval,

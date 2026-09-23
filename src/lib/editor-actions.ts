@@ -18,6 +18,7 @@ export function saveModel(model: monaco.editor.ITextModel) {
   const content = model.getValue();
   void snapshotBeforeSave(path).finally(() =>
     writeTextFile(path, content).then(() => {
+      window.dispatchEvent(new CustomEvent("l8ide:file-saved", { detail: path }));
       void clearBackup(path);
       void import("@/lib/continuous-run").then((m) => m.onFileSaved(path));
       if (path.endsWith("/.l8ide/settings.json")) {

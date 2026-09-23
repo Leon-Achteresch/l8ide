@@ -97,6 +97,10 @@ export function toMonacoOptions(s: EditorSettings): editor.IEditorOptions {
     stickyScroll: { enabled: s.stickyScroll },
     minimap: { enabled: s.minimap },
     linkedEditing: s.linkedEditing,
+    multiCursorModifier: "alt",
+    definitionLinkOpensInPeek: true,
+    gotoLocation: { multipleDefinitions: "peek", multipleReferences: "peek" },
+    hover: { enabled: true, sticky: true, delay: 300 },
   };
   (opts as Record<string, unknown>)["semanticHighlighting.enabled"] =
     s.semanticHighlighting;

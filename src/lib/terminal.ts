@@ -355,14 +355,14 @@ function insideRoot(cwd: string | null, root: string | null) {
   return cwd === root || cwd.startsWith(`${root}/`) || cwd.startsWith(`${root}\\`);
 }
 
-export async function runInTerminal(text: string) {
+export async function runInTerminal(text: string, options: { newGroup?: boolean } = {}) {
   const store = useTerminalStore.getState();
   const root = useWorkspaceStore.getState().rootPath;
   store.setOpen(true);
 
   const active = store.activePane;
   const activeCwd = active != null ? (store.panes[active]?.cwd ?? null) : null;
-  if (active == null || (root && wslPath(root)) || !insideRoot(activeCwd, root)) store.addGroup();
+  if (options.newGroup || active == null || (root && wslPath(root)) || !insideRoot(activeCwd, root)) store.addGroup();
 
   const paneId = useTerminalStore.getState().activePane;
   if (paneId == null) return;

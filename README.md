@@ -1,5 +1,7 @@
 # Tauri + React + Typescript
 
+[React-/Frontend-Editor, Projektstart und lokale Werkzeuge](docs/EDITOR.md)
+
 Release-Prozess und signierte Desktop-Updates: [docs/RELEASE.md](docs/RELEASE.md).
 [WSL-Integration unter Windows](docs/WSL.md)
 

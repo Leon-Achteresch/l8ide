@@ -5,6 +5,7 @@ import { getMonacoInstance } from "@/lib/monaco-instance";
 import { monacoUriForPath, pathFromMonacoUri } from "@/lib/monaco-uri";
 import { organizeImportsModel, useRefactorSettings } from "@/lib/ts-refactor";
 import { sortTailwindClasses } from "@/lib/tailwind";
+import { formatWithProjectTool } from "@/lib/project-tools";
 import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import type * as monaco from "monaco-editor";
 import { toast } from "sonner";
@@ -51,7 +52,7 @@ export const DEFAULT_OPTIONS: PrettierOptions = {
   endOfLine: "lf",
 };
 
-export type LanguageFormatter = "prettier" | "none";
+export type LanguageFormatter = "prettier" | "prettier-project" | "biome" | "none";
 
 type PrettierStore = {
   enabled: boolean;
@@ -214,6 +215,12 @@ export async function formatCode(
 ) {
   const cfg = LANGS[languageId];
   if (!cfg) return null;
+  const selected = usePrettierSettings.getState().formatterByLanguage[languageId] ?? "prettier";
+  if (selected === "none") return null;
+  if (selected === "prettier-project" || selected === "biome") {
+    if (!filepath || range) return null;
+    return formatWithProjectTool(selected === "biome" ? "biome" : "prettier", filepath, code);
+  }
   const prettier = await loadPrettier();
   const plugins = await Promise.all(cfg.plugins.map(loadPlugin));
   const { options } = usePrettierSettings.getState();
@@ -285,7 +292,7 @@ export async function formatModel(model: monaco.editor.ITextModel) {
     }
     return true;
   } catch (e) {
-    toast.error(`Prettier: ${messageOf(e)}`);
+    toast.error(`Formatter: ${messageOf(e)}`);
     return false;
   }
 }
@@ -385,7 +392,7 @@ export function initPrettier(m: typeof monaco) {
         );
         return out == null ? [] : editsFor(model, src, out);
       } catch (e) {
-        toast.error(`Prettier: ${messageOf(e)}`);
+        toast.error(`Formatter: ${messageOf(e)}`);
         return [];
       }
     },
@@ -411,7 +418,7 @@ export function initPrettier(m: typeof monaco) {
         );
         return out == null ? [] : editsFor(model, src, out);
       } catch (e) {
-        toast.error(`Prettier: ${messageOf(e)}`);
+        toast.error(`Formatter: ${messageOf(e)}`);
         return [];
       }
     },

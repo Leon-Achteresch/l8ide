@@ -2,11 +2,23 @@ import { exists, readTextFile } from "@tauri-apps/plugin-fs";
 
 export type Script = { name: string; command: string };
 export type PackageManager = "bun" | "pnpm" | "yarn" | "npm";
+export const PACKAGE_MANAGERS: PackageManager[] = ["bun", "pnpm", "yarn", "npm"];
 
 const LOCKFILES = ["bun.lock", "bun.lockb", "pnpm-lock.yaml", "yarn.lock"];
 
 export function scriptCommand(pm: PackageManager, name: string) {
+  if (!/^[\w:.-]+$/.test(name)) {
+    throw new Error("Skriptname enthält Zeichen, die im Terminal nicht sicher sind.");
+  }
   return `${pm} run ${name}`;
+}
+
+export function preferredScript(scripts: Script[], previous?: string | null): string | null {
+  if (previous && scripts.some((script) => script.name === previous)) return previous;
+  for (const name of ["dev", "start", "serve", "preview"]) {
+    if (scripts.some((script) => script.name === name)) return name;
+  }
+  return scripts[0]?.name ?? null;
 }
 
 async function fileExists(path: string) {

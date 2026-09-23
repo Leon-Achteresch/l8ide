@@ -27,6 +27,7 @@ import { attachTestResults } from "@/lib/test-results";
 import { attachCoverage } from "@/lib/coverage";
 import { attachExplainLayer } from "@/lib/explain-layer";
 import { trackEditorStatus } from "@/lib/status-store";
+import { attachProjectDiagnostics } from "@/lib/project-tools";
 import { registerEditorRefactors } from "@/lib/ts-refactor";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { revealInEditor, takePendingReveal } from "@/lib/monaco-navigation";
@@ -226,6 +227,7 @@ export function TextEditor({
             if (target) revealInEditor(editor, target);
 
             trackEditorStatus(editor);
+            attachProjectDiagnostics(editor, monaco, path);
             attachCallHierarchy(editor);
             attachBreakpointGutter(editor, monaco, path);
             attachExplainLayer(editor, monaco, path);
