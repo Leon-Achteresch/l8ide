@@ -191,8 +191,8 @@ jobs:
         run: |
           mkdir -p .release-check
           gh release download "$TAG" --pattern latest.json --dir .release-check
-          gh release view "$TAG" --json assets --jq '.assets[].name' > .release-check/assets.txt
-          node scripts/verify-release.mjs .release-check/latest.json "$TAG" .release-check/assets.txt
+          gh release view "$TAG" --json assets > .release-check/assets.json
+          node scripts/verify-release.mjs .release-check/latest.json "$TAG" .release-check/assets.json
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
