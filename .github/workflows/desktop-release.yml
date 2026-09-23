@@ -38,6 +38,8 @@ jobs:
     if: github.event_name == 'pull_request'
     needs: check
     runs-on: ${{ matrix.platform }}
+    env:
+      NODE_OPTIONS: --max-old-space-size=6144
     strategy:
       fail-fast: false
       matrix:
@@ -121,6 +123,8 @@ jobs:
     needs: prepare-release
     runs-on: ${{ matrix.platform }}
     environment: release
+    env:
+      NODE_OPTIONS: --max-old-space-size=6144
     permissions:
       contents: write
     strategy:
