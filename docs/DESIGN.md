@@ -23,7 +23,7 @@ Destilliert aus Dribbble-IDE-Shots (AI-Editor/Dark-IDE-Trends), Raycast, Zed, Li
 
 - Basis bleibt das oklch-System in `App.css` (Hue 265, dezenter Blau-Tint = Raycast-Feeling). Kein reines Schwarz/Weiß.
 - Neutrale Grautöne + genau ein Akzent. Status-Farben nur semantisch: rot-500 Fehler, amber-500 Warnung, sky-500 Info, emerald-500 Erfolg.
-- Gradient-Akzente sparsam: nur für AI-Momente (Chat-Denken, Agent aktiv), nie für Chrome.
+- Gradient-Akzente sparsam für KI-Funktionen, nie für Chrome.
 
 ## Typografie
 

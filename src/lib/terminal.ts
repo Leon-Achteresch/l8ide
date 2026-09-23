@@ -16,6 +16,7 @@ import { ShellIntegration } from "@/lib/terminal-shell-integration";
 import { loadDetectedProfiles, resolveProfile } from "@/lib/terminal-profiles";
 import { type Profile, useTerminalStore } from "@/lib/terminal-store";
 import { useWorkspaceStore } from "@/lib/workspace-store";
+import { wslPath, wslWindowsPath } from "@/lib/wsl-path";
 
 type PtyEvent =
   | { type: "data"; data: string; bytes: number }
@@ -31,6 +32,7 @@ type TermSession = {
   opened: boolean;
   polling: boolean;
   pendingInput: string;
+  wslDistribution: string | null;
 };
 
 const SHELL_NAMES = new Set(["zsh", "bash", "fish", "sh", "nu", "pwsh", "powershell.exe", "cmd.exe"]);
@@ -109,13 +111,21 @@ export function getSession(id: number) {
   return sessions.get(id);
 }
 
-function resolvePath(raw: string, cwd: string | null): string | null {
+function resolvePath(raw: string, cwd: string | null, wslDistribution: string | null): string | null {
   let p = raw;
+  if (wslDistribution && p.startsWith("/")) return wslWindowsPath(wslDistribution, p);
   if (p.startsWith("/")) return p;
   if (p.startsWith("~")) return null;
   const base = cwd ?? useWorkspaceStore.getState().rootPath;
   if (!base) return null;
   return `${base.replace(/\/$/, "")}/${p.replace(/^\.\//, "")}`;
+}
+
+function sessionCwd(session: TermSession): string | null {
+  const cwd = session.integration.getState().cwd;
+  return cwd && session.wslDistribution && cwd.startsWith("/")
+    ? wslWindowsPath(session.wslDistribution, cwd)
+    : cwd;
 }
 
 function registerFileLinks(session: TermSession) {
@@ -125,7 +135,7 @@ function registerFileLinks(session: TermSession) {
       const line = buf.getLine(y - 1);
       if (!line) return callback(undefined);
       const text = line.translateToString(true);
-      const cwd = session.integration.getState().cwd;
+      const cwd = sessionCwd(session);
       const candidates: {
         start: number;
         end: number;
@@ -134,7 +144,7 @@ function registerFileLinks(session: TermSession) {
         column: number;
       }[] = [];
       for (const m of text.matchAll(FILE_RE)) {
-        const abs = resolvePath(m[1], cwd);
+        const abs = resolvePath(m[1], cwd, session.wslDistribution);
         if (!abs) continue;
         candidates.push({
           start: m.index,
@@ -196,6 +206,7 @@ function ensureSession(id: number): TermSession {
     opened: false,
     polling: false,
     pendingInput: "",
+    wslDistribution: null,
   };
   sessions.set(id, session);
   notifySessions();
@@ -221,6 +232,7 @@ export function attachSession(
   opts: { profileId: string; cwd: string | null; ptyId: number | null },
 ) {
   const session = ensureSession(id);
+  session.wslDistribution = wslPath(opts.cwd ?? "")?.distribution ?? null;
   host.appendChild(session.container);
 
   if (!session.opened) {
@@ -239,7 +251,7 @@ export function attachSession(
     session.term.loadAddon(new ImageAddon());
     registerFileLinks(session);
     session.integration.subscribe(() => {
-      const cwd = session.integration.getState().cwd;
+      const cwd = sessionCwd(session);
       if (cwd) useTerminalStore.getState().setCwd(id, cwd);
     });
     void resolveAndStart(id, session, opts);
@@ -259,8 +271,10 @@ async function resolveAndStart(
     const detected = await loadDetectedProfiles();
     const custom = useTerminalStore.getState().customProfiles;
     profile = resolveProfile(opts.profileId, detected, custom);
+    if (profile?.id.startsWith("wsl:")) session.wslDistribution = profile.id.slice(4);
   }
-  await start(id, session, profile, opts.cwd, opts.ptyId);
+  const cwd = profile?.id.startsWith("wsl") && !wslPath(opts.cwd ?? "") ? null : opts.cwd;
+  await start(id, session, profile, cwd, opts.ptyId);
 }
 
 function flushInput(session: TermSession) {
@@ -278,10 +292,11 @@ async function start(
   reconnectId: number | null,
 ) {
   const { term } = session;
+  if (cwd) useTerminalStore.getState().setCwd(id, cwd);
   const channel = new Channel<PtyEvent>();
   channel.onmessage = (event) => {
     if (event.type === "data") {
-      feedTaskProblems(id, event.data, session.integration.getState().cwd);
+      feedTaskProblems(id, event.data, sessionCwd(session));
       term.write(event.data, () => {
         if (session.ptyId !== null) void invoke("pty_ack", { id: session.ptyId, bytes: event.bytes });
       });
@@ -335,7 +350,8 @@ export function runCommand(id: number, text: string) {
 }
 
 function insideRoot(cwd: string | null, root: string | null) {
-  if (!root || !cwd) return true;
+  if (!root) return true;
+  if (!cwd) return false;
   return cwd === root || cwd.startsWith(`${root}/`) || cwd.startsWith(`${root}\\`);
 }
 
@@ -346,7 +362,7 @@ export async function runInTerminal(text: string) {
 
   const active = store.activePane;
   const activeCwd = active != null ? (store.panes[active]?.cwd ?? null) : null;
-  if (active == null || !insideRoot(activeCwd, root)) store.addGroup();
+  if (active == null || (root && wslPath(root)) || !insideRoot(activeCwd, root)) store.addGroup();
 
   const paneId = useTerminalStore.getState().activePane;
   if (paneId == null) return;

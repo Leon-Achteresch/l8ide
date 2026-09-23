@@ -52,7 +52,6 @@ async function explainCode(code: string): Promise<string | null> {
       },
       { role: "user", content: code.slice(0, 12000) },
     ],
-    [],
   );
   return (result.content ?? "").trim() || null;
 }

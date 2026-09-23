@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Bot,
   Bug,
   FolderGit2,
   Globe,
@@ -22,13 +21,10 @@ type Section = {
 
 const SECTIONS: Section[] = [
   {
-    icon: Bot,
-    title: "KI",
+    icon: Sparkles,
+    title: "Start",
     gradient: "from-violet-400/70 via-fuchsia-300/60 to-sky-300/60",
-    items: [
-      { cmd: "chat.toggle", label: "KI-Chat", hint: "⌘L · /explain /fix /test" },
-      { cmd: "command.palette", label: "Alles finden", hint: "⌘⇧P" },
-    ],
+    items: [{ cmd: "command.palette", label: "Alles finden", hint: "⌘⇧P" }],
   },
   {
     icon: Bug,
@@ -88,7 +84,7 @@ export function WelcomePage() {
           <h1 className="text-xl font-semibold text-foreground">l8ide</h1>
         </div>
         <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">
-          Deine Umgebung für Webentwicklung — Editor, Debugger, Git und KI in
+          Deine Umgebung für Webentwicklung — Editor, Debugger und Git in
           einem. Ein Klick startet, ⌘⇧P findet alles.
         </p>
 

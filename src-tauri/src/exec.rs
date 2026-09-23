@@ -15,7 +15,11 @@ const MAX_OUTPUT: usize = 100_000;
 
 fn capped(mut s: String) -> String {
     if s.len() > MAX_OUTPUT {
-        s.truncate(MAX_OUTPUT);
+        let mut boundary = MAX_OUTPUT;
+        while !s.is_char_boundary(boundary) {
+            boundary -= 1;
+        }
+        s.truncate(boundary);
         s.push_str("\n… [gekürzt]");
     }
     s
@@ -29,10 +33,18 @@ pub async fn run_shell(
 ) -> Result<ShellResult, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let timeout = Duration::from_millis(timeout_ms.unwrap_or(60_000).min(300_000));
-        let mut child = Command::new("sh")
-            .arg("-lc")
-            .arg(&command)
-            .current_dir(&cwd)
+        let mut runner = if let Some(path) =
+            crate::wsl::parse_path(std::path::Path::new(&cwd)).filter(|_| cfg!(windows))
+        {
+            let mut cmd = crate::wsl::command_at(&path);
+            cmd.args(["sh", "-lc", &command]);
+            cmd
+        } else {
+            let mut cmd = Command::new("sh");
+            cmd.args(["-lc", &command]).current_dir(&cwd);
+            cmd
+        };
+        let mut child = runner
             .stdin(Stdio::null())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())

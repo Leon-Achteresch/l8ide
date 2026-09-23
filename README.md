@@ -1,6 +1,7 @@
 # Tauri + React + Typescript
 
 Release-Prozess und signierte Desktop-Updates: [docs/RELEASE.md](docs/RELEASE.md).
+[WSL-Integration unter Windows](docs/WSL.md)
 
 This template should help get you started developing with Tauri, React and Typescript in Vite.
 

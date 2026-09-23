@@ -4,7 +4,6 @@ import { AppHotkeys } from "@/components/app-hotkeys";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { closeBrowser } from "@/lib/browser";
 import { useBrowserStore } from "@/lib/browser-store";
-import { useChatStore } from "@/lib/chat-store";
 import { FileSearch } from "@/components/file-search";
 import { CommandPalette } from "@/components/command-palette";
 import { MonacoWorkspace } from "@/components/monaco-workspace";
@@ -38,6 +37,9 @@ import { WorkspaceTrustBanner } from "@/components/workspace-trust-banner";
 import { useProblemsPanel } from "@/lib/markers-store";
 import { pageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { useTerminalStore } from "@/lib/terminal-store";
+import { wslPath } from "@/lib/wsl-path";
+import { invoke } from "@tauri-apps/api/core";
+import { toast } from "sonner";
 import { useUiZoom } from "@/lib/ui-zoom";
 import { useViewStore } from "@/lib/view-store";
 import { SPRING_PANEL } from "@/lib/ease";
@@ -58,29 +60,11 @@ const ProblemsPanel = lazy(() =>
   })),
 );
 
-const ChatPanel = lazy(() =>
-  import("@/components/chat/chat-panel").then((m) => ({
-    default: m.ChatPanel,
-  })),
-);
-
 const BrowserPanel = lazy(() =>
   import("@/components/browser/browser-panel").then((m) => ({
     default: m.BrowserPanel,
   })),
 );
-
-function ChatSlot() {
-  const open = useChatStore((s) => s.open);
-  if (!open) return null;
-  return (
-    <ErrorBoundary label="Der KI-Chat">
-      <Suspense fallback={null}>
-        <ChatPanel />
-      </Suspense>
-    </ErrorBoundary>
-  );
-}
 
 function BrowserSlot() {
   const open = useBrowserStore((s) => s.open);
@@ -174,11 +158,26 @@ function RootComponent() {
   const uiZoom = useUiZoom((z) => z.zoom);
   const zenMode = useViewStore((s) => s.zenMode);
   const centeredLayout = useViewStore((s) => s.centeredLayout);
+  const rootPath = useWorkspaceStore((s) => s.rootPath);
+  useEffect(() => {
+    const wsl = rootPath && wslPath(rootPath);
+    if (!wsl) return;
+    let active = true;
+    void invoke("wsl_open_folder", { distribution: wsl.distribution, linuxPath: wsl.linuxPath })
+      .then(async () => {
+        if (!active) return;
+        const { refreshTree } = await import("@/components/file-tree");
+        if (active) refreshTree();
+      })
+      .catch((error) => { if (active) toast.error(`WSL-Verzeichnis nicht erreichbar: ${String(error)}`); });
+    return () => { active = false; };
+  }, [rootPath]);
   useEffect(() => {
     document.documentElement.style.zoom = String(uiZoom);
   }, [uiZoom]);
 
   useEffect(() => {
+    localStorage.removeItem("chat-store");
     if (localStorage.getItem("l8-welcomed")) return;
     localStorage.setItem("l8-welcomed", "1");
     useWorkspaceStore.getState().openFile(pageTab("/welcome"));
@@ -213,7 +212,6 @@ function RootComponent() {
                 </ErrorBoundary>
               </div>
               <BrowserSlot />
-              <ChatSlot />
             </div>
             {!zenMode && <ProblemsSlot />}
             {!zenMode && <TerminalSlot />}

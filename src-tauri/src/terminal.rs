@@ -177,7 +177,11 @@ fn probe(candidates: &[&str]) -> Option<String> {
 }
 
 #[tauri::command]
-pub fn pty_profiles() -> Vec<ShellProfile> {
+pub async fn pty_profiles() -> Result<Vec<ShellProfile>, String> {
+    tauri::async_runtime::spawn_blocking(profiles_sync).await.map_err(|e| e.to_string())
+}
+
+fn profiles_sync() -> Vec<ShellProfile> {
     let mut out = Vec::new();
     if cfg!(windows) {
         out.push(ShellProfile {
@@ -195,12 +199,23 @@ pub fn pty_profiles() -> Vec<ShellProfile> {
         if let Some(p) = probe(&["pwsh.exe"]) {
             out.push(ShellProfile { id: "pwsh".into(), label: "PowerShell Core".into(), path: p, args: vec![] });
         }
-        out.push(ShellProfile {
-            id: "wsl".into(),
-            label: "WSL".into(),
-            path: "wsl.exe".into(),
-            args: vec![],
-        });
+        let distributions = crate::wsl::status_sync().distributions;
+        if !distributions.is_empty() {
+            out.push(ShellProfile {
+                id: "wsl".into(),
+                label: "WSL (Standard)".into(),
+                path: "wsl.exe".into(),
+                args: vec![],
+            });
+        }
+        for distribution in distributions {
+            out.push(ShellProfile {
+                id: format!("wsl:{distribution}"),
+                label: format!("WSL: {distribution}"),
+                path: "wsl.exe".into(),
+                args: vec!["--distribution".into(), distribution],
+            });
+        }
     } else {
         let shells: &[(&str, &str, &[&str])] = &[
             ("zsh", "zsh", &["/bin/zsh", "/usr/bin/zsh", "/usr/local/bin/zsh", "/opt/homebrew/bin/zsh"]),
@@ -247,8 +262,18 @@ pub fn pty_spawn(
         .map_err(|e| e.to_string())?;
 
     let (default_path, default_args) = default_shell();
-    let shell_path = shell.unwrap_or(default_path);
+    let mut shell_path = shell.unwrap_or(default_path);
     let mut shell_args = args.unwrap_or(default_args);
+    let wsl_cwd = cwd.as_deref().and_then(|p| crate::wsl::parse_path(std::path::Path::new(p))).filter(|_| cfg!(windows));
+    if let Some(path) = &wsl_cwd {
+        shell_path = "wsl.exe".into();
+        shell_args = vec![
+            "--distribution".into(), path.distribution.clone(),
+            "--cd".into(), path.linux_path.clone(),
+        ];
+    } else if shell_path.eq_ignore_ascii_case("wsl.exe") && !shell_args.iter().any(|arg| arg == "--cd") {
+        shell_args.extend(["--cd".into(), "~".into()]);
+    }
 
     let mut cmd = CommandBuilder::new(&shell_path);
     cmd.env("TERM", "xterm-256color");
@@ -266,7 +291,7 @@ pub fn pty_spawn(
         cmd.arg(arg);
     }
     let cwd = cwd.or_else(|| std::env::var("HOME").or_else(|_| std::env::var("USERPROFILE")).ok());
-    if let Some(dir) = cwd {
+    if let Some(dir) = cwd.filter(|_| wsl_cwd.is_none() && !shell_path.eq_ignore_ascii_case("wsl.exe")) {
         cmd.cwd(dir);
     }
 

@@ -71,10 +71,9 @@ pub struct GitRemote {
 }
 
 pub(crate) fn run_git(repo: &PathBuf, args: &[&str]) -> Result<String, String> {
-    let output = git_command()
-        .arg("-C")
-        .arg(repo)
-        .args(args)
+    let args: Vec<String> = args.iter().map(|arg| crate::wsl::git_arg(repo, arg)).collect();
+    let output = git_command(Some(repo))
+        .args(&args)
         .output()
         .map_err(|e| format!("failed to run git: {e}"))?;
 
@@ -85,12 +84,10 @@ pub(crate) fn run_git(repo: &PathBuf, args: &[&str]) -> Result<String, String> {
 }
 
 fn run_git_merged_output_at(cwd: Option<&PathBuf>, args: &[&str]) -> Result<String, String> {
-    let mut cmd = git_command();
-    if let Some(dir) = cwd {
-        cmd.arg("-C").arg(dir);
-    }
+    let mut cmd = git_command(cwd.map(PathBuf::as_path));
+    let args: Vec<String> = args.iter().map(|arg| cwd.map(|repo| crate::wsl::git_arg(repo, arg)).unwrap_or_else(|| (*arg).to_string())).collect();
     let output = cmd
-        .args(args)
+        .args(&args)
         .output()
         .map_err(|e| format!("failed to run git: {e}"))?;
 
@@ -1005,11 +1002,7 @@ pub async fn cherry_pick_state(path: String) -> Result<CherryPickState, String> 
         let repo = PathBuf::from(path.trim());
         let head_path_raw = run_git(&repo, &["rev-parse", "--git-path", "CHERRY_PICK_HEAD"])?;
         let head_path = head_path_raw.trim();
-        let abs_head = if std::path::Path::new(head_path).is_absolute() {
-            PathBuf::from(head_path)
-        } else {
-            repo.join(head_path)
-        };
+        let abs_head = crate::wsl::host_path(&repo, head_path);
         let head = std::fs::read_to_string(&abs_head)
             .ok()
             .map(|s| s.trim().to_string())
@@ -1045,11 +1038,7 @@ pub async fn merge_state(path: String) -> Result<MergeState, String> {
         let repo = PathBuf::from(path.trim());
         let head_path_raw = run_git(&repo, &["rev-parse", "--git-path", "MERGE_HEAD"])?;
         let head_path = head_path_raw.trim();
-        let abs_head = if std::path::Path::new(head_path).is_absolute() {
-            PathBuf::from(head_path)
-        } else {
-            repo.join(head_path)
-        };
+        let abs_head = crate::wsl::host_path(&repo, head_path);
         let merge_head = std::fs::read_to_string(&abs_head)
             .ok()
             .map(|s| s.trim().to_string())
@@ -1604,9 +1593,7 @@ fn compute_upstream_sync(repo: &PathBuf) -> UpstreamSyncCounts {
 }
 
 fn compute_has_upstream(repo: &PathBuf) -> bool {
-    git_command()
-        .arg("-C")
-        .arg(repo)
+    git_command(Some(repo))
         .args([
             "rev-parse",
             "--abbrev-ref",
@@ -1793,8 +1780,7 @@ pub async fn repo_file_diff(path: String, file: String, untracked: bool) -> Resu
 
 /// Apply a unified-diff patch to the git index (staging individual hunks/lines).
 fn apply_patch_to_index(repo: &PathBuf, patch: &str, reverse: bool) -> Result<(), String> {
-    let mut cmd = git_command();
-    cmd.arg("-C").arg(repo);
+    let mut cmd = git_command(Some(repo));
     cmd.arg("apply");
     cmd.arg("--cached");
     cmd.arg("--whitespace=nowarn");
@@ -1881,8 +1867,7 @@ pub async fn unstage_hunk(path: String, patch: String) -> Result<(), String> {
 }
 
 fn apply_patch_to_worktree(repo: &PathBuf, patch: &str, reverse: bool) -> Result<(), String> {
-    let mut cmd = git_command();
-    cmd.arg("-C").arg(repo);
+    let mut cmd = git_command(Some(repo));
     cmd.arg("apply");
     cmd.arg("--whitespace=nowarn");
     if reverse {
@@ -3917,7 +3902,17 @@ pub async fn list_worktrees(path: String) -> Result<Vec<WorktreeEntry>, String> 
     spawn_git(move || {
         let repo = PathBuf::from(path.trim());
         let out = run_git(&repo, &["worktree", "list", "--porcelain"])?;
-        Ok(parse_worktree_list(&out))
+        let mut entries = parse_worktree_list(&out);
+        if cfg!(windows) {
+            if let Some(wsl) = crate::wsl::parse_path(&repo) {
+                for entry in &mut entries {
+                    if entry.path.starts_with('/') {
+                        entry.path = crate::wsl::to_windows_path(&wsl.distribution, &entry.path);
+                    }
+                }
+            }
+        }
+        Ok(entries)
     }).await
 }
 
@@ -4404,19 +4399,11 @@ fn resolve_hooks_dir(repo: &PathBuf) -> Result<PathBuf, String> {
         .filter(|s| !s.is_empty());
 
     if let Some(p) = custom {
-        let abs = if std::path::Path::new(&p).is_absolute() {
-            PathBuf::from(&p)
-        } else {
-            repo.join(&p)
-        };
+        let abs = crate::wsl::host_path(repo, &p);
         return Ok(abs);
     }
 
-    let git_dir_path = if std::path::Path::new(&git_dir).is_absolute() {
-        PathBuf::from(&git_dir)
-    } else {
-        repo.join(&git_dir)
-    };
+    let git_dir_path = crate::wsl::host_path(repo, &git_dir);
     Ok(git_dir_path.join("hooks"))
 }
 

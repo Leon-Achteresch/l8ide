@@ -29,6 +29,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useTheme } from "next-themes";
 import { useState } from "react";
 import { AppHeaderMenuAction } from "./app-header-menu-action";
+import { WslFolderDialog } from "@/components/wsl-folder-dialog";
 import {
   AUTOSAVE_DELAYS,
   MENU_CONTAINER,
@@ -70,11 +71,12 @@ export function AppHeaderLogoMenu() {
   const setRootPath = useWorkspaceStore((s) => s.setRootPath);
   const [menuOpen, setMenuOpen] = useState(false);
   const [recentOpen, setRecentOpen] = useState(false);
+  const [wslOpen, setWslOpen] = useState(false);
   const { resolvedTheme } = useTheme();
   const logoSrc =
     resolvedTheme === "dark" ? "/logo_black.png" : "/logo_white.png";
 
-  return (
+  return (<>
     <Popover open={menuOpen} onOpenChange={setMenuOpen}>
       <PopoverTrigger
         render={
@@ -200,6 +202,11 @@ export function AppHeaderLogoMenu() {
               shortcut="Mod+O"
               onClick={openFolder}
             />
+            {navigator.userAgent.includes("Windows") && <AppHeaderMenuAction
+              icon={FolderOpen}
+              label="WSL-Ordner öffnen"
+              onClick={() => { setMenuOpen(false); setWslOpen(true); }}
+            />}
             <motion.button
               type="button"
               variants={MENU_ITEM}
@@ -308,5 +315,6 @@ export function AppHeaderLogoMenu() {
         </motion.div>
       </PopoverContent>
     </Popover>
-  );
+    <WslFolderDialog open={wslOpen} onOpenChange={setWslOpen} />
+  </>);
 }

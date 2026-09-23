@@ -39,7 +39,6 @@ export async function suggestRename(oldName: string): Promise<string | null> {
         content: `Sprache: ${ctx?.language ?? "?"}\nKontext:\n${ctx?.context ?? ""}\n\nBesserer Name für „${oldName}“:`,
       },
     ],
-    [],
   ).catch((e) => {
     toast.error(e instanceof Error ? e.message : String(e));
     return null;

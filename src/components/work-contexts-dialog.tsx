@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useWorkContexts, type WorkContext } from "@/lib/workspace-contexts";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
-const EMPTY: WorkContext[] = [];
+const EMPTY_CONTEXTS: WorkContext[] = [];
 
 function timeLabel(t: number) {
   return new Date(t).toLocaleString("de-DE", {
@@ -25,8 +25,8 @@ export function WorkContextsDialog() {
   const open = useWorkContexts((s) => s.dialogOpen);
   const setOpen = useWorkContexts((s) => s.setDialogOpen);
   const rootPath = useWorkspaceStore((s) => s.rootPath);
-  const contexts = useWorkContexts(
-    (s) => (rootPath ? s.byRoot[rootPath] : undefined) ?? EMPTY,
+  const contexts = useWorkContexts((s) =>
+    rootPath ? (s.byRoot[rootPath] ?? EMPTY_CONTEXTS) : EMPTY_CONTEXTS,
   );
   const save = useWorkContexts((s) => s.save);
   const apply = useWorkContexts((s) => s.apply);

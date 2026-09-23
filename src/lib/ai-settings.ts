@@ -1,8 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-// Auswahl aus dem Modell-Screening (siehe docs/AI_INTEGRATION_BENCH.md):
-// je 5/5 agentisch, 0 invalide Calls. mimo-v2.5 = bestes Preis/Leistung.
+// Modell-Auswahl für die verbleibenden KI-Funktionen.
 export const AI_MODELS = [
   { id: "xiaomi/mimo-v2.5", label: "MiMo v2.5 (bestes P/L)" },
   { id: "openai/gpt-5.1-codex-mini", label: "GPT-5.1 Codex mini (zuverlässig)" },

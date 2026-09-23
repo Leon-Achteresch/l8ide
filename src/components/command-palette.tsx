@@ -1,18 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Star } from "lucide-react";
 import { formatForDisplay } from "@tanstack/react-hotkeys";
 import { create } from "zustand";
 import {
-  Command,
-  CommandInput,
-  CommandList,
-  CommandGroup,
-  CommandItem,
-  CommandEmpty,
-} from "@/components/ui/command";
-import { Kbd } from "@/components/ui/kbd";
+  CommandPalette as MotionCommandPalette,
+  type CommandItem,
+} from "@/components/motion/command-palette";
 import {
   COMMANDS,
   effectiveHotkey,
@@ -21,7 +16,6 @@ import {
 } from "@/lib/hotkeys";
 import { runCommand, topCommands } from "@/lib/command-registry";
 import { runEditorAction } from "@/lib/editor-actions";
-import { cn } from "@/lib/utils";
 
 export const useCommandPalette = create<{
   open: boolean;
@@ -35,10 +29,7 @@ const EDITOR_ACTIONS: { id: string; label: string }[] = [
   { id: "editor.action.gotoLine", label: "Gehe zu Zeile/Spalte" },
   { id: "editor.action.quickOutline", label: "Symbol in Datei suchen" },
   { id: "editor.action.goToImplementation", label: "Zur Implementierung springen" },
-  {
-    id: "editor.action.referenceSearch.trigger",
-    label: "Alle Referenzen suchen",
-  },
+  { id: "editor.action.referenceSearch.trigger", label: "Alle Referenzen suchen" },
   { id: "editor.action.transformToUppercase", label: "In GROSSBUCHSTABEN umwandeln" },
   { id: "editor.action.transformToLowercase", label: "In kleinbuchstaben umwandeln" },
   { id: "editor.action.transformToTitlecase", label: "In Title Case umwandeln" },
@@ -46,13 +37,8 @@ const EDITOR_ACTIONS: { id: string; label: string }[] = [
   { id: "editor.action.transformToKebabcase", label: "In kebab-case umwandeln" },
   { id: "editor.action.sortLinesAscending", label: "Zeilen aufsteigend sortieren" },
   { id: "editor.action.sortLinesDescending", label: "Zeilen absteigend sortieren" },
-  {
-    id: "editor.action.trimTrailingWhitespace",
-    label: "Nachgestellte Leerzeichen entfernen",
-  },
+  { id: "editor.action.trimTrailingWhitespace", label: "Nachgestellte Leerzeichen entfernen" },
 ];
-
-const GROUPS = [...new Set(COMMANDS.map((c) => c.group))];
 
 function displayHotkey(binding: string) {
   if (binding === NUMPAD_ADD_HOTKEY) return `${formatForDisplay("Mod+=")} (Num)`;
@@ -63,128 +49,53 @@ export function CommandPalette() {
   const open = useCommandPalette((s) => s.open);
   const setOpen = useCommandPalette((s) => s.setOpen);
   const overrides = useHotkeySettings((s) => s.overrides);
-  const [query, setQuery] = useState("");
 
-  const frequent = useMemo(() => {
+  const items = useMemo<CommandItem[]>(() => [
+    ...COMMANDS.filter((command) => command.id !== "command.palette").map((command) => {
+      const binding = effectiveHotkey(command, overrides);
+      return {
+        id: command.id,
+        label: command.label,
+        group: command.group,
+        hint: binding ? displayHotkey(binding) : undefined,
+        onSelect: () => runCommand(command.id),
+      };
+    }),
+    ...EDITOR_ACTIONS.map((action) => ({
+      id: action.id,
+      label: action.label,
+      group: "Editor-Aktionen",
+      onSelect: () => requestAnimationFrame(() => runEditorAction(action.id)),
+    })),
+  ], [overrides]);
+
+  const featuredItems = useMemo<CommandItem[]>(() => {
     if (!open) return [];
-    const top = topCommands(5);
-    return top
-      .map((id) => COMMANDS.find((c) => c.id === id))
-      .filter((c): c is (typeof COMMANDS)[number] => Boolean(c) && c!.id !== "command.palette");
-  }, [open]);
-
-  useEffect(() => {
-    if (open) setQuery("");
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, setOpen]);
-
-  if (!open) return null;
+    return topCommands(5)
+      .map((id) => COMMANDS.find((command) => command.id === id))
+      .filter((command): command is (typeof COMMANDS)[number] => Boolean(command) && command!.id !== "command.palette")
+      .map((command) => {
+        const binding = effectiveHotkey(command, overrides);
+        return {
+          id: `freq:${command.id}`,
+          label: command.label,
+          group: "Häufig genutzt",
+          icon: Star,
+          hint: binding ? displayHotkey(binding) : undefined,
+          onSelect: () => runCommand(command.id),
+        };
+      });
+  }, [open, overrides]);
 
   return (
-    <>
-      <div
-        data-overlay
-        className="fixed inset-0 z-40 bg-background/20 backdrop-blur-[3px] animate-in fade-in-0 duration-150 motion-reduce:animate-none"
-        onMouseDown={() => setOpen(false)}
-      />
-      <div
-        className={cn(
-          "fixed inset-x-0 top-[12vh] z-50 flex justify-center px-4",
-          "animate-in fade-in-0 zoom-in-98 slide-in-from-top-2 duration-150 ease-out motion-reduce:animate-none",
-        )}
-      >
-        <div
-          className="w-full max-w-2xl overflow-hidden rounded-xl bg-popover/95 text-popover-foreground shadow-pop backdrop-blur-xl"
-          onMouseDown={(e) => e.stopPropagation()}
-        >
-          <Command loop>
-            <CommandInput
-              placeholder="Befehl eingeben…"
-              autoFocus
-              value={query}
-              onValueChange={setQuery}
-            />
-            <CommandList>
-              <CommandEmpty>
-                <span className="text-muted-foreground">Keine Ergebnisse</span>
-              </CommandEmpty>
-              {query.trim() === "" && frequent.length > 0 && (
-                <CommandGroup heading="Häufig genutzt">
-                  {frequent.map((command) => {
-                    const binding = effectiveHotkey(command, overrides);
-                    return (
-                      <CommandItem
-                        key={`freq:${command.id}`}
-                        value={`★ ${command.label}`}
-                        onSelect={() => {
-                          setOpen(false);
-                          runCommand(command.id);
-                        }}
-                      >
-                        <Star className="size-3.5 shrink-0 text-amber-500" />
-                        <span className="truncate">{command.label}</span>
-                        {binding && (
-                          <Kbd className="ml-auto h-4 px-1 text-[10px]">
-                            {displayHotkey(binding)}
-                          </Kbd>
-                        )}
-                      </CommandItem>
-                    );
-                  })}
-                </CommandGroup>
-              )}
-              {GROUPS.map((group) => (
-                <CommandGroup key={group} heading={group}>
-                  {COMMANDS.filter(
-                    (c) => c.group === group && c.id !== "command.palette",
-                  ).map((command) => {
-                    const binding = effectiveHotkey(command, overrides);
-                    return (
-                      <CommandItem
-                        key={command.id}
-                        value={command.label}
-                        onSelect={() => {
-                          setOpen(false);
-                          runCommand(command.id);
-                        }}
-                      >
-                        <span className="truncate">{command.label}</span>
-                        {binding && (
-                          <Kbd className="ml-auto h-4 px-1 text-[10px]">
-                            {displayHotkey(binding)}
-                          </Kbd>
-                        )}
-                      </CommandItem>
-                    );
-                  })}
-                </CommandGroup>
-              ))}
-              <CommandGroup heading="Editor-Aktionen">
-                {EDITOR_ACTIONS.map((action) => (
-                  <CommandItem
-                    key={action.id}
-                    value={action.label}
-                    onSelect={() => {
-                      setOpen(false);
-                      requestAnimationFrame(() => runEditorAction(action.id));
-                    }}
-                  >
-                    <span className="truncate">{action.label}</span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </div>
-      </div>
-    </>
+    <MotionCommandPalette
+      items={items}
+      featuredItems={featuredItems}
+      shortcut={null}
+      placeholder="Befehl eingeben…"
+      emptyMessage="Keine Ergebnisse"
+      open={open}
+      onOpenChange={setOpen}
+    />
   );
 }

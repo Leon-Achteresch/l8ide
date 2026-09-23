@@ -500,17 +500,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [ ] **Next Edit Suggestions**: Vorhersage der nächsten Änderung an anderer Stelle
 
-* [x] **AI-Chat**: Chat-Panel mit Agent-Loop und Workspace-Tools (list/read/search/edit/create/run_command/get_diagnostics — Letzteres liefert dem Agenten die aktuellen Fehler/Warnungen zur Selbstkorrektur ohne tsc-Lauf), OpenRouter-Streaming, tokeneffiziente History (`pruneForLlm`, Test `test:aiprune`), Datei-Anhänge; **Slash-Commands** `/explain /fix /test /review /refactor` mit Autocomplete, hängen die aktive Datei automatisch an (`chat-slash.ts`); geschätzter Token-Verbrauch der Sitzung im Chat-Header (`token-estimate.ts`, Test `test:tokest`)
-
-* [x] **Inline Chat**: ⌘I öffnet Eingabe-Widget an der Cursorposition; ersetzt Selektion bzw. fügt an Cursor ein, ±30 Zeilen Kontext, undo-fähig via executeEdits (`inline-chat.ts`); auch im Editor-Kontextmenü
-
-* [x] **Edits/Agent Mode (Basis)**: Multi-File-Änderungen autonom; jede Agent-Änderung als Karte im Chat mit Diff-Ansicht (Vorher↔Agent) und Ein-Klick-Rückgängig, neu erstellte Dateien werden beim Rückgängig gelöscht (`agent-edits.ts`); `run_command`-Tool führt Shell-Kommandos im Root aus (Trust-Gate, 60s-Timeout, Output-Cap — `exec.rs`) für Test-/Build-Selbstkorrektur
-
 * [x] **Commit-Message-Generierung**: Sparkles-Button an der Commit-Eingabe erzeugt Conventional-Commit-Message aus dem gestagten Diff (Diff auf 24k gekappt, `generateCommitMessage` in `git-store.ts`)
-
-* [x] **Chat-Kontext (Dateien)**: Dateien an die Nachricht anhängen — Chips über dem Input, „Aktive Datei" mit einem Klick, nativer Datei-Picker; Inhalt (≤16k/Datei) geht nur mit dieser einen Nachricht mit (tokeneffizient), Chips bleiben im Verlauf sichtbar; Symbole/Ordner/Bilder fehlen
-
-* [x] **Custom Instructions & Prompt-Files**: der AI-Chat lädt beim Projekt-Öffnen automatisch projektspezifische Anweisungen (Priorität: `.l8ide/instructions.md` → `.github/copilot-instructions.md` → `AGENTS.md` → `CLAUDE.md`, erste vorhandene gewinnt) und hängt sie mit Vorrang-Hinweis an den System-Prompt (auf 6000 Zeichen gekappt = tokeneffizient, einmal gecacht — `ai/custom-instructions.ts`, Injektion in `buildSystemPrompt`, Tests `test:sysprompt`). **Wiederverwendbare Prompt-Files**: Markdown-Dateien in `.l8ide/prompts/` bzw. `.github/prompts/*.prompt.md` werden zu Slash-Commands im Chat (Name = Dateiname, `description`/`attach` aus optionalem Frontmatter, `${input}`/`{{input}}`/`$ARGUMENTS`-Platzhalter oder Anhängen des Rests), erscheinen im Slash-Menü und hängen optional die aktive Datei an (`prompt-files.ts`, Test `test:promptfiles`, Scan/Dedup/Namensableitung gegen echte Dateien verifiziert)
 
 * [ ] **MCP-Support (Model Context Protocol)**: Externe Tools/Server im Agent Mode
 
@@ -562,7 +552,7 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Notifications-Center**: Glocke in der Statusbar sammelt alle Toasts (zentraler Capture, max. 100), Ungelesen-Punkt, Popover mit Verlauf/Zeit, „Alle löschen"; Do-not-disturb unterdrückt Toasts außer Fehlern, Center sammelt weiter (`notifications.ts`)
 
-* [x] **Walkthroughs / Getting Started**: Willkommensseite (⌘⌥0, beim ersten Start automatisch) mit nach Bereich gruppierten Feature-Karten (KI/Debuggen/Web/Git/Navigieren), Klick startet den jeweiligen Befehl inkl. Shortcut-Hinweis (`welcome-page.tsx`)
+* [x] **Walkthroughs / Getting Started**: Willkommensseite (⌘⌥0, beim ersten Start automatisch) mit nach Bereich gruppierten Feature-Karten (Start/Debuggen/Web/Git/Navigieren), Klick startet den jeweiligen Befehl inkl. Shortcut-Hinweis (`welcome-page.tsx`)
 
 * [x] **Screencast Mode**: ⌘⌥K toggelt Tastenanzeige — Chips unten mittig mit Modifier-Symbolen, Wiederholungszähler (×n), Spring-Ein-/Ausblendung, max. 5 gleichzeitig (`screencast-overlay.tsx`)
 
@@ -791,4 +781,3 @@ Ideen, die VS Code nicht oder nur schwach abdeckt — Kandidaten für l8ide.
 * [ ] **State-Inspektion für Frameworks**: React/Vue/Svelte-Komponentenbaum + State im Editor-Panel
 
 * [~] **Responsive-Preview**: Geräte-Presets (iPhone SE/15, Pixel 8, iPad Mini/Pro, Desktop) setzen die Browser-Panel-Breite per Dropdown; Matrix mit mehreren Viewports gleichzeitig fehlt
-

@@ -218,7 +218,6 @@ export const useGitStore = create<GitStore>()((set, get) => ({
           },
           { role: "user", content: diff.slice(0, 24000) },
         ],
-        [],
       );
       const review = (result.content ?? "").trim();
       set({ review: review || null });
@@ -256,7 +255,6 @@ export const useGitStore = create<GitStore>()((set, get) => ({
           },
           { role: "user", content: diff.slice(0, 24000) },
         ],
-        [],
       );
       const message = (result.content ?? "").trim().replace(/^["']|["']$/g, "");
       if (message) set({ commitMessage: message });

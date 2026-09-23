@@ -47,7 +47,6 @@ async function applyFix(payload: FixPayload) {
           content: `Sprache: ${textModel.getLanguageId()}\nKontext:\n${context}\n\nFehler in der markierten Zeile: ${payload.messages.join("; ")}\n\nZu korrigierende Zeile:\n${target}`,
         },
       ],
-      [],
     );
     const fixed = stripFences(result.content ?? "");
     toast.dismiss(busy);
