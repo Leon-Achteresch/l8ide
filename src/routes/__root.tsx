@@ -33,6 +33,7 @@ import { ScreencastOverlay } from "@/components/screencast-overlay";
 import { Sidebar } from "@/components/sidebar";
 import { StatusBar } from "@/components/status-bar";
 import { Toaster } from "@/components/ui/sonner";
+import { UpdateCheck } from "@/components/update-check";
 import { WorkspaceTrustBanner } from "@/components/workspace-trust-banner";
 import { useProblemsPanel } from "@/lib/markers-store";
 import { pageTab, useWorkspaceStore } from "@/lib/workspace-store";
@@ -244,6 +245,7 @@ function RootComponent() {
       <TransformPalette />
       <RegexTesterDialog />
       <Toaster />
+      <UpdateCheck />
       {RouterDevtools && (
         <Suspense fallback={null}>
           <RouterDevtools position="bottom-right" />

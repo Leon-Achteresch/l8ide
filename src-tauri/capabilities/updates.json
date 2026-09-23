@@ -1,0 +1,7 @@
+{
+  "identifier": "updates",
+  "description": "Update and restart only from the main application window",
+  "platforms": ["macOS", "windows", "linux"],
+  "windows": ["main"],
+  "permissions": ["updater:default", "process:allow-restart"]
+}
