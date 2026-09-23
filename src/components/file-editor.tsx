@@ -26,7 +26,6 @@ import { attachInlineValues } from "@/lib/inline-values";
 import { attachTestResults } from "@/lib/test-results";
 import { attachCoverage } from "@/lib/coverage";
 import { attachExplainLayer } from "@/lib/explain-layer";
-import { attachInlineChat } from "@/lib/inline-chat";
 import { trackEditorStatus } from "@/lib/status-store";
 import { registerEditorRefactors } from "@/lib/ts-refactor";
 import { useWorkspaceStore } from "@/lib/workspace-store";
@@ -227,7 +226,6 @@ export function TextEditor({
             if (target) revealInEditor(editor, target);
 
             trackEditorStatus(editor);
-            attachInlineChat(editor, monaco, path);
             attachCallHierarchy(editor);
             attachBreakpointGutter(editor, monaco, path);
             attachExplainLayer(editor, monaco, path);

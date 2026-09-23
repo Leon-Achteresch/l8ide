@@ -1,5 +1,4 @@
 import {
-  Bot,
   Bug,
   FolderGit2,
   Globe,
@@ -14,12 +13,9 @@ type Section = { icon: LucideIcon; title: string; items: Item[] };
 
 const SECTIONS: Section[] = [
   {
-    icon: Bot,
-    title: "KI",
-    items: [
-      { cmd: "chat.toggle", label: "KI-Chat", hint: "⌘L · /explain /fix /test" },
-      { cmd: "command.palette", label: "Alles finden", hint: "⌘⇧P" },
-    ],
+    icon: Sparkles,
+    title: "Start",
+    items: [{ cmd: "command.palette", label: "Alles finden", hint: "⌘⇧P" }],
   },
   {
     icon: Bug,
@@ -67,7 +63,7 @@ export function WelcomePage() {
           <h1 className="text-xl font-semibold text-foreground">l8ide</h1>
         </div>
         <p className="mt-2 text-sm text-muted-foreground">
-          Deine Umgebung für Webentwicklung — Editor, Debugger, Git und KI in
+          Deine Umgebung für Webentwicklung — Editor, Debugger und Git in
           einem. Ein Klick startet, ⌘⇧P findet alles.
         </p>
         <div className="mt-8 space-y-6">

@@ -257,7 +257,7 @@ function AiSettingsSection() {
       <div className="mt-4 flex items-center justify-between">
         <div>
           <p className="text-sm font-medium">Modell</p>
-          <p className="text-xs text-muted-foreground">Für den KI-Chat (⌘L)</p>
+          <p className="text-xs text-muted-foreground">Für KI-Funktionen im Editor und Git</p>
         </div>
         <NativeSelect
           size="sm"

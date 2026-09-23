@@ -3,7 +3,6 @@ import { AppHeader } from "@/components/app-header/app-header";
 import { AppHotkeys } from "@/components/app-hotkeys";
 import { closeBrowser } from "@/lib/browser";
 import { useBrowserStore } from "@/lib/browser-store";
-import { useChatStore } from "@/lib/chat-store";
 import { FileSearch } from "@/components/file-search";
 import { CommandPalette } from "@/components/command-palette";
 import { MonacoWorkspace } from "@/components/monaco-workspace";
@@ -56,27 +55,11 @@ const ProblemsPanel = lazy(() =>
   })),
 );
 
-const ChatPanel = lazy(() =>
-  import("@/components/chat/chat-panel").then((m) => ({
-    default: m.ChatPanel,
-  })),
-);
-
 const BrowserPanel = lazy(() =>
   import("@/components/browser/browser-panel").then((m) => ({
     default: m.BrowserPanel,
   })),
 );
-
-function ChatSlot() {
-  const open = useChatStore((s) => s.open);
-  if (!open) return null;
-  return (
-    <Suspense fallback={null}>
-      <ChatPanel />
-    </Suspense>
-  );
-}
 
 function BrowserSlot() {
   const open = useBrowserStore((s) => s.open);
@@ -169,6 +152,7 @@ function RootComponent() {
   }, [uiZoom]);
 
   useEffect(() => {
+    localStorage.removeItem("chat-store");
     if (localStorage.getItem("l8-welcomed")) return;
     localStorage.setItem("l8-welcomed", "1");
     useWorkspaceStore.getState().openFile(pageTab("/welcome"));
@@ -197,7 +181,6 @@ function RootComponent() {
                 )}
               </div>
               <BrowserSlot />
-              <ChatSlot />
             </div>
             {!zenMode && <ProblemsSlot />}
             {!zenMode && <TerminalSlot />}
