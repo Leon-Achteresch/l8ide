@@ -1,10 +1,27 @@
 import { initialize } from "monaco-editor/esm/vs/common/initialize.js";
 import { TypeScriptWorker } from "monaco-editor/esm/vs/language/typescript/tsWorker.js";
+import { typescript } from "monaco-editor/esm/vs/language/typescript/lib/typescriptServices.js";
 import type ts from "typescript";
+import { getTypeHierarchy, type TypeHierarchyDirection } from "@/lib/type-hierarchy-core";
 
 const NO_PREFERENCES: ts.UserPreferences = {};
 
 class RefactorTsWorker extends TypeScriptWorker {
+  async getTypeHierarchy(
+    fileName: string,
+    offset: number,
+    direction: TypeHierarchyDirection,
+  ) {
+    try {
+      const program = this._languageService.getProgram();
+      return program
+        ? getTypeHierarchy(typescript, program, fileName, offset, direction)
+        : { root: null, types: [] };
+    } catch {
+      return { root: null, types: [] };
+    }
+  }
+
   getScriptFileNames(): string[] {
     // Package manifests live in the virtual filesystem for module resolution,
     // but are not TypeScript source files.

@@ -90,7 +90,7 @@ Referenz für l8ide: Teil 1 listet alle Features von Visual Studio Code detailli
 
 * [x] **Call Hierarchy**: Eingehende **und ausgehende** Aufrufe als lazy expandierender Baum (Rechtsklick → „Eingehende/Ausgehende Aufrufe anzeigen", Klick springt zur Stelle; Worker `getIncomingCalls`/`getOutgoingCalls` mit Zeilenauflösung — `call-hierarchy.ts`)
 
-* [ ] **Type Hierarchy**: Vererbungshierarchie
+* [~] **Type Hierarchy**: Ober- und Untertypen für TypeScript/JavaScript-Klassen und Interfaces über Editor-Kontextmenü und Befehlspalette; lazy aufklappbarer Baum mit Sprung zur Deklaration (`type-hierarchy-core.ts`, `type-hierarchy.ts`). Sprachserver-Provider für andere Sprachen fehlen.
 
 * [x] **Sticky Scroll**: Aktuelle Scope-Header bleiben oben kleben (Monaco `stickyScroll`, abschaltbar in den Einstellungen)
 

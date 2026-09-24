@@ -49,7 +49,7 @@ Weitere relevante Workbench-Quellen:
 
 | VS-Code-Quelle | Funktion | Beobachtete Lücke in L8IDE |
 | --- | --- | --- |
-| [`typeHierarchy`](https://github.com/microsoft/vscode/tree/a61ce5554c7c573af1a80bedfd5a1c379680258c/src/vs/workbench/contrib/typeHierarchy) | Ober-/Untertypen als Peek und Baum | Im Katalog offen; kein Type-Hierarchy-Provider gefunden. |
+| [`typeHierarchy`](https://github.com/microsoft/vscode/tree/a61ce5554c7c573af1a80bedfd5a1c379680258c/src/vs/workbench/contrib/typeHierarchy) | Ober-/Untertypen als Peek und Baum | TS/JS-Klassen und Interfaces haben nun einen eigenen Hierarchie-Dialog; allgemeine Sprachserver-Provider fehlen. |
 | [`codeEditor`](https://github.com/microsoft/vscode/tree/a61ce5554c7c573af1a80bedfd5a1c379680258c/src/vs/workbench/contrib/codeEditor) | Workbench-Aktionen und Editor-Dienste | Nur einzelne Funktionen in L8IDE nachgebaut; Befehle und Einstellungen brauchen einen Einzelabgleich. |
 | [`format`](https://github.com/microsoft/vscode/tree/a61ce5554c7c573af1a80bedfd5a1c379680258c/src/vs/workbench/contrib/format) und [`codeActions`](https://github.com/microsoft/vscode/tree/a61ce5554c7c573af1a80bedfd5a1c379680258c/src/vs/workbench/contrib/codeActions) | Formatter-Auswahl, Save-Aktionen, Quick Fixes | Prettier/Biome/ESLint/TS sind integriert; fremde Extension-Provider fehlen. |
 | [`snippets`](https://github.com/microsoft/vscode/tree/a61ce5554c7c573af1a80bedfd5a1c379680258c/src/vs/workbench/contrib/snippets) und [`languageDetection`](https://github.com/microsoft/vscode/tree/a61ce5554c7c573af1a80bedfd5a1c379680258c/src/vs/workbench/contrib/languageDetection) | Snippet-Verwaltung und Sprachwahl | Eigene Snippets vorhanden; Sprach-Erkennung/-Umschaltung gesondert prüfen. |
@@ -70,7 +70,8 @@ Bereichen fest.
    Formatierung, Diagnostics und semantische Tokens prüfen. TS/JS, HTML, CSS,
    JSON und Markdown zuerst; weitere Sprachen danach.
 2. Fehlende Workbench-Editor-Funktionen einzeln implementieren, beginnend mit
-   Type Hierarchy und den prüfbaren Editor-Aktionen aus `codeEditor/browser`.
+   den prüfbaren Editor-Aktionen aus `codeEditor/browser` und der Ausweitung
+   der Type Hierarchy auf weitere Sprachen.
 3. Sprachserver- und Erweiterungsstrategie festlegen. Ohne diese Architektur
    kann L8IDE die von Extensions gelieferten Sprachfunktionen nicht 1:1 bieten.
 4. Eine versionierte Verhaltensmatrix mit konkreten Testfällen pflegen; ein

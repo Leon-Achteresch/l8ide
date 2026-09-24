@@ -18,6 +18,7 @@ import { scheduleBackup, takeBackup } from "@/lib/hot-exit";
 import { checkSecretExposure } from "@/lib/secrets-guard";
 import { attachBreakpointGutter } from "@/lib/breakpoint-gutter";
 import { attachCallHierarchy } from "@/lib/call-hierarchy";
+import { attachTypeHierarchy } from "@/lib/type-hierarchy";
 import { attachA11yLint } from "@/lib/a11y-lint";
 import { attachBookmarks } from "@/lib/bookmarks";
 import { attachMarkdownLinks } from "@/lib/markdown-links";
@@ -229,6 +230,7 @@ export function TextEditor({
             trackEditorStatus(editor);
             attachProjectDiagnostics(editor, monaco, path);
             attachCallHierarchy(editor);
+            attachTypeHierarchy(editor);
             attachBreakpointGutter(editor, monaco, path);
             attachExplainLayer(editor, monaco, path);
             attachBlameLayer(editor, monaco, path);

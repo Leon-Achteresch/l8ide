@@ -16,6 +16,7 @@ import { getMonacoInstance } from "@/lib/monaco-instance";
 import { openFileAt } from "@/lib/monaco-navigation";
 import { pathFromMonacoUri } from "@/lib/monaco-uri";
 import type { CallHierarchyNode } from "@/lib/ts-refactor";
+import { TypeHierarchyDialog } from "@/components/type-hierarchy-dialog";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
 function toPath(fileUri: string): string {
@@ -134,7 +135,7 @@ function CallNode({
   );
 }
 
-export function CallHierarchyDialog() {
+function CallHierarchyContent() {
   const root = useCallHierarchy((s) => s.root);
   const close = useCallHierarchy((s) => s.close);
   if (!root) return null;
@@ -175,4 +176,8 @@ export function CallHierarchyDialog() {
       </DialogContent>
     </Dialog>
   );
+}
+
+export function CallHierarchyDialog() {
+  return <><CallHierarchyContent /><TypeHierarchyDialog /></>;
 }

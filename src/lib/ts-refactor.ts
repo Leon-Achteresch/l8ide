@@ -13,6 +13,7 @@ import { readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
 import type * as monaco from "monaco-editor";
 import { typescript as tsLanguages } from "monaco-editor";
 import type ts from "typescript";
+import type { TypeHierarchyDirection, TypeHierarchyNode } from "@/lib/type-hierarchy-core";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -52,6 +53,11 @@ export type CallHierarchyNode = {
 };
 
 export type RefactorWorker = {
+  getTypeHierarchy(
+    fileName: string,
+    offset: number,
+    direction: TypeHierarchyDirection,
+  ): Promise<{ root: TypeHierarchyNode | null; types: TypeHierarchyNode[] }>;
   getIncomingCalls(
     fileName: string,
     offset: number,

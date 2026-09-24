@@ -18,3 +18,7 @@ declare module "monaco-editor/esm/vs/common/initialize.js" {
     callback: (ctx: unknown, createData: unknown) => unknown,
   ): void;
 }
+
+declare module "monaco-editor/esm/vs/language/typescript/lib/typescriptServices.js" {
+  export const typescript: typeof import("typescript");
+}
