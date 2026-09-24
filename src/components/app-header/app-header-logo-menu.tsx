@@ -75,9 +75,20 @@ export function AppHeaderLogoMenu() {
   const { resolvedTheme } = useTheme();
   const logoSrc =
     resolvedTheme === "dark" ? "/logo_black.png" : "/logo_white.png";
+  const closeMenu = () => {
+    setMenuOpen(false);
+    setRecentOpen(false);
+  };
+  const runAndClose = (action: () => void) => () => {
+    closeMenu();
+    action();
+  };
 
   return (<>
-    <Popover open={menuOpen} onOpenChange={setMenuOpen}>
+    <Popover open={menuOpen} onOpenChange={(open) => {
+      setMenuOpen(open);
+      if (!open) setRecentOpen(false);
+    }}>
       <PopoverTrigger
         render={
           <motion.button
@@ -125,7 +136,10 @@ export function AppHeaderLogoMenu() {
                   Automatisch speichern
                 </p>
               </div>
-              <Switch checked={autoSave} onCheckedChange={setAutoSave} />
+              <Switch checked={autoSave} onCheckedChange={(checked) => {
+                setAutoSave(checked);
+                closeMenu();
+              }} />
             </div>
 
             <AnimatePresence initial={false}>
@@ -149,7 +163,7 @@ export function AppHeaderLogoMenu() {
                           <motion.button
                             key={ms}
                             type="button"
-                            onClick={() => setAutoSaveDelay(ms)}
+                            onClick={runAndClose(() => setAutoSaveDelay(ms))}
                             whileTap={{ scale: 0.94 }}
                             transition={{
                               type: "spring",
@@ -189,23 +203,23 @@ export function AppHeaderLogoMenu() {
             <AppHeaderMenuAction
               icon={AppWindow}
               label="Neues Fenster"
-              onClick={newWindow}
+              onClick={runAndClose(newWindow)}
             />
             <AppHeaderMenuAction
               icon={FileText}
               label="Datei öffnen"
-              onClick={openFile}
+              onClick={runAndClose(openFile)}
             />
             <AppHeaderMenuAction
               icon={FolderOpen}
               label="Ordner öffnen"
               shortcut="Mod+O"
-              onClick={openFolder}
+              onClick={runAndClose(openFolder)}
             />
             {navigator.userAgent.includes("Windows") && <AppHeaderMenuAction
               icon={FolderOpen}
               label="WSL-Ordner öffnen"
-              onClick={() => { setMenuOpen(false); setWslOpen(true); }}
+              onClick={runAndClose(() => setWslOpen(true))}
             />}
             <motion.button
               type="button"
@@ -251,7 +265,7 @@ export function AppHeaderLogoMenu() {
                         delay: index * 0.035,
                       }}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => setRootPath(path)}
+                      onClick={runAndClose(() => setRootPath(path))}
                       title={path}
                       className="flex w-full items-center gap-2 rounded-md py-1 pr-2 pl-8 text-left text-muted-foreground transition-colors duration-150 hover:bg-foreground/8 hover:text-foreground"
                     >
@@ -273,19 +287,19 @@ export function AppHeaderLogoMenu() {
               icon={Save}
               label="Speichern"
               shortcut="Mod+S"
-              onClick={() => void formatAndSaveActive()}
+              onClick={runAndClose(() => void formatAndSaveActive())}
             />
             <AppHeaderMenuAction
               icon={Undo2}
               label="Rückgängig"
               shortcut="Mod+Z"
-              onClick={undoActive}
+              onClick={runAndClose(undoActive)}
             />
             <AppHeaderMenuAction
               icon={Redo2}
               label="Wiederholen"
               shortcut="Mod+Shift+Z"
-              onClick={redoActive}
+              onClick={runAndClose(redoActive)}
             />
           </motion.div>
 
@@ -297,19 +311,19 @@ export function AppHeaderLogoMenu() {
               icon={Minimize2}
               label="Zen-Modus"
               shortcut="Mod+Alt+Z"
-              onClick={() => useViewStore.getState().toggleZen()}
+              onClick={runAndClose(() => useViewStore.getState().toggleZen())}
             />
             <AppHeaderMenuAction
               icon={AlignCenter}
               label="Zentriertes Layout"
               shortcut="Mod+Alt+C"
-              onClick={() => useViewStore.getState().toggleCentered()}
+              onClick={runAndClose(() => useViewStore.getState().toggleCentered())}
             />
             <AppHeaderMenuAction
               icon={Maximize2}
               label="Vollbild"
               shortcut="F11"
-              onClick={toggleFullscreen}
+              onClick={runAndClose(toggleFullscreen)}
             />
           </motion.div>
         </motion.div>
