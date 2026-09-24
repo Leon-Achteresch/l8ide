@@ -1,7 +1,7 @@
 import { readDir, readTextFile } from "@tauri-apps/plugin-fs";
 import * as monaco from "monaco-editor";
 import { typescript as ts } from "monaco-editor";
-import { monacoUriForPath } from "@/lib/monaco-uri";
+import { monacoDeclarationUriForPath } from "@/lib/monaco-uri";
 import { importedPackages, packageNameFromSpecifier, typePackageName } from "@/lib/monaco-declarations-core";
 
 export { importedPackages } from "@/lib/monaco-declarations-core";
@@ -72,7 +72,7 @@ export class MonacoDeclarations {
 
   private register(path: string, content: string) {
     if (this.disposed || this.loadedFiles.has(path) || this.loadedFiles.size >= MAX_FILES || this.totalChars + content.length > MAX_TOTAL_CHARS) return;
-    const uri = monacoUriForPath(path).toString();
+    const uri = monacoDeclarationUriForPath(path);
     this.loadedFiles.set(path, [
       ts.typescriptDefaults.addExtraLib(content, uri),
       ts.javascriptDefaults.addExtraLib(content, uri),

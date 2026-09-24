@@ -5,6 +5,12 @@ export function monacoUriForPath(path: string): monaco.Uri {
   return URI.parse(path);
 }
 
+export function monacoDeclarationUriForPath(path: string): string {
+  // TypeScript appends literal package names while resolving node_modules.
+  // Monaco URI serialization escapes scoped names such as @types to %40types.
+  return monacoUriForPath(path).toString().replace(/(\/node_modules\/)%40/gi, "$1@");
+}
+
 export function pathFromMonacoUri(uri: monaco.Uri): string {
   if (uri.scheme === "file") {
     return uri.fsPath;

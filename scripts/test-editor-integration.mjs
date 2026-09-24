@@ -3,6 +3,7 @@ import { parseTsconfigJson } from "../src/lib/tsconfig-core.ts";
 import { parseBiomeDiagnostics, parseBiomeFindings, parseEslintDiagnostics, parseEslintFindings } from "../src/lib/project-diagnostics-core.ts";
 import { preferredScript, scriptCommand } from "../src/lib/run-scripts.ts";
 import { importedPackages, packageNameFromSpecifier, typePackageName } from "../src/lib/monaco-declarations-core.ts";
+import { monacoDeclarationUriForPath, monacoUriForPath } from "../src/lib/monaco-uri.ts";
 import { TypeScriptWorker } from "../node_modules/monaco-editor/esm/vs/language/typescript/tsWorker.js";
 import { typescript as ts } from "../node_modules/monaco-editor/esm/vs/language/typescript/lib/typescriptServices.js";
 
@@ -30,6 +31,20 @@ const unresolved = new TypeScriptWorker({ getMirrorModels: () => [model] }, {
   extraLibs: {},
 });
 assert.ok((await unresolved.getSemanticDiagnostics(fileName)).some((diagnostic) => diagnostic.code === 2307));
+
+const jsxRoot = "/workspace/my project";
+const jsxFile = monacoUriForPath(`${jsxRoot}/src/App.tsx`).toString();
+const jsxDeclaration = monacoDeclarationUriForPath(`${jsxRoot}/node_modules/@types/react/jsx-runtime.d.ts`);
+assert.equal(jsxDeclaration, "file:///workspace/my%20project/node_modules/@types/react/jsx-runtime.d.ts");
+const jsxWorker = new TypeScriptWorker({ getMirrorModels: () => [{
+  uri: { toString: () => jsxFile, path: `${jsxRoot}/src/App.tsx` },
+  version: 1,
+  getValue: () => "export const App = () => <div />;",
+}] }, {
+  compilerOptions: { moduleResolution: ts.ModuleResolutionKind.NodeJs, module: ts.ModuleKind.ESNext, jsx: ts.JsxEmit.ReactJSX },
+  extraLibs: { [jsxDeclaration]: { content: "export namespace JSX { interface Element {} interface IntrinsicElements { div: {}; } }", version: 1 } },
+});
+assert.ok(!(await jsxWorker.getSemanticDiagnostics(jsxFile)).some((diagnostic) => diagnostic.code === 2875));
 
 const config = parseTsconfigJson(`{
   // URLs and comment-like text inside strings must survive.
