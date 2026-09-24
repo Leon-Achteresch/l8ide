@@ -7,7 +7,8 @@ import {
   useMemo,
   useDeferredValue,
 } from "react";
-import { AtSign, CornerDownRight, File, Hash, HelpCircle } from "lucide-react";
+import { AtSign, CornerDownRight, File, Hash, HelpCircle, Search, ArrowUp, CornerDownLeft } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   Command,
   CommandInput,
@@ -18,7 +19,8 @@ import {
 } from "@/components/ui/command";
 import { isPageTab, useWorkspaceStore } from "@/lib/workspace-store";
 import { fileIcon } from "@/lib/file-icons";
-import { filterFiles, useFileIndexStore } from "@/lib/file-index";
+import { useFileIndexStore } from "@/lib/file-index";
+import { recordFileChoice, recordFileQuery, suggestFiles } from "@/lib/file-suggestions";
 import { openFileAt } from "@/lib/monaco-navigation";
 import {
   flattenOutline,
@@ -28,7 +30,7 @@ import {
 } from "@/lib/outline";
 import { getWorkspaceSymbols, type WorkspaceSymbol } from "@/lib/workspace-symbols";
 import { create } from "zustand";
-import { cn } from "@/lib/utils";
+import { EASE_OUT } from "@/lib/ease";
 
 const useFileSearchStore = create<{
   open: boolean;
@@ -75,14 +77,17 @@ export function FileSearch() {
   const hiddenNames = useWorkspaceStore((s) => s.hiddenNames);
   const workspaceHidden = useWorkspaceStore((s) => s.workspaceHidden);
   const tabs = useWorkspaceStore((s) => s.tabs);
+  const pinned = useWorkspaceStore((s) => s.pinned);
   const activeFile = useWorkspaceStore((s) => s.activeFile);
   const files = useFileIndexStore((s) => s.files);
+  const indexedRoot = useFileIndexStore((s) => s.rootPath);
   const loading = useFileIndexStore((s) => s.loading);
   const ensureIndex = useFileIndexStore((s) => s.ensureIndex);
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
   const [fileSymbols, setFileSymbols] = useState<OutlineNode[]>([]);
   const [wsSymbols, setWsSymbols] = useState<WorkspaceSymbol[]>([]);
+  const reduce = useReducedMotion();
 
   const mode = modeOf(deferredQuery);
   const term = mode === "file" ? deferredQuery : deferredQuery.slice(1);
@@ -90,6 +95,12 @@ export function FileSearch() {
   useEffect(() => {
     setQuery(open ? prefill : "");
   }, [open, prefill]);
+
+  useEffect(() => {
+    if (!open || modeOf(query) !== "file" || query.trim().length < 2) return;
+    const timer = setTimeout(() => recordFileQuery(rootPath, query), 900);
+    return () => clearTimeout(timer);
+  }, [open, rootPath, query]);
 
   useEffect(() => {
     if (!rootPath) return;
@@ -138,8 +149,8 @@ export function FileSearch() {
   }, [open, mode, term]);
 
   const fileResults = useMemo(
-    () => (mode === "file" ? filterFiles(files, deferredQuery, tabs) : []),
-    [mode, files, deferredQuery, tabs],
+    () => (mode === "file" && indexedRoot === rootPath ? suggestFiles(files, deferredQuery, { root: rootPath, tabs, pinned, activeFile }) : []),
+    [mode, files, deferredQuery, rootPath, indexedRoot, tabs, pinned, activeFile, open],
   );
 
   const symbolResults = useMemo(() => {
@@ -159,39 +170,45 @@ export function FileSearch() {
 
   const openFile = useCallback(
     (path: string) => {
+      recordFileChoice(rootPath, path, query);
       useWorkspaceStore.getState().openFile(path);
       close();
     },
-    [close],
+    [close, rootPath, query],
   );
 
-  if (!open) return null;
-
   return (
-    <>
-      <div
+    <AnimatePresence initial={false}>
+      {open && <>
+      <motion.div
         data-overlay
-        className="fixed inset-0 z-40"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        transition={{ duration: reduce ? 0 : 0.16 }}
+        className="fixed inset-0 z-40 bg-background/10 backdrop-blur-sm"
         onMouseDown={() => setOpen(false)}
       />
-      <div
-        className={cn(
-          "fixed inset-x-0 top-10 z-50 flex justify-center px-4",
-          "animate-in fade-in-0 slide-in-from-top-1 duration-100",
-        )}
+      <motion.div
+        initial={{ opacity: 0, y: reduce ? 0 : -10, scale: reduce ? 1 : 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: reduce ? 0 : -6, scale: reduce ? 1 : 0.98 }}
+        transition={{ duration: reduce ? 0 : 0.2, ease: EASE_OUT }}
+        className="pointer-events-none fixed inset-x-0 top-[12vh] z-50 flex justify-center px-4"
       >
         <div
-          className="w-full max-w-2xl overflow-hidden rounded-b-lg border-b bg-popover text-popover-foreground shadow-2xl ring-1 ring-foreground/10"
+          className="pointer-events-auto w-full max-w-2xl overflow-hidden rounded-2xl border bg-popover text-popover-foreground shadow-2xl ring-1 ring-foreground/5"
           onMouseDown={(e) => e.stopPropagation()}
         >
-          <Command shouldFilter={false} loop>
+          <Command shouldFilter={false} loop className="p-2">
+            <div className="flex items-center gap-2 px-3 pt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              <Search className="size-3" /> Schnell öffnen <span className="ml-auto font-normal normal-case tracking-normal">@ Datei · # Projekt · : Zeile · ? Hilfe</span>
+            </div>
             <CommandInput
               placeholder={MODE_PLACEHOLDER[mode]}
               autoFocus
               value={query}
               onValueChange={setQuery}
             />
-            <CommandList>
+            <CommandList className="max-h-[58vh]">
               <CommandEmpty>
                 <span className="text-muted-foreground">
                   {loading && files.length === 0
@@ -201,7 +218,7 @@ export function FileSearch() {
               </CommandEmpty>
 
               {mode === "file" && (
-                <CommandGroup>
+                <CommandGroup heading={term.trim() ? "Dateien" : "Vorgeschlagen für dieses Projekt"}>
                   {fileResults.map((file) => {
                     const name = file.split("/").pop() ?? file;
                     const dir = file.slice(0, file.lastIndexOf("/"));
@@ -218,8 +235,8 @@ export function FileSearch() {
                           <File className="size-4 shrink-0 text-muted-foreground" />
                         )}
                         <span className="truncate">{name}</span>
-                        <span className="ml-auto truncate text-xs text-muted-foreground">
-                          {dir}
+                        <span className="ml-auto max-w-[55%] truncate text-xs text-muted-foreground">
+                          {rootPath && dir.startsWith(rootPath) ? dir.slice(rootPath.length).replace(/^\//, "") || "." : dir}
                         </span>
                       </CommandItem>
                     );
@@ -329,8 +346,13 @@ export function FileSearch() {
               )}
             </CommandList>
           </Command>
+          <div className="flex items-center justify-between border-t px-4 py-2 text-[11px] text-muted-foreground">
+            <span>{mode === "file" ? `${fileResults.length} Dateien` : MODE_PLACEHOLDER[mode]}</span>
+            <span className="flex items-center gap-2"><ArrowUp className="size-3" /> ↓ Navigieren <CornerDownLeft className="size-3" /> Öffnen</span>
+          </div>
         </div>
-      </div>
-    </>
+      </motion.div>
+      </>}
+    </AnimatePresence>
   );
 }

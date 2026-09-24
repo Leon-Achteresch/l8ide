@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
-import { Star } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { File, Star } from "lucide-react";
 import { formatForDisplay } from "@tanstack/react-hotkeys";
 import { create } from "zustand";
 import {
@@ -16,6 +16,10 @@ import {
 } from "@/lib/hotkeys";
 import { runCommand, topCommands } from "@/lib/command-registry";
 import { runEditorAction } from "@/lib/editor-actions";
+import { useWorkspaceStore } from "@/lib/workspace-store";
+import { useFileIndexStore } from "@/lib/file-index";
+import { suggestFiles, recordFileChoice, recordFileQuery } from "@/lib/file-suggestions";
+import { fileIcon } from "@/lib/file-icons";
 
 export const useCommandPalette = create<{
   open: boolean;
@@ -49,6 +53,45 @@ export function CommandPalette() {
   const open = useCommandPalette((s) => s.open);
   const setOpen = useCommandPalette((s) => s.setOpen);
   const overrides = useHotkeySettings((s) => s.overrides);
+  const [query, setQuery] = useState("");
+  const root = useWorkspaceStore((s) => s.rootPath);
+  const tabs = useWorkspaceStore((s) => s.tabs);
+  const pinned = useWorkspaceStore((s) => s.pinned);
+  const activeFile = useWorkspaceStore((s) => s.activeFile);
+  const hiddenNames = useWorkspaceStore((s) => s.hiddenNames);
+  const workspaceHidden = useWorkspaceStore((s) => s.workspaceHidden);
+  const files = useFileIndexStore((s) => s.files);
+  const indexedRoot = useFileIndexStore((s) => s.rootPath);
+  const ensureIndex = useFileIndexStore((s) => s.ensureIndex);
+
+  useEffect(() => {
+    if (open && root) ensureIndex(root, hiddenNames, workspaceHidden[root] ?? []);
+  }, [open, root, hiddenNames, workspaceHidden, ensureIndex]);
+
+  useEffect(() => {
+    if (!open || query.trim().length < 2) return;
+    const timer = setTimeout(() => recordFileQuery(root, query), 900);
+    return () => clearTimeout(timer);
+  }, [open, root, query]);
+
+  const fileItems = useMemo<CommandItem[]>(() => {
+    if (!open || !root || indexedRoot !== root) return [];
+    return suggestFiles(files, query, { root, tabs, pinned, activeFile, limit: query.trim() ? 16 : 6 })
+      .map((path) => {
+        const name = path.slice(path.lastIndexOf("/") + 1);
+        return {
+          id: `file:${path}`,
+          label: name,
+          description: path.slice(root.length).replace(/^\//, "") || path,
+          group: query.trim() ? "Dateien" : "Für dich",
+          icon: fileIcon(name) ?? File,
+          onSelect: () => {
+            recordFileChoice(root, path, query);
+            useWorkspaceStore.getState().openFile(path);
+          },
+        };
+      });
+  }, [open, root, indexedRoot, files, query, tabs, pinned, activeFile]);
 
   const items = useMemo<CommandItem[]>(() => [
     ...COMMANDS.filter((command) => command.id !== "command.palette").map((command) => {
@@ -90,9 +133,11 @@ export function CommandPalette() {
   return (
     <MotionCommandPalette
       items={items}
-      featuredItems={featuredItems}
+      featuredItems={[...fileItems, ...featuredItems]}
+      searchItems={query.trim() ? fileItems : []}
+      onQueryChange={setQuery}
       shortcut={null}
-      placeholder="Befehl eingeben…"
+      placeholder="Datei, Befehl oder Aktion suchen…"
       emptyMessage="Keine Ergebnisse"
       open={open}
       onOpenChange={setOpen}

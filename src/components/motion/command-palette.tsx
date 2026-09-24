@@ -2,8 +2,9 @@
 // beui.dev/components/blocks/command-palette
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { Search, type LucideIcon } from "lucide-react";
+import { Search, ArrowUp, CornerDownLeft } from "lucide-react";
 import {
+  type ComponentType,
   type ReactNode,
   useCallback,
   useEffect,
@@ -27,8 +28,9 @@ export type CommandItem = {
   group?: string;
   hint?: string;
   keywords?: string[];
-  icon?: LucideIcon;
+  icon?: ComponentType<{ className?: string }>;
   badge?: ReactNode;
+  description?: string;
   onSelect: () => void;
 };
 
@@ -36,6 +38,8 @@ export interface CommandPaletteProps {
   items: CommandItem[];
   /** Shown before the full list only while the search is empty. */
   featuredItems?: CommandItem[];
+  searchItems?: CommandItem[];
+  onQueryChange?: (query: string) => void;
   /** Opens with Cmd/Ctrl + this key. Default: "k" */
   shortcut?: string | null;
   placeholder?: string;
@@ -56,6 +60,8 @@ const PANEL_SPRING = {
 export function CommandPalette({
   items,
   featuredItems = [],
+  searchItems = [],
+  onQueryChange,
   shortcut = "k",
   placeholder = "Type a command or search…",
   emptyMessage = "No results found.",
@@ -116,8 +122,8 @@ export function CommandPalette({
   }, [open]);
 
   const filtered = useMemo(
-    () => query.trim() ? searchCommands(items, query) : [...featuredItems, ...items],
-    [featuredItems, items, query],
+    () => query.trim() ? [...searchItems, ...searchCommands(items, query)] : [...featuredItems, ...items],
+    [featuredItems, items, query, searchItems],
   );
 
   // Reserve the icon column only when at least one item brings an icon, so
@@ -149,6 +155,10 @@ export function CommandPalette({
     setQuery("");
     moveTo(null);
   });
+
+  useEffect(() => {
+    if (open) onQueryChange?.("");
+  }, [open, onQueryChange]);
 
   useEffect(() => {
     if (!open) return;
@@ -221,7 +231,7 @@ export function CommandPalette({
             // `inert` alone rather than the gate's pointer-events value.
             <div
               inert={!isPresent}
-              className="pointer-events-none fixed inset-x-4 bottom-4 top-[18vh] z-[100] flex items-start justify-center"
+              className="pointer-events-none fixed inset-x-4 bottom-4 top-[12vh] z-[100] flex items-start justify-center"
             >
               <motion.div
                 role="dialog"
@@ -242,14 +252,17 @@ export function CommandPalette({
                 transition={reduce ? { duration: 0.1 } : PANEL_SPRING}
                 {...gate}
                 onKeyDown={onKeyDown}
-                className="pointer-events-auto w-full max-w-xl overflow-hidden rounded-2xl border border-border bg-card shadow-2xl will-change-transform"
+                className="pointer-events-auto w-full max-w-2xl overflow-hidden rounded-2xl border border-border bg-popover text-popover-foreground shadow-2xl ring-1 ring-foreground/5 will-change-transform"
               >
-                <div className="flex items-center gap-3 border-b border-border px-4">
-                  <Search className="h-4 w-4 text-muted-foreground" />
+                <div className="flex items-center gap-3 border-b border-border px-5">
+                  <Search className="h-5 w-5 text-muted-foreground" />
                   <input
                     ref={inputRef}
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={(e) => {
+                      setQuery(e.target.value);
+                      onQueryChange?.(e.target.value);
+                    }}
                     placeholder={placeholder}
                     role="combobox"
                     // The field only exists while the palette is open.
@@ -260,7 +273,7 @@ export function CommandPalette({
                     }
                     aria-autocomplete="list"
                     className={cn(
-                      "h-12 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none",
+                      "h-14 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none",
                       // The palette focuses this field the moment it opens, and iOS
                       // zooms the page in on a focused field under 16px: the fixed
                       // overlay is magnified off-center — clipped leading edge, half
@@ -278,7 +291,7 @@ export function CommandPalette({
                   id={`${uid}-list`}
                   role="listbox"
                   aria-label="Commands"
-                  className="max-h-[60vh] overflow-y-auto overscroll-contain p-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                  className="max-h-[58vh] overflow-y-auto overscroll-contain p-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 >
                   {rows.length === 0 ? (
                     <div className="p-8 text-center text-sm text-muted-foreground">
@@ -286,10 +299,10 @@ export function CommandPalette({
                     </div>
                   ) : (
                     grouped.map(([group, list]) => (
-                      <div key={group} className="mb-1 last:mb-0">
+                      <div key={group} className="mb-2 last:mb-0">
                         <div
                           aria-hidden
-                          className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
+                          className="px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground"
                         >
                           {group}
                         </div>
@@ -312,7 +325,7 @@ export function CommandPalette({
                                 it.onSelect();
                               }}
                               className={cn(
-                                "relative isolate flex w-full items-center gap-3 rounded-md px-2 py-2 text-left text-sm transition-colors",
+                                "relative isolate flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors",
                                 isActive
                                   ? "text-foreground"
                                   : "text-muted-foreground",
@@ -321,7 +334,7 @@ export function CommandPalette({
                               {isActive ? (
                                 <motion.span
                                   layoutId={`${uid}-active`}
-                                  className="absolute inset-0 z-0 rounded-md bg-muted/60"
+                                  className="absolute inset-0 z-0 rounded-lg bg-accent/80"
                                   transition={
                                     reduce
                                       ? { duration: 0 }
@@ -340,8 +353,9 @@ export function CommandPalette({
                               ) : hasIcons ? (
                                 <span className="relative z-10 h-4 w-4" />
                               ) : null}
-                              <span className="relative z-10 flex-1 truncate">
-                                {it.label}
+                              <span className="relative z-10 flex min-w-0 flex-1 flex-col gap-0.5">
+                                <span className="truncate">{it.label}</span>
+                                {it.description ? <span className="truncate text-xs text-muted-foreground">{it.description}</span> : null}
                               </span>
                               {it.badge ? (
                                 <span className="relative z-10 shrink-0">
@@ -359,6 +373,10 @@ export function CommandPalette({
                       </div>
                     ))
                   )}
+                </div>
+                <div className="flex items-center justify-between border-t border-border px-4 py-2 text-[11px] text-muted-foreground">
+                  <span>{query.trim() ? `${rows.length} Treffer` : "Befehle und Dateien durchsuchen"}</span>
+                  <span className="flex items-center gap-2"><ArrowUp className="size-3" /> ↓ Navigieren <CornerDownLeft className="size-3" /> Öffnen</span>
                 </div>
               </motion.div>
             </div>
