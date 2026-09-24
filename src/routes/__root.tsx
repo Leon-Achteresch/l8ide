@@ -27,6 +27,7 @@ import { ScriptPalette } from "@/components/script-palette";
 import { TransformPalette } from "@/components/transform-palette";
 import { RegexTesterDialog } from "@/components/regex-tester-dialog";
 import { ClipboardHistoryDialog } from "@/components/clipboard-history-dialog";
+import { ConfirmationDialog } from "@/components/confirmation-dialog";
 import { WorkContextsDialog } from "@/components/work-contexts-dialog";
 import { ScreencastOverlay } from "@/components/screencast-overlay";
 import { Sidebar } from "@/components/sidebar";
@@ -221,6 +222,7 @@ function RootComponent() {
       </div>
       {zenMode && <ZenExit />}
       <RefactorDialogs />
+      <ConfirmationDialog />
       <LocalHistoryDialog />
       <ClipboardHistoryDialog />
       <CallHierarchyDialog />

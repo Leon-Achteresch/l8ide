@@ -11,6 +11,17 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { Tag } from "@/components/ui/tag";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
 import { useGitStore } from "@/lib/git-store";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 
@@ -50,6 +61,8 @@ async function refresh() {
 export function GitHistoryPage() {
   const rootPath = useWorkspaceStore((s) => s.rootPath);
   const [commits, setCommits] = useState<Commit[] | null>(null);
+  const [tagCommit, setTagCommit] = useState<Commit | null>(null);
+  const [tagName, setTagName] = useState("");
 
   const load = () => {
     const root = rootPath?.replace(/\/+$/, "");
@@ -98,6 +111,37 @@ export function GitHistoryPage() {
 
   return (
     <div className="h-full overflow-auto">
+      <AlertDialog open={!!tagCommit} onOpenChange={(open) => { if (!open) setTagCommit(null); }}>
+        <AlertDialogContent>
+          <form onSubmit={(event) => {
+            event.preventDefault();
+            const name = tagName.trim();
+            if (!name || !tagCommit) return;
+            void run("Tag erstellt", () => invoke("git_tag_commit", {
+              path: root,
+              name,
+              commit: tagCommit.hash,
+            }));
+            setTagCommit(null);
+          }}>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Tag erstellen</AlertDialogTitle>
+              <AlertDialogDescription>Tag-Name für {tagCommit?.short_hash}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <Input
+              autoFocus
+              aria-label="Tag-Name"
+              value={tagName}
+              onChange={(event) => setTagName(event.target.value)}
+              className="my-5"
+            />
+            <AlertDialogFooter>
+              <AlertDialogCancel type="button" onClick={() => setTagCommit(null)}>Abbrechen</AlertDialogCancel>
+              <AlertDialogAction type="submit" disabled={!tagName.trim()}>Tag erstellen</AlertDialogAction>
+            </AlertDialogFooter>
+          </form>
+        </AlertDialogContent>
+      </AlertDialog>
       <div className="mx-auto max-w-3xl px-4 py-4">
         <div className="mb-3 flex items-center gap-2">
           <GitCommit className="size-4 text-muted-foreground" />
@@ -205,15 +249,8 @@ export function GitHistoryPage() {
                 <ContextMenuSeparator />
                 <ContextMenuItem
                   onClick={() => {
-                    const name = prompt(`Tag-Name für ${c.short_hash}:`);
-                    if (name?.trim())
-                      void run("Tag erstellt", () =>
-                        invoke("git_tag_commit", {
-                          path: root,
-                          name: name.trim(),
-                          commit: c.hash,
-                        }),
-                      );
+                    setTagName("");
+                    setTagCommit(c);
                   }}
                 >
                   Tag auf diesen Commit

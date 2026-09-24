@@ -45,7 +45,7 @@ import {
 	useDroppable,
 } from "@dnd-kit/react";
 import { getCurrentWebview } from "@tauri-apps/api/webview";
-import { confirm } from "@tauri-apps/plugin-dialog";
+import { confirmAlert } from "@/lib/confirm-alert";
 import {
 	copyFile,
 	exists,
@@ -209,10 +209,7 @@ async function deletePaths(paths: string[]) {
 		targets.length === 1
 			? `„${basename(targets[0])}“`
 			: `${targets.length} Elemente`;
-	const ok = await confirm(`${label} wirklich löschen?`, {
-		title: "Löschen",
-		kind: "warning",
-	});
+	const ok = await confirmAlert(`${label} wirklich löschen?`, "Löschen", "Löschen");
 	if (!ok) return;
 	const affected = new Set<string>();
 	const deleted: string[] = [];
@@ -562,9 +559,9 @@ const TreeNode = memo(function TreeNode({
 		const dest = `${parentDir(entry.path)}/${name}`;
 		try {
 			if (await exists(dest)) {
-				const ok = await confirm(
+				const ok = await confirmAlert(
 					`„${name}“ existiert bereits in diesem Ordner. Ersetzen?`,
-					{ title: "Ersetzen", kind: "warning" },
+					"Ersetzen", "Ersetzen",
 				);
 				if (!ok) return;
 				await remove(dest, { recursive: true });
@@ -1036,9 +1033,9 @@ export function FileTree({ rootPath }: { rootPath: string }) {
 				try {
 					if (await exists(dest)) {
 						dlog("conflict — asking to replace", dest);
-						const ok = await confirm(
+						const ok = await confirmAlert(
 							`„${basename(src)}“ existiert bereits in diesem Ordner. Ersetzen?`,
-							{ title: "Ersetzen", kind: "warning" },
+							"Ersetzen", "Ersetzen",
 						);
 						if (!ok) {
 							dlog("replace declined", dest);
