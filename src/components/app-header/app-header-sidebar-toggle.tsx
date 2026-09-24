@@ -1,7 +1,7 @@
-import { SvgPathMorphing } from "@/blocks/svg-path-morphing";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/lib/workspace-store";
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen } from "lucide";
+import { MorphIcon } from "morphicons/react";
 
 export function AppHeaderSidebarToggle() {
   const sidebarOpen = useWorkspaceStore((s) => s.sidebarOpen);
@@ -19,12 +19,11 @@ export function AppHeaderSidebarToggle() {
         sidebarOpen && "text-foreground",
       )}
     >
-      <SvgPathMorphing
+      <MorphIcon
         size={16}
         strokeWidth={2}
-        isOpen={sidebarOpen}
-        openIcon={PanelLeftClose}
-        closedIcon={PanelLeftOpen}
+        icon={sidebarOpen ? PanelLeftClose : PanelLeftOpen}
+        reducedMotion="user"
       />
     </button>
   );

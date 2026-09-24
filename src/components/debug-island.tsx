@@ -3,14 +3,13 @@ import {
   ArrowDownToDot,
   ArrowUpFromDot,
   Bug,
-  ChevronRight,
   Eye,
-  Pause,
-  Play,
   Redo2,
   X,
   Zap,
 } from "lucide-react";
+import { Pause, Play, Eye as EyeData, EyeOff, ChevronDown, ChevronRight as ChevronRightData } from "lucide";
+import { MorphIcon } from "morphicons/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { SPRING_LAYOUT } from "@/lib/ease";
@@ -67,13 +66,7 @@ function VarRow({ node, depth }: { node: VarNodeData; depth: number }) {
       >
         {node.objectId && depth < 4 ? (
           <button type="button" onClick={() => void expand()} className="shrink-0">
-            <motion.span
-              animate={{ rotate: open ? 90 : 0 }}
-              transition={{ type: "spring", stiffness: 500, damping: 32 }}
-              className="block"
-            >
-              <ChevronRight className="size-3 text-background/50" />
-            </motion.span>
+            <MorphIcon icon={open ? ChevronDown : ChevronRightData} className="size-3 text-background/50" reducedMotion="user" />
           </button>
         ) : (
           <span className="w-3 shrink-0" />
@@ -200,15 +193,9 @@ export function DebugIsland() {
                 ? "Pausiert"
                 : "Läuft"}
           </span>
-          {paused ? (
-            <button type="button" title="Fortsetzen (Continue)" onClick={dbg.resume} className={BTN}>
-              <Play className="size-3.5" />
-            </button>
-          ) : (
-            <button type="button" title="Pausieren" onClick={dbg.pause} className={BTN}>
-              <Pause className="size-3.5" />
-            </button>
-          )}
+          <button type="button" title={paused ? "Fortsetzen (Continue)" : "Pausieren"} onClick={paused ? dbg.resume : dbg.pause} className={BTN}>
+            <MorphIcon icon={paused ? Play : Pause} className="size-3.5" reducedMotion="user" />
+          </button>
           <button type="button" title="Step Over" onClick={dbg.stepOver} disabled={!paused} className={BTN}>
             <Redo2 className="size-3.5" />
           </button>
@@ -225,12 +212,7 @@ export function DebugIsland() {
               onClick={() => setStackOpen((v) => !v)}
               className={cn(BTN, "w-auto gap-0.5 px-1.5 text-[10px] font-medium")}
             >
-              <motion.span
-                animate={{ rotate: stackOpen ? 90 : 0 }}
-                transition={{ type: "spring", stiffness: 500, damping: 32 }}
-              >
-                <ChevronRight className="size-3" />
-              </motion.span>
+              <MorphIcon icon={stackOpen ? ChevronDown : ChevronRightData} className="size-3" reducedMotion="user" />
               Stack {frames.length}
             </button>
           )}
@@ -241,12 +223,7 @@ export function DebugIsland() {
               onClick={() => setVarsOpen((v) => !v)}
               className={cn(BTN, "w-auto gap-0.5 px-1.5 text-[10px] font-medium")}
             >
-              <motion.span
-                animate={{ rotate: varsOpen ? 90 : 0 }}
-                transition={{ type: "spring", stiffness: 500, damping: 32 }}
-              >
-                <ChevronRight className="size-3" />
-              </motion.span>
+              <MorphIcon icon={varsOpen ? ChevronDown : ChevronRightData} className="size-3" reducedMotion="user" />
               Vars {variables.length}
             </button>
           )}
@@ -256,7 +233,7 @@ export function DebugIsland() {
             onClick={() => setWatchOpen((v) => !v)}
             className={cn(BTN, watchOpen && "text-background")}
           >
-            <Eye className="size-3.5" />
+            <MorphIcon icon={watchOpen ? EyeData : EyeOff} className="size-3.5" reducedMotion="user" />
           </button>
           <button
             type="button"

@@ -3,9 +3,9 @@ import { fileIcon } from "@/lib/file-icons";
 import { openFileAt } from "@/lib/monaco-navigation";
 import { useSearchStore, type FileMatches } from "@/lib/search-store";
 import { cn } from "@/lib/utils";
+import { ChevronDown, ChevronRight } from "lucide";
+import { MorphIcon } from "morphicons/react";
 import {
-  ChevronDown,
-  ChevronRight,
   File,
   Replace,
   ReplaceAll,
@@ -49,11 +49,7 @@ export function SearchFileGroup({
           onClick={() => toggleCollapsed(file.path)}
           className="flex min-w-0 flex-1 items-start gap-1.5 py-0.5 pl-0.5 text-left"
         >
-          {collapsed ? (
-            <ChevronRight className="mt-0.5 size-3 shrink-0 text-muted-foreground" />
-          ) : (
-            <ChevronDown className="mt-0.5 size-3 shrink-0 text-muted-foreground" />
-          )}
+          <MorphIcon icon={collapsed ? ChevronRight : ChevronDown} className="mt-0.5 size-3 shrink-0 text-muted-foreground" reducedMotion="user" />
           <Icon className="mt-0.5 size-3.5 shrink-0 opacity-80" />
           <span className="min-w-0 flex-1">
             <span className="block truncate text-xs font-medium leading-tight">

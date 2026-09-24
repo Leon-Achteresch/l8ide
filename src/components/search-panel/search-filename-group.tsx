@@ -1,7 +1,9 @@
 import { fileIcon } from "@/lib/file-icons";
 import { useWorkspaceStore } from "@/lib/workspace-store";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronRight, File } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide";
+import { File } from "lucide-react";
+import { MorphIcon } from "morphicons/react";
 import { useState } from "react";
 
 export function SearchFilenameGroup({
@@ -24,11 +26,7 @@ export function SearchFilenameGroup({
           "hover:bg-sidebar-accent",
         )}
       >
-        {collapsed ? (
-          <ChevronRight className="size-3 shrink-0 text-muted-foreground" />
-        ) : (
-          <ChevronDown className="size-3 shrink-0 text-muted-foreground" />
-        )}
+        <MorphIcon icon={collapsed ? ChevronRight : ChevronDown} className="size-3 shrink-0 text-muted-foreground" reducedMotion="user" />
         <span className="text-[10px] font-medium tracking-wide text-muted-foreground">
           Dateinamen
         </span>
