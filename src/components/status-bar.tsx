@@ -44,6 +44,7 @@ import {
 import { formatRemaining, useFocusTimer } from "@/lib/focus-timer";
 import { useContinuousRun } from "@/lib/continuous-run";
 import { useSearchStore } from "@/lib/search-store";
+import { WslFolderDialog } from "@/components/wsl-folder-dialog";
 
 const KIND_META: Record<
   NotificationKind,
@@ -344,6 +345,45 @@ function ContinuousRunItem() {
       Watch
     </Item>
   );
+function WslInfo() {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState(false);
+
+  if (typeof navigator === "undefined" || !navigator.userAgent.includes("Windows")) return null;
+
+  return (
+    <>
+      <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+        <PopoverTrigger
+          title="WSL verbinden: Informationen"
+          aria-label="Informationen zum Verbinden von WSL"
+          className="inline-flex h-full items-center gap-1 rounded-md px-1.5 text-muted-foreground transition-colors hover:bg-foreground/8 hover:text-foreground"
+        >
+          <Info className="size-3" strokeWidth={2} />
+          WSL
+        </PopoverTrigger>
+        <PopoverContent align="start" side="top" className="w-72 rounded-xl p-3 text-xs shadow-lg">
+          <p className="font-semibold text-foreground">WSL-Ordner verbinden</p>
+          <p className="mt-2 text-muted-foreground">
+            Installiere WSL und eine Linux-Distribution. Wähle dann die Distribution und einen absoluten Linux-Pfad, zum Beispiel /home/user/projekt.
+          </p>
+          <p className="mt-2 text-muted-foreground">
+            Terminal, Git und Aufgaben laufen in der gewählten Distribution. Für Linux-Werkzeuge empfiehlt sich ein Projekt unter /home.
+          </p>
+          <button
+            type="button"
+            onClick={() => { setPopoverOpen(false); setDialogOpen(true); }}
+            className="mt-3 rounded-md bg-primary px-2.5 py-1.5 font-medium text-primary-foreground"
+          >
+            WSL-Ordner öffnen
+          </button>
+        </PopoverContent>
+      </Popover>
+      <WslFolderDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+    </>
+  );
+}
+
 }
 
 function Item({
@@ -463,6 +503,7 @@ export function StatusBar() {
           <Item onClick={gotoLine} title="Gehe zu Zeile/Spalte">
             Z {status.line}, S {status.column}
             {status.selectedChars > 0 &&
+        <WslInfo />
               ` (${status.selectedChars} Z · ${status.selectedWords} W${
                 status.selectedLines > 1 ? ` · ${status.selectedLines} Zl` : ""
               })`}
