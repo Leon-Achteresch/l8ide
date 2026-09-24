@@ -86,6 +86,7 @@ type Entry = {
 	isDirectory: boolean;
 	ignored?: boolean;
 	nested?: Entry[];
+	preloadedChildren?: Entry[];
 };
 
 const ROOT_ID = "__root__";
@@ -95,6 +96,7 @@ type TreeViewState = {
 	expandedByRoot: Record<string, string[]>;
 	selectedByRoot: Record<string, string[]>;
 	setExpanded: (root: string, path: string, open: boolean) => void;
+	setExpandedPaths: (root: string, paths: string[]) => void;
 	setSelected: (root: string, selected: string[]) => void;
 	collapseAll: (root: string) => void;
 	remapPaths: (root: string, src: string, dest: string) => void;
@@ -112,6 +114,12 @@ const useTreeViewStore = create<TreeViewState>()(persist((set) => ({
 			[root]: open ? [...expanded, path] : expanded.filter((p) => p !== path),
 		} };
 	}),
+	setExpandedPaths: (root, paths) => set((s) => ({
+		expandedByRoot: {
+			...s.expandedByRoot,
+			[root]: [...new Set([...(s.expandedByRoot[root] ?? []), ...paths])],
+		},
+	})),
 	setSelected: (root, selected) => set((s) => ({
 		selectedByRoot: { ...s.selectedByRoot, [root]: selected },
 	})),
@@ -280,6 +288,32 @@ async function listDir(path: string): Promise<Entry[]> {
 	return nestEntries(await Promise.all(mapped.map(compactChain)));
 }
 
+async function loadRestoredTree(root: string): Promise<Entry[]> {
+	const expanded = new Set(useTreeViewStore.getState().expandedByRoot[root] ?? []);
+	const activeFile = useWorkspaceStore.getState().activeFile;
+	const activeDirs: string[] = [];
+	async function load(path: string): Promise<Entry[]> {
+		const entries = await listDir(path);
+		await Promise.all(entries.map(async (entry) => {
+			if (!entry.isDirectory) return;
+			const containsActive = Boolean(activeFile?.startsWith(`${entry.path}/`));
+			if (!expanded.has(entry.path) && !containsActive) return;
+			if (containsActive) activeDirs.push(entry.path);
+			try {
+				entry.preloadedChildren = await load(entry.path);
+			} catch {
+				entry.preloadedChildren = [];
+			}
+		}));
+		return entries;
+	}
+	const entries = await load(root);
+	if (activeDirs.length > 0) {
+		useTreeViewStore.getState().setExpandedPaths(root, activeDirs);
+	}
+	return entries;
+}
+
 async function copyEntry(src: string, dest: string) {
 	const info = await stat(src);
 	if (info.isDirectory) {
@@ -367,6 +401,7 @@ function EntryIcon({ entry, open }: { entry: Entry; open?: boolean }) {
 
 type TreeCtxType = {
 	rootPath: string;
+	restoring: boolean;
 	hidden: Set<string>;
 	onRowClick: (entry: Entry, e: React.MouseEvent) => void;
 };
@@ -389,7 +424,7 @@ const TreeNode = memo(function TreeNode({
 	}, [ctx.rootPath, entry.path]);
 	const renaming = useTreeStore((s) => s.renamingPath === entry.path);
 	const cancelRename = useRef(false);
-	const [children, setChildren] = useState<Entry[] | null>(null);
+	const [children, setChildren] = useState<Entry[] | null>(entry.preloadedChildren ?? null);
 	const isActive = useWorkspaceStore((s) => s.activeFile === entry.path);
 	const activeDescendant = useWorkspaceStore((s) =>
 		entry.isDirectory && s.activeFile?.startsWith(`${entry.path}/`)
@@ -879,6 +914,7 @@ function TreeContainer({
 
 export function FileTree({ rootPath }: { rootPath: string }) {
 	const [children, setChildren] = useState<Entry[] | null>(null);
+	const [restoring, setRestoring] = useState(true);
 	const [altKey, setAltKey] = useState(false);
 	const [overValid, setOverValid] = useState<boolean | null>(null);
 	const containerRef = useRef<HTMLDivElement | null>(null);
@@ -916,20 +952,29 @@ export function FileTree({ rootPath }: { rootPath: string }) {
 
 	useEffect(() => {
 		setChildren(null);
+		setRestoring(true);
 		useTreeStore.getState().reset(rootPath);
-		listDir(rootPath).then(setChildren).catch(() => setChildren([]));
+		let cancelled = false;
+		loadRestoredTree(rootPath)
+			.then((entries) => { if (!cancelled) setChildren(entries); })
+			.catch(() => { if (!cancelled) setChildren([]); });
+		return () => { cancelled = true; };
 	}, [rootPath]);
+
+	useEffect(() => {
+		if (children !== null && restoring) setRestoring(false);
+	}, [children, restoring]);
 
 	const rootTick = useTreeStore((s) => s.refreshTicks[rootPath] ?? 0);
 	useEffect(() => {
 		if (rootTick === 0) return;
-		listDir(rootPath).then(setChildren).catch(() => setChildren([]));
+		loadRestoredTree(rootPath).then(setChildren).catch(() => setChildren([]));
 	}, [rootTick, rootPath]);
 
 	const refreshEpoch = useTreeStore((s) => s.refreshEpoch);
 	useEffect(() => {
 		if (refreshEpoch === 0) return;
-		listDir(rootPath).then(setChildren).catch(() => setChildren([]));
+		loadRestoredTree(rootPath).then(setChildren).catch(() => setChildren([]));
 	}, [refreshEpoch, rootPath]);
 
 	useCommandHotkeys(
@@ -1126,8 +1171,8 @@ export function FileTree({ rootPath }: { rootPath: string }) {
 	}, [rootPath]);
 
 	const ctx = useMemo<TreeCtxType>(
-		() => ({ rootPath, hidden, onRowClick: handleRowClick }),
-		[rootPath, hidden, handleRowClick],
+		() => ({ rootPath, restoring, hidden, onRowClick: handleRowClick }),
+		[rootPath, restoring, hidden, handleRowClick],
 	);
 
 	if (children === null) {
