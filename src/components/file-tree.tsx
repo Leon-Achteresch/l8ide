@@ -12,7 +12,7 @@ import { heatOf, useFileHeatmap } from "@/lib/file-heatmap";
 import { nestEntries } from "@/lib/file-nesting";
 import { ignoredNames } from "@/lib/git-ignore-tree";
 import { useCommandHotkeys } from "@/lib/hotkeys";
-import { basename, canMove, dragRoots, parentDir } from "@/lib/fs-move";
+import { basename, canMove, dragRoots, parentDir, remap } from "@/lib/fs-move";
 import { cn } from "@/lib/utils";
 import { addPathsToGitignore } from "@/lib/gitignore";
 import { useGitDeco } from "@/lib/git-decorations";
@@ -78,6 +78,7 @@ import {
 	useState,
 } from "react";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type Entry = {
 	name: string;
@@ -90,6 +91,49 @@ type Entry = {
 const ROOT_ID = "__root__";
 const EXPAND_DELAY = 500;
 
+type TreeViewState = {
+	expandedByRoot: Record<string, string[]>;
+	selectedByRoot: Record<string, string[]>;
+	setExpanded: (root: string, path: string, open: boolean) => void;
+	setSelected: (root: string, selected: string[]) => void;
+	collapseAll: (root: string) => void;
+	remapPaths: (root: string, src: string, dest: string) => void;
+	removePaths: (root: string, paths: string[]) => void;
+};
+
+const useTreeViewStore = create<TreeViewState>()(persist((set) => ({
+	expandedByRoot: {},
+	selectedByRoot: {},
+	setExpanded: (root, path, open) => set((s) => {
+		const expanded = s.expandedByRoot[root] ?? [];
+		if (expanded.includes(path) === open) return s;
+		return { expandedByRoot: {
+			...s.expandedByRoot,
+			[root]: open ? [...expanded, path] : expanded.filter((p) => p !== path),
+		} };
+	}),
+	setSelected: (root, selected) => set((s) => ({
+		selectedByRoot: { ...s.selectedByRoot, [root]: selected },
+	})),
+	collapseAll: (root) => set((s) => ({
+		expandedByRoot: { ...s.expandedByRoot, [root]: [] },
+	})),
+	remapPaths: (root, src, dest) => set((s) => {
+		const map = remap(src, dest);
+		return {
+			expandedByRoot: { ...s.expandedByRoot, [root]: (s.expandedByRoot[root] ?? []).map(map) },
+			selectedByRoot: { ...s.selectedByRoot, [root]: (s.selectedByRoot[root] ?? []).map(map) },
+		};
+	}),
+	removePaths: (root, paths) => set((s) => {
+		const keep = (path: string) => !paths.some((deleted) => path === deleted || path.startsWith(`${deleted}/`));
+		return {
+			expandedByRoot: { ...s.expandedByRoot, [root]: (s.expandedByRoot[root] ?? []).filter(keep) },
+			selectedByRoot: { ...s.selectedByRoot, [root]: (s.selectedByRoot[root] ?? []).filter(keep) },
+		};
+	}),
+}), { name: "file-tree-view" }));
+
 type TreeState = {
 	dropTarget: string | null;
 	selected: string[];
@@ -97,7 +141,6 @@ type TreeState = {
 	dragging: string[];
 	renamingPath: string | null;
 	refreshTicks: Record<string, number>;
-	collapseEpoch: number;
 	refreshEpoch: number;
 	reveal: string | null;
 	setDropTarget: (path: string | null) => void;
@@ -105,10 +148,9 @@ type TreeState = {
 	setDragging: (paths: string[]) => void;
 	setRenaming: (path: string | null) => void;
 	bumpDirs: (dirs: Iterable<string>) => void;
-	collapseAll: () => void;
 	refresh: () => void;
 	revealPath: (path: string | null) => void;
-	reset: () => void;
+	reset: (root: string) => void;
 };
 
 const useTreeStore = create<TreeState>()((set) => ({
@@ -118,13 +160,18 @@ const useTreeStore = create<TreeState>()((set) => ({
 	dragging: [],
 	renamingPath: null,
 	refreshTicks: {},
-	collapseEpoch: 0,
 	refreshEpoch: 0,
 	reveal: null,
 	setDropTarget: (dropTarget) =>
 		set((s) => (s.dropTarget === dropTarget ? s : { dropTarget })),
-	select: (selected, anchor) =>
-		set(anchor === undefined ? { selected } : { selected, anchor }),
+	select: (selected, anchor) => {
+		const root = useWorkspaceStore.getState().rootPath;
+		if (root) useTreeViewStore.getState().setSelected(root, selected);
+		set({
+			selected,
+			...(anchor === undefined ? {} : { anchor }),
+		});
+	},
 	setDragging: (dragging) => set({ dragging }),
 	setRenaming: (renamingPath) => set({ renamingPath }),
 	bumpDirs: (dirs) =>
@@ -133,18 +180,15 @@ const useTreeStore = create<TreeState>()((set) => ({
 			for (const d of dirs) refreshTicks[d] = (refreshTicks[d] ?? 0) + 1;
 			return { refreshTicks };
 		}),
-	collapseAll: () => set((s) => ({ collapseEpoch: s.collapseEpoch + 1 })),
 	refresh: () => set((s) => ({ refreshEpoch: s.refreshEpoch + 1 })),
 	revealPath: (reveal) => set({ reveal }),
-	reset: () =>
-		set({
+	reset: (root) => set({
 			dropTarget: null,
-			selected: [],
+			selected: useTreeViewStore.getState().selectedByRoot[root] ?? [],
 			anchor: null,
 			dragging: [],
 			renamingPath: null,
 			refreshTicks: {},
-			collapseEpoch: 0,
 			refreshEpoch: 0,
 			reveal: null,
 		}),
@@ -163,9 +207,11 @@ async function deletePaths(paths: string[]) {
 	});
 	if (!ok) return;
 	const affected = new Set<string>();
+	const deleted: string[] = [];
 	for (const path of targets) {
 		try {
 			await remove(path, { recursive: true });
+			deleted.push(path);
 			const ws = useWorkspaceStore.getState();
 			for (const t of ws.tabs) {
 				if (t === path || t.startsWith(`${path}/`)) ws.closeTab(t);
@@ -176,6 +222,8 @@ async function deletePaths(paths: string[]) {
 		}
 	}
 	const st = useTreeStore.getState();
+	const root = useWorkspaceStore.getState().rootPath;
+	if (root && deleted.length > 0) useTreeViewStore.getState().removePaths(root, deleted);
 	st.select([], null);
 	st.bumpDirs(affected);
 	refreshFileIndex();
@@ -287,7 +335,8 @@ export async function createEntry(kind: "file" | "folder", inDir?: string) {
 }
 
 export function collapseAll() {
-	useTreeStore.getState().collapseAll();
+	const root = useWorkspaceStore.getState().rootPath;
+	if (root) useTreeViewStore.getState().collapseAll(root);
 }
 
 export function revealInTree(path: string) {
@@ -317,6 +366,7 @@ function EntryIcon({ entry, open }: { entry: Entry; open?: boolean }) {
 }
 
 type TreeCtxType = {
+	rootPath: string;
 	hidden: Set<string>;
 	onRowClick: (entry: Entry, e: React.MouseEvent) => void;
 };
@@ -331,7 +381,12 @@ const TreeNode = memo(function TreeNode({
 	depth: number;
 }) {
 	const ctx = useContext(TreeCtx);
-	const [open, setOpen] = useState(false);
+	const open = useTreeViewStore((s) =>
+		(s.expandedByRoot[ctx.rootPath] ?? []).includes(entry.path),
+	);
+	const setOpen = useCallback((next: boolean) => {
+		useTreeViewStore.getState().setExpanded(ctx.rootPath, entry.path, next);
+	}, [ctx.rootPath, entry.path]);
 	const renaming = useTreeStore((s) => s.renamingPath === entry.path);
 	const cancelRename = useRef(false);
 	const [children, setChildren] = useState<Entry[] | null>(null);
@@ -341,6 +396,14 @@ const TreeNode = memo(function TreeNode({
 			? s.activeFile
 			: null,
 	);
+	const restoredOpen = useRef(open || Boolean(activeDescendant));
+	useEffect(() => {
+		if (restoredOpen.current && (
+			(!open && !activeDescendant) || !entry.isDirectory || children !== null
+		)) {
+			restoredOpen.current = false;
+		}
+	}, [open, activeDescendant, entry.isDirectory, children]);
 	const openFile = useWorkspaceStore((s) => s.openFile);
 	const openPreview = useWorkspaceStore((s) => s.openPreview);
 	const counts = useMarkersStore((s) =>
@@ -357,7 +420,6 @@ const TreeNode = memo(function TreeNode({
 	const isDragSource = useTreeStore((s) => s.dragging.includes(entry.path));
 	const tick = useTreeStore((s) => s.refreshTicks[entry.path] ?? 0);
 	const refreshEpoch = useTreeStore((s) => s.refreshEpoch);
-	const collapseEpoch = useTreeStore((s) => s.collapseEpoch);
 	const reveal = useTreeStore((s) =>
 		s.reveal &&
 		entry.isDirectory &&
@@ -381,14 +443,16 @@ const TreeNode = memo(function TreeNode({
 	});
 
 	useEffect(() => {
+		if (open && entry.isDirectory && children === null) {
+			listDir(entry.path).then(setChildren).catch(() => setChildren([]));
+		}
+	}, [open, entry.isDirectory, entry.path, children]);
+
+	useEffect(() => {
 		if (activeDescendant) {
 			setOpen(true);
-			setChildren((c) => {
-				if (c === null) listDir(entry.path).then(setChildren);
-				return c;
-			});
 		}
-	}, [activeDescendant, entry.path]);
+	}, [activeDescendant, setOpen]);
 
 	useEffect(() => {
 		if (isActive) buttonRef.current?.scrollIntoView({ block: "nearest" });
@@ -411,28 +475,16 @@ const TreeNode = memo(function TreeNode({
 	}, [refreshEpoch, entry.path]);
 
 	useEffect(() => {
-		if (collapseEpoch > 0) setOpen(false);
-	}, [collapseEpoch]);
-
-	useEffect(() => {
 		if (reveal) {
 			setOpen(true);
-			setChildren((c) => {
-				if (c === null) listDir(entry.path).then(setChildren);
-				return c;
-			});
 		}
-	}, [reveal, entry.path]);
+	}, [reveal, setOpen]);
 
 	useEffect(() => {
 		if (isDropTarget && entry.isDirectory && !open) {
 			expandTimer.current = window.setTimeout(() => {
 				expandTimer.current = null;
 				dlog("auto-expand", entry.path);
-				setChildren((c) => {
-					if (c === null) listDir(entry.path).then(setChildren);
-					return c;
-				});
 				setOpen(true);
 			}, EXPAND_DELAY);
 		}
@@ -442,7 +494,7 @@ const TreeNode = memo(function TreeNode({
 				expandTimer.current = null;
 			}
 		};
-	}, [isDropTarget, entry.path, entry.isDirectory, open]);
+	}, [isDropTarget, entry.path, entry.isDirectory, open, setOpen]);
 
 	async function toggle() {
 		if (!entry.isDirectory) {
@@ -452,7 +504,7 @@ const TreeNode = memo(function TreeNode({
 		if (!open && children === null) {
 			setChildren(await listDir(entry.path));
 		}
-		setOpen((o) => !o);
+		setOpen(!open);
 	}
 
 	function handleDelete() {
@@ -484,6 +536,7 @@ const TreeNode = memo(function TreeNode({
 			}
 			await rename(entry.path, dest);
 			useWorkspaceStore.getState().remapPath(entry.path, dest);
+			useTreeViewStore.getState().remapPaths(ctx.rootPath, entry.path, dest);
 			useTreeStore.getState().bumpDirs([parentDir(entry.path)]);
 			refreshFileIndex();
 		} catch (err) {
@@ -559,7 +612,7 @@ const TreeNode = memo(function TreeNode({
 										entry.nested
 											? (e) => {
 													e.stopPropagation();
-													setOpen((o) => !o);
+													setOpen(!open);
 												}
 											: undefined
 									}
@@ -745,7 +798,7 @@ const TreeNode = memo(function TreeNode({
 			<AnimatePresence initial={false}>
 				{open && (entry.isDirectory ? children !== null : Boolean(entry.nested)) && (
 					<motion.div
-						initial={{ height: 0, opacity: 0 }}
+						initial={restoredOpen.current ? false : { height: 0, opacity: 0 }}
 						animate={{ height: "auto", opacity: 1 }}
 						exit={{ height: 0, opacity: 0 }}
 						transition={{ type: "spring", stiffness: 500, damping: 38, mass: 0.6 }}
@@ -863,7 +916,7 @@ export function FileTree({ rootPath }: { rootPath: string }) {
 
 	useEffect(() => {
 		setChildren(null);
-		useTreeStore.getState().reset();
+		useTreeStore.getState().reset(rootPath);
 		listDir(rootPath).then(setChildren).catch(() => setChildren([]));
 	}, [rootPath]);
 
@@ -952,8 +1005,9 @@ export function FileTree({ rootPath }: { rootPath: string }) {
 						await copyEntry(src, dest);
 						dlog("copied", src, "→", dest);
 					} else {
-						await rename(src, dest);
-						useWorkspaceStore.getState().remapPath(src, dest);
+					await rename(src, dest);
+					useWorkspaceStore.getState().remapPath(src, dest);
+					useTreeViewStore.getState().remapPaths(rootPath, src, dest);
 						affected.add(parentDir(src));
 						dlog("moved", src, "→", dest);
 					}
@@ -1072,8 +1126,8 @@ export function FileTree({ rootPath }: { rootPath: string }) {
 	}, [rootPath]);
 
 	const ctx = useMemo<TreeCtxType>(
-		() => ({ hidden, onRowClick: handleRowClick }),
-		[hidden, handleRowClick],
+		() => ({ rootPath, hidden, onRowClick: handleRowClick }),
+		[rootPath, hidden, handleRowClick],
 	);
 
 	if (children === null) {
