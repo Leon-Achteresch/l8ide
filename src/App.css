@@ -220,6 +220,24 @@
   }
 }
 
+/* Keep the item that opened a context menu identifiable while the menu is visible. */
+[data-slot="context-menu-trigger"]:not([data-context-surface]),
+[data-context-surface] [data-path] {
+  transition: background-color 120ms ease, box-shadow 120ms ease;
+}
+
+[data-slot="context-menu-trigger"]:not([data-context-surface]):hover,
+[data-context-surface] [data-path]:hover {
+  background-color: color-mix(in oklch, var(--foreground) 5%, transparent);
+}
+
+[data-slot="context-menu-trigger"]:not([data-context-surface])[data-popup-open],
+[data-context-target] {
+  background-color: color-mix(in oklch, var(--foreground) 11%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--foreground) 16%, transparent);
+  border-radius: var(--radius-md);
+}
+
 .markdown-rich .milkdown {
   --crepe-font-default: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --crepe-font-title: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;

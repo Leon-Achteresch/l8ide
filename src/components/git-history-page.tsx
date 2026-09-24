@@ -188,9 +188,9 @@ export function GitHistoryPage() {
           </svg>
           {commits.map((c) => (
             <ContextMenu key={c.hash}>
-              <ContextMenuTrigger>
+              <ContextMenuTrigger className="rounded-md">
                 <div
-                  className="flex items-center gap-3 rounded-md pr-2 hover:bg-foreground/[0.04]"
+                  className="flex items-center gap-3 rounded-md pr-2"
                   style={{ height: ROW_H, paddingLeft: graphW }}
                 >
                   <span className="shrink-0 font-mono text-[11px] text-violet-500">

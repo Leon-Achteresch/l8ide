@@ -866,15 +866,33 @@ function TreeContainer({
 		collisionPriority: CollisionPriority.Low,
 	});
 	const isRootDropTarget = useTreeStore((s) => s.dropTarget === rootPath);
+	const contextTargetRef = useRef<HTMLElement | null>(null);
 
 	return (
-		<ContextMenu>
+		<ContextMenu
+			onOpenChange={(open) => {
+				if (!open) {
+					contextTargetRef.current?.removeAttribute("data-context-target");
+					contextTargetRef.current = null;
+				}
+			}}
+		>
 			<ContextMenuTrigger
+				data-context-surface
 				render={
 					<div
 						ref={(el) => {
 							containerRef.current = el;
 							dropRef(el);
+						}}
+						onContextMenuCapture={(e) => {
+							const row = (e.target as HTMLElement).closest<HTMLElement>("[data-path]");
+							const target = row?.closest('[data-slot="context-menu-trigger"]') === e.currentTarget
+								? row
+								: null;
+							contextTargetRef.current?.removeAttribute("data-context-target");
+							if (target) target.setAttribute("data-context-target", "");
+							contextTargetRef.current = target;
 						}}
 						onClick={(e) => {
 							if (e.target === containerRef.current) {

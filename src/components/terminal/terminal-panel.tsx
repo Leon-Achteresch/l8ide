@@ -145,6 +145,7 @@ function PaneView({
   return (
     <ContextMenu>
       <ContextMenuTrigger
+        data-context-surface
         ref={ref}
         onPointerDown={() => {
           setActivePane(paneId);
