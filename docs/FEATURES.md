@@ -234,8 +234,6 @@ Diagnostics-Quelle: Monaco-Marker (`onDidChangeMarkers`), gespiegelt in `markers
 
 * [x] **Datei-Dekorationen (Git/Fehler)**: Git-Status färbt Datei-/Ordnernamen + Buchstaben-Badge (M/A/D/R/U/!), Fehler-Badges bestehen; Quelle `git-store` (`git-decorations.ts`, `git-status-letter.ts`)
 
-* [x] **Open Editors-Sektion**: Einklappbare Liste aller offenen Tabs über alle Editor-Gruppen im Explorer (Gruppen-Labels bei Splits, aktiver Tab hervorgehoben, Hover-X schließt, Zustand persistiert; `open-editors.tsx`)
-
 * [x] **Timeline-View**: ⌘⌥H zeigt Local-History-Snapshots + Git-Commits (`git log --follow`, max. 100) der Datei chronologisch gemischt, je mit Diff und Wiederherstellen (Restore sichert vorher; `git_file_log`, `local-history-dialog.tsx`)
 
 * [x] **Local History**: Snapshot des alten Stands bei jedem Speichern (max. 20/Datei, ≤1MB, Dedupe), Dialog via ⌘⌥H mit Diff + Wiederherstellen — Restore sichert vorher den aktuellen Stand (`local-history.ts`, `local-history-dialog.tsx`)
