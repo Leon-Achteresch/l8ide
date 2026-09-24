@@ -27,6 +27,9 @@ const BunIcon: Icon = (props) => <Bun {...props} fill="currentColor" />;
 const MarkdownIcon: Icon = (props) => (
   <Markdown {...props} variant="mono" fill="currentColor" />
 );
+const RustIcon: Icon = (props) => (
+  <Rust {...props} variant="mono" fill="currentColor" />
+);
 
 const byName: Record<string, Icon> = {
   "package.json": Npm,
@@ -56,7 +59,7 @@ const byExt: Record<string, Icon> = {
   sass: Sass,
   md: MarkdownIcon,
   mdx: MarkdownIcon,
-  rs: Rust,
+  rs: RustIcon,
   py: Python,
   go: Go,
   swift: Swift,
